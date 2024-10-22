@@ -1,50 +1,29 @@
-# Welcome to your Expo app 👋
+# fitxp
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A new Flutter project.
 
-## Get started
+## Getting Started
 
-1. Install dependencies
+This project is a starting point for a Flutter application that follows the
+[simple app state management
+tutorial](https://flutter.dev/to/state-management-sample).
 
-   ```bash
-   npm install
-   ```
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
 
-2. Start the app
+## Assets
 
-   ```bash
-    npx expo start
-   ```
+The `assets` directory houses images, fonts, and any other files you want to
+include with your application.
 
-In the output, you'll find options to open the app in a
+The `assets/images` directory contains [resolution-aware
+images](https://flutter.dev/to/resolution-aware-images).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Localization
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+This project generates localized messages based on arb files found in
+the `lib/src/localization` directory.
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+To support additional languages, please visit the tutorial on
+[Internationalizing Flutter apps](https://flutter.dev/to/internationalization).
