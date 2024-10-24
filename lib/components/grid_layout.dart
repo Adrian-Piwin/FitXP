@@ -5,9 +5,9 @@ class GridLayout extends StatelessWidget {
   final List<Map<String, dynamic>> widgets;
 
   const GridLayout({
-    Key? key,
+    super.key,
     required this.widgets,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

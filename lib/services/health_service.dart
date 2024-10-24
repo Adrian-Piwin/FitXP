@@ -17,6 +17,7 @@ class HealthService {
     HealthDataType.SLEEP_ASLEEP,
     HealthDataType.EXERCISE_TIME,
     HealthDataType.NUTRITION,
+    HealthDataType.DIETARY_PROTEIN_CONSUMED,
     // Add other data types as needed
   ];
 
@@ -69,8 +70,7 @@ class HealthService {
   }
 
   // Fetch Active Calories Burned
-  Future<double> getActiveCaloriesBurned(TimeFrame timeFrame,
-      {int offset = 0}) async {
+  Future<double> getActiveCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
     final data = await _fetchData(
       HealthDataType.ACTIVE_ENERGY_BURNED,
       timeFrame,
@@ -87,8 +87,7 @@ class HealthService {
   }
 
   // Fetch Resting Calories Burned (Basal Energy Burned)
-  Future<double> getRestingCaloriesBurned(TimeFrame timeFrame,
-      {int offset = 0}) async {
+  Future<double> getRestingCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
     final data = await _fetchData(
       HealthDataType.BASAL_ENERGY_BURNED,
       timeFrame,
@@ -105,8 +104,7 @@ class HealthService {
   }
 
   // Fetch Dietary Calories Eaten
-  Future<double> getDietaryCaloriesConsumed(TimeFrame timeFrame,
-      {int offset = 0}) async {
+  Future<double> getDietaryCaloriesConsumed(TimeFrame timeFrame, {int offset = 0}) async {
     final data = await _fetchData(
       HealthDataType.DIETARY_ENERGY_CONSUMED,
       timeFrame,
@@ -176,8 +174,7 @@ class HealthService {
   }
 
   // Fetch Exercise Minutes
-  Future<double> getExerciseMinutes(TimeFrame timeFrame,
-      {int offset = 0}) async {
+  Future<double> getExerciseMinutes(TimeFrame timeFrame, {int offset = 0}) async {
     final data = await _fetchData(
       HealthDataType.EXERCISE_TIME,
       timeFrame,
@@ -204,8 +201,8 @@ class HealthService {
     double totalProtein = 0.0;
 
     for (var point in data) {
-      final value = point.value as NutritionHealthValue;
-      totalProtein += value.protein ?? 0.0;
+      final value = point.value as NumericHealthValue;
+      totalProtein += value.numericValue;
     }
 
     return totalProtein;

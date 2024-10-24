@@ -1,3 +1,4 @@
+import 'package:fitxp/constants/size.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
 
@@ -22,28 +23,26 @@ class CalorieWidgetItem extends StatelessWidget {
         color: Colors.redAccent,
         borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.all(16.0), // Add padding for better layout
+      padding: const EdgeInsets.all(16.0),
       child: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Wrap content vertically
+          mainAxisSize: MainAxisSize.min, 
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Small font title loaded from localization
             Text(
               AppLocalizations.of(context)!.caloriesWidgetTitle,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 12.0, // Small font size
+                fontSize: FontSizes.widgetTitle, 
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8.0), // Space between title and equation
-            // Display the equation
+            const SizedBox(height: FormatSizes.widgetGap),
             Text(
-              '${activeCalories.toStringAsFixed(1)} + ${restingCalories.toStringAsFixed(1)} - ${dietaryCalories.toStringAsFixed(1)} = ${result.toStringAsFixed(1)}',
+              '${activeCalories.toStringAsFixed(0)} + ${restingCalories.toStringAsFixed(0)} - ${dietaryCalories.toStringAsFixed(0)} = ${result.toStringAsFixed(0)}',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 16.0, // Adjust font size as needed
+                fontSize: 16.0, 
               ),
               textAlign: TextAlign.center,
             ),

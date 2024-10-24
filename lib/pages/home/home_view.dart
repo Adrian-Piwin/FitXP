@@ -1,3 +1,4 @@
+import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'calorie_widget_item.dart';
@@ -6,6 +7,7 @@ import 'large_widget_item.dart';
 import 'small_widget_item.dart';
 import 'home_controller.dart'; 
 import '../../components/timeframe_dropdown.dart'; 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -32,14 +34,13 @@ class HomeView extends StatelessWidget {
                         dietaryCalories: controller.dietaryCalories,
                       ),
               },
-              {"size": 1, "widget": SmallWidgetItem(title: "Widget 1x1")},
+              {"size": 1, "widget": BasicWidgetItem(title: AppLocalizations.of(context)!.proteinWidgetTitle, value: "${controller.protein.toStringAsFixed(0)}g")},
               {"size": 1, "widget": SmallWidgetItem(title: "Widget 1x1")},
               {"size": 2, "widget": LargeWidgetItem(title: "Another 1x2 Widget")},
             ];
 
             return Column(
               children: [
-                // TimeFrameDropdown component
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TimeFrameDropdown(
@@ -49,7 +50,6 @@ class HomeView extends StatelessWidget {
                     },
                   ),
                 ),
-                // Expanded GridLayout
                 Expanded(
                   child: GridLayout(widgets: widgets),
                 ),

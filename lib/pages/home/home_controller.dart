@@ -10,6 +10,7 @@ class HomeController extends ChangeNotifier {
   double _activeCalories = 0.0;
   double _restingCalories = 0.0;
   double _dietaryCalories = 0.0;
+  double _protein = 0.0;
   bool _isLoading = true;
 
   // Getters
@@ -17,6 +18,7 @@ class HomeController extends ChangeNotifier {
   double get activeCalories => _activeCalories;
   double get restingCalories => _restingCalories;
   double get dietaryCalories => _dietaryCalories;
+  double get protein => _protein;
   bool get isLoading => _isLoading;
 
   HomeController() {
@@ -35,16 +37,15 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      double activeCalories =
-          await _healthService.getActiveCaloriesBurned(_selectedTimeFrame);
-      double restingCalories =
-          await _healthService.getRestingCaloriesBurned(_selectedTimeFrame);
-      double dietaryCalories =
-          await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame);
+      double activeCalories = await _healthService.getActiveCaloriesBurned(_selectedTimeFrame);
+      double restingCalories = await _healthService.getRestingCaloriesBurned(_selectedTimeFrame);
+      double dietaryCalories = await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame);
+      double protein = await _healthService.getProteinIntake(_selectedTimeFrame);
 
       _activeCalories = activeCalories;
       _restingCalories = restingCalories;
       _dietaryCalories = dietaryCalories;
+      _protein = protein;
     } catch (e) {
       // Handle errors as needed
       print('Error fetching data: $e');
