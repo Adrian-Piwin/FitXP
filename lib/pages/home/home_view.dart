@@ -5,8 +5,9 @@ import 'calorie_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'large_widget_item.dart';
 import 'small_widget_item.dart';
-import 'home_controller.dart'; 
-import '../../components/timeframe_dropdown.dart'; 
+import 'home_controller.dart';
+import '../../components/timeframe_dropdown.dart';
+import '../../components/date_selector.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeView extends StatelessWidget {
@@ -19,7 +20,19 @@ class HomeView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => HomeController(),
       child: Scaffold(
-        appBar: AppBar(title: const Text("Home")),
+        appBar: AppBar(
+          title: Consumer<HomeController>(
+            builder: (context, controller, _) {
+              return DateSelector(
+                selectedTimeFrame: controller.selectedTimeFrame,
+                offset: controller.offset,
+                onOffsetChanged: (newOffset) {
+                  controller.updateOffset(newOffset);
+                },
+              );
+            },
+          ),
+        ),
         body: Consumer<HomeController>(
           builder: (context, controller, _) {
             // Build the list of widgets to pass to GridLayout
@@ -34,7 +47,13 @@ class HomeView extends StatelessWidget {
                         dietaryCalories: controller.dietaryCalories,
                       ),
               },
-              {"size": 1, "widget": BasicWidgetItem(title: AppLocalizations.of(context)!.proteinWidgetTitle, value: "${controller.protein.toStringAsFixed(0)}g")},
+              {
+                "size": 1,
+                "widget": BasicWidgetItem(
+                  title: AppLocalizations.of(context)!.proteinWidgetTitle,
+                  value: "${controller.protein.toStringAsFixed(0)}g",
+                ),
+              },
               {"size": 1, "widget": SmallWidgetItem(title: "Widget 1x1")},
               {"size": 2, "widget": LargeWidgetItem(title: "Another 1x2 Widget")},
             ];

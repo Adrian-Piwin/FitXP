@@ -7,6 +7,7 @@ class HomeController extends ChangeNotifier {
 
   // State variables
   TimeFrame _selectedTimeFrame = TimeFrame.day;
+  int _offset = 0; // Offset for date navigation
   double _activeCalories = 0.0;
   double _restingCalories = 0.0;
   double _dietaryCalories = 0.0;
@@ -15,6 +16,7 @@ class HomeController extends ChangeNotifier {
 
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
+  int get offset => _offset;
   double get activeCalories => _activeCalories;
   double get restingCalories => _restingCalories;
   double get dietaryCalories => _dietaryCalories;
@@ -28,7 +30,14 @@ class HomeController extends ChangeNotifier {
   // Method to update the selected TimeFrame
   void updateTimeFrame(TimeFrame newTimeFrame) {
     _selectedTimeFrame = newTimeFrame;
+    _offset = 0; // Reset offset when TimeFrame changes
     fetchCalorieData();
+  }
+
+  // Method to update the offset
+  void updateOffset(int newOffset) {
+      _offset = newOffset;
+      fetchCalorieData();
   }
 
   // Fetch data from HealthService
@@ -37,10 +46,10 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      double activeCalories = await _healthService.getActiveCaloriesBurned(_selectedTimeFrame);
-      double restingCalories = await _healthService.getRestingCaloriesBurned(_selectedTimeFrame);
-      double dietaryCalories = await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame);
-      double protein = await _healthService.getProteinIntake(_selectedTimeFrame);
+      double activeCalories = await _healthService.getActiveCaloriesBurned(_selectedTimeFrame, offset: _offset);
+      double restingCalories = await _healthService.getRestingCaloriesBurned(_selectedTimeFrame, offset: _offset);
+      double dietaryCalories = await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame, offset: _offset);
+      double protein = await _healthService.getProteinIntake(_selectedTimeFrame, offset: _offset);
 
       _activeCalories = activeCalories;
       _restingCalories = restingCalories;

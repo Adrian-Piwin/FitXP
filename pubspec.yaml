@@ -19,6 +19,7 @@ dependencies:
   health: ^11.1.0
   provider: ^6.0.0
   app_settings: ^4.1.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
