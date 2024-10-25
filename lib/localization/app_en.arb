@@ -11,6 +11,5 @@
   "timeFrameDay": "Day",
   "timeFrameWeek": "Week",
   "timeFrameMonth": "Month",
-  "timeFrameYear": "Year",
-  "timeFrameAllTime": "All time"
+  "timeFrameYear": "Year"
 }

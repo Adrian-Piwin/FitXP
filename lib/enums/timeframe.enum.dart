@@ -3,5 +3,4 @@ enum TimeFrame {
   week,
   month,
   year,
-  allTime,
 }

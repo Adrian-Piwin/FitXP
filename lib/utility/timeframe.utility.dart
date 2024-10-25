@@ -27,11 +27,6 @@ DateTimeRange calculateDateRange(TimeFrame timeFrame, {int offset = 0}) {
       final start = DateTime(now.year + offset, 1, 1);
       final end = DateTime(start.year + 1, 1, 1);
       return DateTimeRange(start: start, end: end);
-    case TimeFrame.allTime:
-      // Assuming all-time starts from a very early date
-      final start = DateTime(1970);
-      final end = now;
-      return DateTimeRange(start: start, end: end);
     default:
       return DateTimeRange(start: now, end: now);
   }
@@ -48,8 +43,6 @@ String timeFrameToString(BuildContext context, TimeFrame timeFrame) {
       return appLocalizations.timeFrameMonth;
     case TimeFrame.year:
       return appLocalizations.timeFrameYear;
-    case TimeFrame.allTime:
-      return appLocalizations.timeFrameAllTime;
     default:
       return '';
   }

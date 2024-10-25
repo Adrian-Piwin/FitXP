@@ -30,13 +30,10 @@ class DateSelector extends StatelessWidget {
         displayedDate = DateTime(now.year, now.month - offset * -1, 1);
       case TimeFrame.year:
         displayedDate = DateTime(now.year - offset * -1, 1, 1);
-      case TimeFrame.allTime:
-        displayedDate = now;
-
     }
 
     // Determine if right arrow should be disabled (can't go into the future)
-    bool isRightArrowDisabled = offset == 0 || selectedTimeFrame == TimeFrame.allTime;
+    bool isRightArrowDisabled = offset == 0;
 
     // Displayed date string
     String displayedDateString = '';
@@ -45,25 +42,23 @@ class DateSelector extends StatelessWidget {
       case TimeFrame.day:
         displayedDateString = DateFormat('MMMM d, yyyy').format(displayedDate);
       case TimeFrame.week:
-        DateTime startOfWeek = displayedDate.subtract(Duration(days: displayedDate.weekday - 1));
+        DateTime startOfWeek =
+            displayedDate.subtract(Duration(days: displayedDate.weekday - 1));
         DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
-        displayedDateString = '${DateFormat('MMM d').format(startOfWeek)} – ${DateFormat('MMM d, yyyy').format(endOfWeek)}';
+        displayedDateString =
+            '${DateFormat('MMM d').format(startOfWeek)} – ${DateFormat('MMM d, yyyy').format(endOfWeek)}';
       case TimeFrame.month:
         displayedDateString = DateFormat('MMMM yyyy').format(displayedDate);
       case TimeFrame.year:
         displayedDateString = DateFormat('yyyy').format(displayedDate);
-      case TimeFrame.allTime:
-        displayedDateString = 'All Time';
     }
 
     // Arrow buttons
     Widget leftArrow = IconButton(
       icon: Icon(Icons.arrow_left),
-      onPressed: selectedTimeFrame != TimeFrame.allTime
-          ? () {
-              onOffsetChanged(offset - 1);
-            }
-          : null,
+      onPressed: () {
+        onOffsetChanged(offset - 1);
+      },
     );
 
     Widget rightArrow = IconButton(

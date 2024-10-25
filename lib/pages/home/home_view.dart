@@ -1,3 +1,4 @@
+import 'package:fitxp/components/timeframe_tabbar.dart';
 import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,13 +22,13 @@ class HomeView extends StatelessWidget {
       create: (_) => HomeController(),
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
           title: Consumer<HomeController>(
             builder: (context, controller, _) {
-              return DateSelector(
+              return TimeFrameTabBar(
                 selectedTimeFrame: controller.selectedTimeFrame,
-                offset: controller.offset,
-                onOffsetChanged: (newOffset) {
-                  controller.updateOffset(newOffset);
+                onChanged: (newTimeFrame) {
+                  controller.updateTimeFrame(newTimeFrame);
                 },
               );
             },
@@ -55,19 +56,20 @@ class HomeView extends StatelessWidget {
                 ),
               },
               {"size": 1, "widget": SmallWidgetItem(title: "Widget 1x1")},
-              {"size": 2, "widget": LargeWidgetItem(title: "Another 1x2 Widget")},
+              {
+                "size": 2,
+                "widget": LargeWidgetItem(title: "Another 1x2 Widget")
+              },
             ];
 
             return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TimeFrameDropdown(
-                    selectedTimeFrame: controller.selectedTimeFrame,
-                    onChanged: (newTimeFrame) {
-                      controller.updateTimeFrame(newTimeFrame);
-                    },
-                  ),
+                DateSelector(
+                  selectedTimeFrame: controller.selectedTimeFrame,
+                  offset: controller.offset,
+                  onOffsetChanged: (newOffset) {
+                    controller.updateOffset(newOffset);
+                  },
                 ),
                 Expanded(
                   child: GridLayout(widgets: widgets),
