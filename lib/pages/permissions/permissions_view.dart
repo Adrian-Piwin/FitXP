@@ -5,7 +5,7 @@ import '../home/home_view.dart';
 class PermissionsView extends StatefulWidget {
   const PermissionsView({super.key});
 
-  static const String routeName = "/";
+  static const String routeName = "/permissions";
 
   @override
   State<PermissionsView> createState() => _PermissionsViewState();

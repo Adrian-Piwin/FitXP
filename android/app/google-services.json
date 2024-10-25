@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "896043199805",
+    "project_id": "fitxp-6c3c3",
+    "storage_bucket": "fitxp-6c3c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896043199805:android:bf5e0d901a3109d828e954",
+        "android_client_info": {
+          "package_name": "com.devaydren.fitxp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896043199805-0minnto0qlto2nufp00t5h9fm03oee8i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQFn6-f__8pk_udMHojD4QEi-xou7T3M0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896043199805-0minnto0qlto2nufp00t5h9fm03oee8i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "896043199805-4rgn9i4dokorj47bal29sofsbgltanm5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.winovatesolutions.fitxp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
