@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../enums/timeframe.enum.dart';
-import '../utility/timeframe.utility.dart';
 
 class TimeFrameTabBar extends StatefulWidget {
   final TimeFrame selectedTimeFrame;
@@ -13,10 +12,10 @@ class TimeFrameTabBar extends StatefulWidget {
   });
 
   @override
-  _TimeFrameTabBarState createState() => _TimeFrameTabBarState();
+  TimeFrameTabBarState createState() => TimeFrameTabBarState();
 }
 
-class _TimeFrameTabBarState extends State<TimeFrameTabBar>
+class TimeFrameTabBarState extends State<TimeFrameTabBar>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 

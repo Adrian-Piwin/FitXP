@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../enums/timeframe.enum.dart';
-import '../utility/timeframe.utility.dart';
 
 class TimeFrameDropdown extends StatelessWidget {
   final TimeFrame selectedTimeFrame;

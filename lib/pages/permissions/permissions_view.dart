@@ -22,8 +22,7 @@ class _PermissionsViewState extends State<PermissionsView> {
 
   Future<void> _checkPermissions() async {
     bool isAuthorized = await _controller.checkPermissions();
-    if (isAuthorized) {
-      // Navigate to HomeView
+    if (isAuthorized && mounted) {
       Navigator.of(context).pushReplacementNamed(HomeView.routeName);
     } else {
       // Permissions not granted, stay on this page

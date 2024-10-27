@@ -2,12 +2,12 @@ import 'package:fitxp/components/timeframe_tabbar.dart';
 import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../components/bottom_nav_bar.dart';
 import 'calorie_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'large_widget_item.dart';
 import 'small_widget_item.dart';
 import 'home_controller.dart';
-import '../../components/timeframe_dropdown.dart';
 import '../../components/date_selector.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -78,6 +78,7 @@ class HomeView extends StatelessWidget {
             );
           },
         ),
+        bottomNavigationBar: const BottomNavBar(currentIndex: 0)
       ),
     );
   }

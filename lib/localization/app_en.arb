@@ -11,5 +11,17 @@
   "timeFrameDay": "Day",
   "timeFrameWeek": "Week",
   "timeFrameMonth": "Month",
-  "timeFrameYear": "Year"
+  "timeFrameYear": "Year",
+  "goalsPageTitle": "Goals",
+  "currentPhaseTitle": "Current Phase",
+  "calorieGoalTitle": "Calorie Goal",
+  "exerciseMinutesGoalTitle": "Exercise Minutes Goal",
+  "weightGoalTitle": "Weight Goal",
+  "bodyFatGoalTitle": "Body Fat % Goal",
+  "proteinGoalTitle": "Protein Goal",
+  "stepsGoalTitle": "Steps Goal",
+  "sleepGoalTitle": "Sleep Goal",
+  "navBarHome": "Home",
+  "navBarGoals": "Goals",
+  "navBarSettings": "Settings"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../components/bottom_nav_bar.dart';
 import 'settings_controller.dart';
 
 /// Displays the various settings that can be customized by the user.
@@ -46,6 +47,7 @@ class SettingsView extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 2)
     );
   }
 }

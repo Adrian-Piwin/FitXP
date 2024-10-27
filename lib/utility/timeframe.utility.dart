@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import '../enums/timeframe.enum.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; 
 
 DateTimeRange calculateDateRange(TimeFrame timeFrame, {int offset = 0}) {
   final now = DateTime.now();
@@ -29,21 +28,5 @@ DateTimeRange calculateDateRange(TimeFrame timeFrame, {int offset = 0}) {
       return DateTimeRange(start: start, end: end);
     default:
       return DateTimeRange(start: now, end: now);
-  }
-}
-
-String timeFrameToString(BuildContext context, TimeFrame timeFrame) {
-  final appLocalizations = AppLocalizations.of(context)!;
-  switch (timeFrame) {
-    case TimeFrame.day:
-      return appLocalizations.timeFrameDay;
-    case TimeFrame.week:
-      return appLocalizations.timeFrameWeek;
-    case TimeFrame.month:
-      return appLocalizations.timeFrameMonth;
-    case TimeFrame.year:
-      return appLocalizations.timeFrameYear;
-    default:
-      return '';
   }
 }

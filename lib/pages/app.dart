@@ -5,6 +5,7 @@ import 'package:fitxp/pages/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'goals/goals_view.dart';
 import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
@@ -45,20 +46,25 @@ class MyApp extends StatelessWidget {
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
-            return MaterialPageRoute<void>(
+            return PageRouteBuilder<void>(
               settings: routeSettings,
-              builder: (BuildContext context) {
+              pageBuilder: (BuildContext context, Animation<double> animation,
+                  Animation<double> secondaryAnimation) {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case HomeView.routeName:
                     return const HomeView();
+                  case GoalsView.routeName:
+                    return const GoalsView();
                   case PermissionsView.routeName:
                     return const PermissionsView();
                   default:
                     return const AuthGate();
                 }
               },
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
             );
           },
         );
