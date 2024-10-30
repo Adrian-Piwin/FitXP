@@ -8,6 +8,7 @@
     "description": "Title for the calorie widget"
   },
   "proteinWidgetTitle": "Protein",
+  "exerciseMinutesWidgetTitle": "Exercise Minutes",
   "timeFrameDay": "Day",
   "timeFrameWeek": "Week",
   "timeFrameMonth": "Month",

@@ -60,64 +60,39 @@ class HealthService {
   }
 
   // Fetch Steps
-  Future<int> getTotalSteps(TimeFrame timeFrame, {int offset = 0}) async {
-    final dateRange = calculateDateRange(timeFrame, offset: offset);
-    int? steps = await _health.getTotalStepsInInterval(
-      dateRange.start,
-      dateRange.end,
+  Future<List<HealthDataPoint>> getTotalSteps(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
+      HealthDataType.STEPS,
+      timeFrame,
+      offset: offset,
     );
-    return steps ?? 0;
   }
 
   // Fetch Active Calories Burned
-  Future<double> getActiveCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
-    final data = await _fetchData(
+  Future<List<HealthDataPoint>> getActiveCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
       HealthDataType.ACTIVE_ENERGY_BURNED,
       timeFrame,
       offset: offset,
     );
-
-    double totalCalories = data.fold(
-      0.0,
-      (previousValue, element) =>
-          previousValue + (element.value as NumericHealthValue).numericValue,
-    );
-
-    return totalCalories;
   }
 
   // Fetch Resting Calories Burned (Basal Energy Burned)
-  Future<double> getRestingCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
-    final data = await _fetchData(
+  Future<List<HealthDataPoint>> getRestingCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
       HealthDataType.BASAL_ENERGY_BURNED,
       timeFrame,
       offset: offset,
     );
-
-    double totalCalories = data.fold(
-      0.0,
-      (previousValue, element) =>
-          previousValue + (element.value as NumericHealthValue).numericValue,
-    );
-
-    return totalCalories;
   }
 
   // Fetch Dietary Calories Eaten
-  Future<double> getDietaryCaloriesConsumed(TimeFrame timeFrame, {int offset = 0}) async {
-    final data = await _fetchData(
+  Future<List<HealthDataPoint>> getDietaryCaloriesConsumed(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
       HealthDataType.DIETARY_ENERGY_CONSUMED,
       timeFrame,
       offset: offset,
     );
-
-    double totalCalories = data.fold(
-      0.0,
-      (previousValue, element) =>
-          previousValue + (element.value as NumericHealthValue).numericValue,
-    );
-
-    return totalCalories;
   }
 
   // Fetch Weight
@@ -157,54 +132,29 @@ class HealthService {
   }
 
   // Fetch Hours Slept
-  Future<double> getSleepHours(TimeFrame timeFrame, {int offset = 0}) async {
-    final data = await _fetchData(
+  Future<List<HealthDataPoint>> getSleep(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
       HealthDataType.SLEEP_ASLEEP,
       timeFrame,
       offset: offset,
     );
-
-    double totalMinutes = data.fold(
-      0.0,
-      (previousValue, element) =>
-          previousValue + element.dateTo.difference(element.dateFrom).inMinutes,
-    );
-
-    return totalMinutes / 60.0; // Convert minutes to hours
   }
 
   // Fetch Exercise Minutes
-  Future<double> getExerciseMinutes(TimeFrame timeFrame, {int offset = 0}) async {
-    final data = await _fetchData(
+  Future<List<HealthDataPoint>> getExerciseMinutes(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
       HealthDataType.EXERCISE_TIME,
       timeFrame,
       offset: offset,
     );
-
-    double totalMinutes = data.fold(
-      0.0,
-      (previousValue, element) =>
-          previousValue + (element.value as NumericHealthValue).numericValue,
-    );
-
-    return totalMinutes;
   }
 
   // Fetch Protein Intake
-  Future<double> getProteinIntake(TimeFrame timeFrame, {int offset = 0}) async {
-    final data = await _fetchData(
+  Future<List<HealthDataPoint>> getProteinIntake(TimeFrame timeFrame, {int offset = 0}) async {
+    return await _fetchData(
       HealthDataType.DIETARY_PROTEIN_CONSUMED,
       timeFrame,
       offset: offset,
     );
-
-    double totalProtein = 0.0;
-
-    for (var point in data) {
-      final value = point.value as NumericHealthValue;
-      totalProtein += value.numericValue;
-    }
-
-    return totalProtein;
   }
 }

@@ -55,10 +55,12 @@ class HomeView extends StatelessWidget {
                   value: "${controller.protein.toStringAsFixed(0)}g",
                 ),
               },
-              {"size": 1, "widget": SmallWidgetItem(title: "Widget 1x1")},
               {
-                "size": 2,
-                "widget": LargeWidgetItem(title: "Another 1x2 Widget")
+                "size": 1,
+                "widget": BasicWidgetItem(
+                  title: AppLocalizations.of(context)!.exerciseMinutesWidgetTitle,
+                  value: "${controller.exerciseMinutes.toStringAsFixed(0)}min",
+                ),
               },
             ];
 

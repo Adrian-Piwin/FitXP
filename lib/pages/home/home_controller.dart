@@ -1,4 +1,6 @@
+import 'package:fitxp/utility/health.utility.dart';
 import 'package:flutter/material.dart';
+import 'package:health/health.dart';
 import '../../services/health_service.dart';
 import '../../enums/timeframe.enum.dart';
 
@@ -12,6 +14,7 @@ class HomeController extends ChangeNotifier {
   double _restingCalories = 0.0;
   double _dietaryCalories = 0.0;
   double _protein = 0.0;
+  double _exerciseMinutes = 0.0;
   bool _isLoading = true;
 
   // Getters
@@ -21,6 +24,7 @@ class HomeController extends ChangeNotifier {
   double get restingCalories => _restingCalories;
   double get dietaryCalories => _dietaryCalories;
   double get protein => _protein;
+  double get exerciseMinutes => _exerciseMinutes;
   bool get isLoading => _isLoading;
 
   HomeController() {
@@ -46,15 +50,17 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      double activeCalories = await _healthService.getActiveCaloriesBurned(_selectedTimeFrame, offset: _offset);
-      double restingCalories = await _healthService.getRestingCaloriesBurned(_selectedTimeFrame, offset: _offset);
-      double dietaryCalories = await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame, offset: _offset);
-      double protein = await _healthService.getProteinIntake(_selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> activeCalories = await _healthService.getActiveCaloriesBurned(_selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> restingCalories = await _healthService.getRestingCaloriesBurned(_selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> dietaryCalories = await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> protein = await _healthService.getProteinIntake(_selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> excerciseMinutes = await _healthService.getExerciseMinutes(_selectedTimeFrame, offset: _offset);
 
-      _activeCalories = activeCalories;
-      _restingCalories = restingCalories;
-      _dietaryCalories = dietaryCalories;
-      _protein = protein;
+      _activeCalories = getHealthTotal(activeCalories);
+      _restingCalories = getHealthTotal(restingCalories);
+      _dietaryCalories = getHealthTotal(dietaryCalories);
+      _protein = getHealthTotal(protein);
+      _exerciseMinutes = getHealthTotal(excerciseMinutes);
     } catch (e) {
       // Handle errors as needed
       print('Error fetching data: $e');
