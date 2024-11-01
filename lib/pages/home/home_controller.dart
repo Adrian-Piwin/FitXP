@@ -15,6 +15,9 @@ class HomeController extends ChangeNotifier {
   double _dietaryCalories = 0.0;
   double _protein = 0.0;
   double _exerciseMinutes = 0.0;
+  double _strengthTrainingMinutes = 0.0;
+  double _cardioMinutes = 0.0;
+  double _steps = 0.0; 
   bool _isLoading = true;
 
   // Getters
@@ -25,6 +28,9 @@ class HomeController extends ChangeNotifier {
   double get dietaryCalories => _dietaryCalories;
   double get protein => _protein;
   double get exerciseMinutes => _exerciseMinutes;
+  double get strengthTrainingMinutes => _strengthTrainingMinutes;
+  double get cardioMinutes => _cardioMinutes;
+  double get steps => _steps; 
   bool get isLoading => _isLoading;
 
   HomeController() {
@@ -50,17 +56,22 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<HealthDataPoint> activeCalories = await _healthService.getActiveCaloriesBurned(_selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> restingCalories = await _healthService.getRestingCaloriesBurned(_selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> dietaryCalories = await _healthService.getDietaryCaloriesConsumed(_selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> protein = await _healthService.getProteinIntake(_selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> excerciseMinutes = await _healthService.getExerciseMinutes(_selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> activeCalories = await _healthService.fetchData(HealthDataType.ACTIVE_ENERGY_BURNED, _selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> restingCalories = await _healthService.fetchData(HealthDataType.BASAL_ENERGY_BURNED, _selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> dietaryCalories = await _healthService.fetchData(HealthDataType.DIETARY_ENERGY_CONSUMED, _selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> protein = await _healthService.fetchData(HealthDataType.DIETARY_PROTEIN_CONSUMED, _selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> excerciseMinutes = await _healthService.fetchData(HealthDataType.EXERCISE_TIME, _selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> steps = await _healthService.fetchData(HealthDataType.STEPS, _selectedTimeFrame, offset: _offset); 
+      List<HealthDataPoint> workouts = await _healthService.fetchData(HealthDataType.WORKOUT, _selectedTimeFrame, offset: _offset); 
 
       _activeCalories = getHealthTotal(activeCalories);
       _restingCalories = getHealthTotal(restingCalories);
       _dietaryCalories = getHealthTotal(dietaryCalories);
       _protein = getHealthTotal(protein);
       _exerciseMinutes = getHealthTotal(excerciseMinutes);
+      _steps = getHealthTotal(steps); 
+      _strengthTrainingMinutes = getWorkoutMinutes(extractStrengthTrainingMinutes(workouts)); 
+      _cardioMinutes = getWorkoutMinutes(extractCardioMinutes(workouts)); 
     } catch (e) {
       // Handle errors as needed
       print('Error fetching data: $e');

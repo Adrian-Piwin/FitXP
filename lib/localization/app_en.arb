@@ -9,6 +9,7 @@
   },
   "proteinWidgetTitle": "Protein",
   "exerciseMinutesWidgetTitle": "Exercise Minutes",
+  "stepsWidgetTitle": "Steps",
   "timeFrameDay": "Day",
   "timeFrameWeek": "Week",
   "timeFrameMonth": "Month",

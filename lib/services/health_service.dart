@@ -18,7 +18,7 @@ class HealthService {
     HealthDataType.EXERCISE_TIME,
     HealthDataType.NUTRITION,
     HealthDataType.DIETARY_PROTEIN_CONSUMED,
-    // Add other data types as needed
+    HealthDataType.WORKOUT
   ];
 
   HealthService() {
@@ -30,7 +30,7 @@ class HealthService {
     _isAuthorized = await _health.hasPermissions(_dataTypes) == true;
   }
 
-  Future<List<HealthDataPoint>> _fetchData(
+  Future<List<HealthDataPoint>> fetchData(
     HealthDataType type,
     TimeFrame timeFrame, {
     int offset = 0,
@@ -57,42 +57,6 @@ class HealthService {
       _isAuthorized = await _health.requestAuthorization(_dataTypes);
     }
     return _isAuthorized;
-  }
-
-  // Fetch Steps
-  Future<List<HealthDataPoint>> getTotalSteps(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.STEPS,
-      timeFrame,
-      offset: offset,
-    );
-  }
-
-  // Fetch Active Calories Burned
-  Future<List<HealthDataPoint>> getActiveCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.ACTIVE_ENERGY_BURNED,
-      timeFrame,
-      offset: offset,
-    );
-  }
-
-  // Fetch Resting Calories Burned (Basal Energy Burned)
-  Future<List<HealthDataPoint>> getRestingCaloriesBurned(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.BASAL_ENERGY_BURNED,
-      timeFrame,
-      offset: offset,
-    );
-  }
-
-  // Fetch Dietary Calories Eaten
-  Future<List<HealthDataPoint>> getDietaryCaloriesConsumed(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.DIETARY_ENERGY_CONSUMED,
-      timeFrame,
-      offset: offset,
-    );
   }
 
   // Fetch Weight
@@ -129,32 +93,5 @@ class HealthService {
     } else {
       return null;
     }
-  }
-
-  // Fetch Hours Slept
-  Future<List<HealthDataPoint>> getSleep(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.SLEEP_ASLEEP,
-      timeFrame,
-      offset: offset,
-    );
-  }
-
-  // Fetch Exercise Minutes
-  Future<List<HealthDataPoint>> getExerciseMinutes(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.EXERCISE_TIME,
-      timeFrame,
-      offset: offset,
-    );
-  }
-
-  // Fetch Protein Intake
-  Future<List<HealthDataPoint>> getProteinIntake(TimeFrame timeFrame, {int offset = 0}) async {
-    return await _fetchData(
-      HealthDataType.DIETARY_PROTEIN_CONSUMED,
-      timeFrame,
-      offset: offset,
-    );
   }
 }
