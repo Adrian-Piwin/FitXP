@@ -37,16 +37,6 @@ class HomeView extends StatelessWidget {
               // Build the list of widgets to pass to GridLayout
               final List<Map<String, dynamic>> widgets = [
                 {
-                  "size": 2,
-                  "widget": controller.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : CalorieWidgetItem(
-                          activeCalories: controller.activeCalories,
-                          restingCalories: controller.restingCalories,
-                          dietaryCalories: controller.dietaryCalories,
-                        ),
-                },
-                {
                   "size": 1,
                   "widget": BasicWidgetItem(
                     title: AppLocalizations.of(context)!.proteinWidgetTitle,
@@ -99,6 +89,18 @@ class HomeView extends StatelessWidget {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CalorieWidgetItem(
+                              activeCalories: controller.activeCalories,
+                              restingCalories: controller.restingCalories,
+                              dietaryCalories: controller.dietaryCalories,
+                              goalDietaryCalories:
+                                  controller.goalDietaryCalories,
+                              goalActiveCalories: controller.goalActiveCalories,
+                              goalNetCalories: controller.goalNetCalories,
+                            ),
+                          ),
                           GridLayout(widgets: widgets),
                         ],
                       ),

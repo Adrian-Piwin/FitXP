@@ -1,15 +1,21 @@
 import 'package:fitxp/utility/health.utility.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import '../../models/goal.model.dart';
 import '../../services/health_service.dart';
+import '../../services/db_goals_service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HomeController extends ChangeNotifier {
   final HealthService _healthService = HealthService();
+  final DBGoalsService _goalsService = DBGoalsService();
 
   // State variables
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
+  int _goalDietaryCalories = 0;
+  int _goalNetCalories = 500;
+  int _goalActiveCalories = 500;
   double _activeCalories = 0.0;
   double _restingCalories = 0.0;
   double _dietaryCalories = 0.0;
@@ -23,6 +29,9 @@ class HomeController extends ChangeNotifier {
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
+  int get goalDietaryCalories => _goalDietaryCalories;
+  int get goalNetCalories => _goalNetCalories;
+  int get goalActiveCalories => _goalActiveCalories;
   double get activeCalories => _activeCalories;
   double get restingCalories => _restingCalories;
   double get dietaryCalories => _dietaryCalories;
@@ -35,6 +44,7 @@ class HomeController extends ChangeNotifier {
 
   HomeController() {
     fetchCalorieData();
+    fetchGoalsData();
   }
 
   // Method to update the selected TimeFrame
@@ -48,6 +58,16 @@ class HomeController extends ChangeNotifier {
   void updateOffset(int newOffset) {
       _offset = newOffset;
       fetchCalorieData();
+  }
+
+  // Fetch data from GoalsService
+  Future<void> fetchGoalsData() async {
+    // Fetch goals data
+    // For now, we'll just hardcode the goal calories
+    Goal? goals = await _goalsService.getGoals();
+    if (goals != null) {
+      _goalDietaryCalories = goals.calorieGoal;
+    }
   }
 
   // Fetch data from HealthService
