@@ -1,3 +1,4 @@
+import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
@@ -39,7 +40,7 @@ class GoalsView extends StatelessWidget {
             }
 
             return ListView(
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(PaddingSizes.large),
               children: [
                 // Current Phase Dropdown
                 ListTile(
@@ -149,7 +150,7 @@ class GoalsView extends StatelessWidget {
     return ListTile(
       title: Text(title),
       trailing: SizedBox(
-        width: 100,
+        width: InputSizes.medium,
         child: TextField(
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
@@ -171,7 +172,7 @@ class GoalsView extends StatelessWidget {
     return ListTile(
       title: Text(title),
       trailing: SizedBox(
-        width: 100,
+        width: InputSizes.medium,
         child: TextField(
           keyboardType: TextInputType.datetime,
           decoration: InputDecoration(

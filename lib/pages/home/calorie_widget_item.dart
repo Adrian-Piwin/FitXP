@@ -1,8 +1,10 @@
-import 'package:fitxp/constants/size.constants.dart';
+import 'package:fitxp/constants/icons.constants.dart';
+import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../constants/animations.constants.dart';
 
 class CalorieWidgetItem extends StatelessWidget {
   final double activeCalories;
@@ -35,9 +37,9 @@ class CalorieWidgetItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.teal,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
         ),
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(PaddingSizes.large),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -49,93 +51,85 @@ class CalorieWidgetItem extends StatelessWidget {
                   Text(
                     totalCalories.toStringAsFixed(0),
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
+                      fontSize: FontSizes.medium,
                     ),
                   ),
                   Text(
                     AppLocalizations.of(context)!.caloriesWidgetTitle,
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: FontSizes.widgetTitle,
+                      fontSize: FontSizes.medium,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   Text(
                     goalDietaryCalories.toStringAsFixed(0),
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
+                      fontSize: FontSizes.medium,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: FormatSizes.widgetGap),
+              const SizedBox(height: GapSizes.small),
               LinearPercentIndicator(
-                lineHeight: 20.0,
+                lineHeight: PercentIndicatorSizes.lineHeightLarge,
                 padding: EdgeInsets.zero,
                 percent: percentTotalCalories,
                 backgroundColor: Colors.grey,
                 progressColor: Colors.blue,
-                barRadius: const Radius.circular(10),
+                barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
                 animation: true,
-                animationDuration: 500,
+                animationDuration: PercentIndicatorAnimations.duration,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: GapSizes.large),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CircularPercentIndicator(
-                    radius: 35.0,
-                    lineWidth: 5.0,
+                    radius: PercentIndicatorSizes.circularRadiusMedium,
+                    lineWidth: PercentIndicatorSizes.lineHeightSmall,
                     percent: percentDietaryCalories,
                     center:
-                        FaIcon(FontAwesomeIcons.utensils, color: Colors.white),
+                        FaIcon(IconTypes.dietaryIcon, size: IconSizes.small),
                     progressColor: Colors.green,
                     backgroundColor: Colors.grey,
                     animation: true,
-                    animationDuration: 500,
+                    animationDuration: PercentIndicatorAnimations.duration,
                     footer: Text(
                       dietaryCalories.toStringAsFixed(0),
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
+                        fontSize: FontSizes.medium,
                       ),
                     ),
                   ),
                   CircularPercentIndicator(
-                    radius: 35.0,
-                    lineWidth: 5.0,
+                    radius: PercentIndicatorSizes.circularRadiusMedium,
+                    lineWidth: PercentIndicatorSizes.lineHeightSmall,
                     percent: percentNetCalories,
-                    center: FaIcon(FontAwesomeIcons.scaleBalanced,
-                        color: Colors.white),
+                    center: FaIcon(IconTypes.netCaloriesIcon, size: IconSizes.small),
                     progressColor: Colors.orange,
                     backgroundColor: Colors.grey,
                     animation: true,
-                    animationDuration: 500,
+                    animationDuration: PercentIndicatorAnimations.duration,
                     footer: Text(
-                      '${result.toStringAsFixed(0)}',
+                      result.toStringAsFixed(0),
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
+                        fontSize: FontSizes.medium,
                       ),
                     ),
                   ),
                   CircularPercentIndicator(
-                    radius: 35.0,
-                    lineWidth: 5.0,
+                    radius: PercentIndicatorSizes.circularRadiusMedium,
+                    lineWidth: PercentIndicatorSizes.lineHeightSmall,
                     percent: percentActiveCalories,
-                    center: FaIcon(FontAwesomeIcons.personRunning,
-                        color: Colors.white),
+                    center: FaIcon(IconTypes.activeCaloriesIcon, size: IconSizes.small),
                     progressColor: Colors.red,
                     backgroundColor: Colors.grey,
                     animation: true,
-                    animationDuration: 500,
+                    animationDuration: PercentIndicatorAnimations.duration,
                     footer: Text(
                       activeCalories.toStringAsFixed(0),
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
+                        fontSize: FontSizes.medium,
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:fitxp/components/timeframe_tabbar.dart';
+import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +91,7 @@ class HomeView extends StatelessWidget {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
                             child: CalorieWidgetItem(
                               activeCalories: controller.activeCalories,
                               restingCalories: controller.restingCalories,

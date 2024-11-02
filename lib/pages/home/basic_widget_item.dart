@@ -1,4 +1,4 @@
-import 'package:fitxp/constants/size.constants.dart';
+import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 
 class BasicWidgetItem extends StatelessWidget {
@@ -17,7 +17,7 @@ class BasicWidgetItem extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.blueAccent,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
       ),
       child: Center(
         child: Column(
@@ -27,17 +27,15 @@ class BasicWidgetItem extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
-                fontSize: FontSizes.widgetTitle, 
+                fontSize: FontSizes.medium, 
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: FormatSizes.widgetGap),
+            const SizedBox(height: GapSizes.small),
             Text(
               value,
               style: const TextStyle(
-                color: Colors.white, 
-                fontSize: FontSizes.widgetValue),
+                fontSize: FontSizes.large),
             ),
           ],
         )

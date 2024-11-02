@@ -62,8 +62,6 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
         );
       }).toList(),
       indicatorSize: TabBarIndicatorSize.tab,
-      labelColor: Colors.black, // Selected tab text color.
-      unselectedLabelColor: Colors.grey, // Unselected tab text color.
     );
   }
 }

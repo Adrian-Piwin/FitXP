@@ -1,3 +1,4 @@
+import 'package:fitxp/constants/icons.constants.dart';
 import 'package:flutter/material.dart';
 import '../pages/home/home_view.dart';
 import '../pages/goals/goals_view.dart';
@@ -38,15 +39,15 @@ class BottomNavBar extends StatelessWidget {
       onTap: (index) => _onItemTapped(context, index),
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: Icon(IconTypes.homeIcon),
           label: localizations.navBarHome,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.flag),
+          icon: Icon(IconTypes.goalsIcon),
           label: localizations.navBarGoals,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
+          icon: Icon(IconTypes.settingsIcon),
           label: localizations.navBarSettings,
         ),
       ],

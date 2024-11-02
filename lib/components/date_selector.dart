@@ -1,6 +1,7 @@
 // lib/components/date_selector.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../constants/sizes.constants.dart';
 import '../enums/timeframe.enum.dart';
 
 class DateSelector extends StatelessWidget {
@@ -76,7 +77,7 @@ class DateSelector extends StatelessWidget {
         leftArrow,
         Text(
           displayedDateString,
-          style: const TextStyle(fontSize: 16.0),
+          style: const TextStyle(fontSize: FontSizes.medium),
         ),
         rightArrow,
       ],

@@ -1,3 +1,4 @@
+import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'permissions_controller.dart';
 import '../home/home_view.dart';
@@ -45,15 +46,15 @@ class _PermissionsViewState extends State<PermissionsView> {
         appBar: AppBar(title: const Text('Permissions Required')),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(PaddingSizes.large),
             child: Column(
               children: [
                 Text(
                   _controller.errorMessage!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: FontSizes.medium),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: GapSizes.large),
                 ElevatedButton(
                   onPressed: _retry,
                   child: const Text('Retry'),

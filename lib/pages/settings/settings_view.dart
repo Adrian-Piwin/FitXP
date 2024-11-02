@@ -1,3 +1,4 @@
+import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/bottom_nav_bar.dart';
@@ -21,7 +22,7 @@ class SettingsView extends StatelessWidget {
         title: const Text('Settings'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(PaddingSizes.large),
         // Glue the SettingsController to the theme selection DropdownButton.
         //
         // When a user selects a theme from the dropdown list, the
