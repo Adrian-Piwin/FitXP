@@ -13,10 +13,18 @@ class HomeController extends ChangeNotifier {
   // State variables
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
-  int _goalDietaryCalories = 0;
-  int _goalNetCalories = 500;
-  int _goalActiveCalories = 500;
-  int _goalSteps = 1000;
+
+  Goal _goals = Goal(
+    caloriesInGoal: 0,
+    caloriesOutGoal: 0,
+    exerciseMinutesGoal: 0,
+    weightGoal: 0.0,
+    bodyFatGoal: 0.0,
+    proteinGoal: 0,
+    stepsGoal: 0,
+    sleepGoal: Duration(hours: 0),
+  );
+
   double _activeCalories = 0.0;
   double _restingCalories = 0.0;
   double _dietaryCalories = 0.0;
@@ -24,16 +32,15 @@ class HomeController extends ChangeNotifier {
   double _exerciseMinutes = 0.0;
   double _strengthTrainingMinutes = 0.0;
   double _cardioMinutes = 0.0;
-  double _steps = 0.0; 
+  double _steps = 0.0;
   bool _isLoading = true;
 
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
-  int get goalDietaryCalories => _goalDietaryCalories;
-  int get goalNetCalories => _goalNetCalories;
-  int get goalActiveCalories => _goalActiveCalories;
-  int get goalSteps => _goalSteps;
+
+  Goal get goals => _goals;
+
   double get activeCalories => _activeCalories;
   double get restingCalories => _restingCalories;
   double get dietaryCalories => _dietaryCalories;
@@ -41,7 +48,7 @@ class HomeController extends ChangeNotifier {
   double get exerciseMinutes => _exerciseMinutes;
   double get strengthTrainingMinutes => _strengthTrainingMinutes;
   double get cardioMinutes => _cardioMinutes;
-  double get steps => _steps; 
+  double get steps => _steps;
   bool get isLoading => _isLoading;
 
   HomeController() {
@@ -58,8 +65,8 @@ class HomeController extends ChangeNotifier {
 
   // Method to update the offset
   void updateOffset(int newOffset) {
-      _offset = newOffset;
-      fetchCalorieData();
+    _offset = newOffset;
+    fetchCalorieData();
   }
 
   // Fetch data from GoalsService
@@ -68,7 +75,7 @@ class HomeController extends ChangeNotifier {
     // For now, we'll just hardcode the goal calories
     Goal? goals = await _goalsService.getGoals();
     if (goals != null) {
-      _goalDietaryCalories = goals.calorieGoal;
+      _goals = goals;
     }
   }
 
@@ -78,22 +85,50 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<HealthDataPoint> activeCalories = await _healthService.fetchData(HealthDataType.ACTIVE_ENERGY_BURNED, _selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> restingCalories = await _healthService.fetchData(HealthDataType.BASAL_ENERGY_BURNED, _selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> dietaryCalories = await _healthService.fetchData(HealthDataType.DIETARY_ENERGY_CONSUMED, _selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> protein = await _healthService.fetchData(HealthDataType.DIETARY_PROTEIN_CONSUMED, _selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> excerciseMinutes = await _healthService.fetchData(HealthDataType.EXERCISE_TIME, _selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> steps = await _healthService.fetchData(HealthDataType.STEPS, _selectedTimeFrame, offset: _offset); 
-      List<HealthDataPoint> workouts = await _healthService.fetchData(HealthDataType.WORKOUT, _selectedTimeFrame, offset: _offset); 
+      List<HealthDataPoint> activeCalories = await _healthService.fetchData(
+          HealthDataType.ACTIVE_ENERGY_BURNED, _selectedTimeFrame,
+          offset: _offset);
+      List<HealthDataPoint> restingCalories = await _healthService.fetchData(
+          HealthDataType.BASAL_ENERGY_BURNED, _selectedTimeFrame,
+          offset: _offset);
+      List<HealthDataPoint> dietaryCalories = await _healthService.fetchData(
+          HealthDataType.DIETARY_ENERGY_CONSUMED, _selectedTimeFrame,
+          offset: _offset);
+      List<HealthDataPoint> protein = await _healthService.fetchData(
+          HealthDataType.DIETARY_PROTEIN_CONSUMED, _selectedTimeFrame,
+          offset: _offset);
+      List<HealthDataPoint> excerciseMinutes = await _healthService.fetchData(
+          HealthDataType.EXERCISE_TIME, _selectedTimeFrame,
+          offset: _offset);
+      List<HealthDataPoint> steps = await _healthService
+          .fetchData(HealthDataType.STEPS, _selectedTimeFrame, offset: _offset);
+      List<HealthDataPoint> workouts = await _healthService.fetchData(
+          HealthDataType.WORKOUT, _selectedTimeFrame,
+          offset: _offset);
 
-      _activeCalories = getHealthTotal(activeCalories);
-      _restingCalories = getHealthTotal(restingCalories);
-      _dietaryCalories = getHealthTotal(dietaryCalories);
-      _protein = getHealthTotal(protein);
-      _exerciseMinutes = getHealthTotal(excerciseMinutes);
-      _steps = getHealthTotal(steps); 
-      _strengthTrainingMinutes = getWorkoutMinutes(extractStrengthTrainingMinutes(workouts)); 
-      _cardioMinutes = getWorkoutMinutes(extractCardioMinutes(workouts)); 
+      if (_selectedTimeFrame == TimeFrame.day) {
+        _activeCalories = getHealthTotal(activeCalories);
+        _restingCalories = getHealthTotal(restingCalories);
+        _dietaryCalories = getHealthTotal(dietaryCalories);
+        _protein = getHealthTotal(protein);
+        _exerciseMinutes = getHealthTotal(excerciseMinutes);
+        _steps = getHealthTotal(steps);
+        _strengthTrainingMinutes =
+            getWorkoutMinutesTotal(extractStrengthTrainingMinutes(workouts));
+        _cardioMinutes =
+            getWorkoutMinutesTotal(extractCardioMinutes(workouts));
+      } else {
+        _activeCalories = getHealthAverage(activeCalories);
+        _restingCalories = getHealthAverage(restingCalories);
+        _dietaryCalories = getHealthAverage(dietaryCalories);
+        _protein = getHealthAverage(protein);
+        _exerciseMinutes = getHealthAverage(excerciseMinutes);
+        _steps = getHealthAverage(steps);
+        _strengthTrainingMinutes =
+            getWorkoutMinutesAverage(extractStrengthTrainingMinutes(workouts));
+        _cardioMinutes =
+            getWorkoutMinutesAverage(extractCardioMinutes(workouts));
+      }
     } catch (e) {
       // Handle errors as needed
       print('Error fetching data: $e');

@@ -97,10 +97,7 @@ class HomeView extends StatelessWidget {
                               restingCalories: controller.restingCalories,
                               dietaryCalories: controller.dietaryCalories,
                               steps: controller.steps,
-                              goalDietaryCalories:
-                              controller.goalDietaryCalories,
-                              goalSteps: controller.goalSteps,
-                              goalNetCalories: controller.goalNetCalories,
+                              goals: controller.goals,
                             ),
                           ),
                           GridLayout(widgets: widgets),

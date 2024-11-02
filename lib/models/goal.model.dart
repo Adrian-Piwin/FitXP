@@ -2,7 +2,8 @@ import 'package:fitxp/enums/phasetype.enum.dart';
 
 class Goal {
   PhaseType phaseType; // Using PhaseType enum
-  int calorieGoal; // e.g., 2000
+  int caloriesInGoal; // e.g., 2000
+  int caloriesOutGoal; // e.g., 2000
   int exerciseMinutesGoal; // e.g., 50
   double weightGoal; // e.g., 200.0
   double bodyFatGoal; // e.g., 10.0
@@ -11,19 +12,19 @@ class Goal {
   Duration sleepGoal; // e.g., Duration(hours: 8, minutes: 30)
 
   Goal({
-    required this.phaseType,
-    required this.calorieGoal,
+    required this.caloriesInGoal,
+    required this.caloriesOutGoal,
     required this.exerciseMinutesGoal,
     required this.weightGoal,
     required this.bodyFatGoal,
     required this.proteinGoal,
     required this.stepsGoal,
     required this.sleepGoal,
-  });
+  }) : phaseType = _determinePhaseType(caloriesInGoal, caloriesOutGoal);
 
   Goal copyWith({
-    PhaseType? phaseType,
-    int? calorieGoal,
+    int? caloriesInGoal,
+    int? caloriesOutGoal,
     int? exerciseMinutesGoal,
     double? weightGoal,
     double? bodyFatGoal,
@@ -31,9 +32,11 @@ class Goal {
     int? stepsGoal,
     Duration? sleepGoal,
   }) {
+    final newcaloriesInGoal = caloriesInGoal ?? this.caloriesInGoal;
+    final newcaloriesOutGoal = caloriesOutGoal ?? this.caloriesOutGoal;
     return Goal(
-      phaseType: phaseType ?? this.phaseType,
-      calorieGoal: calorieGoal ?? this.calorieGoal,
+      caloriesInGoal: newcaloriesInGoal,
+      caloriesOutGoal: newcaloriesOutGoal,
       exerciseMinutesGoal: exerciseMinutesGoal ?? this.exerciseMinutesGoal,
       weightGoal: weightGoal ?? this.weightGoal,
       bodyFatGoal: bodyFatGoal ?? this.bodyFatGoal,
@@ -43,11 +46,22 @@ class Goal {
     );
   }
 
+  static PhaseType _determinePhaseType(int caloriesInGoal, int caloriesOutGoal) {
+    if (caloriesInGoal > caloriesOutGoal) {
+      return PhaseType.bulking;
+    } else if (caloriesInGoal < caloriesOutGoal) {
+      return PhaseType.cutting;
+    } else {
+      return PhaseType.none;
+    }
+  }
+
   // Convert Goal to Map for Firestore and local storage
   Map<String, dynamic> toMap() {
     return {
       'phaseType': phaseType.name,
-      'calorieGoal': calorieGoal,
+      'caloriesInGoal': caloriesInGoal,
+      'caloriesOutGoal': caloriesOutGoal,
       'exerciseMinutesGoal': exerciseMinutesGoal,
       'weightGoal': weightGoal,
       'bodyFatGoal': bodyFatGoal,
@@ -59,9 +73,11 @@ class Goal {
 
   // Create Goal from Map (Firestore data)
   factory Goal.fromMap(Map<String, dynamic> map) {
+    final caloriesInGoal = map['caloriesInGoal'] ?? 0;
+    final caloriesOutGoal = map['caloriesOutGoal'] ?? 0;
     return Goal(
-      phaseType: phaseTypeFromString(map['phaseType'] ?? 'none'),
-      calorieGoal: map['calorieGoal'] ?? 0,
+      caloriesInGoal: caloriesInGoal,
+      caloriesOutGoal: caloriesOutGoal,
       exerciseMinutesGoal: map['exerciseMinutesGoal'] ?? 0,
       weightGoal: (map['weightGoal'] ?? 0).toDouble(),
       bodyFatGoal: (map['bodyFatGoal'] ?? 0).toDouble(),

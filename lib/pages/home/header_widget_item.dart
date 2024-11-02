@@ -1,6 +1,8 @@
 import 'package:fitxp/constants/colors.constants.dart';
 import 'package:fitxp/constants/icons.constants.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:fitxp/enums/phasetype.enum.dart';
+import 'package:fitxp/models/goal.model.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,9 +13,7 @@ class HeaderWidgetItem extends StatelessWidget {
   final double restingCalories;
   final double dietaryCalories;
   final double steps;
-  final int goalDietaryCalories;
-  final int goalNetCalories;
-  final int goalSteps;
+  final Goal goals;
 
   const HeaderWidgetItem({
     super.key,
@@ -21,19 +21,17 @@ class HeaderWidgetItem extends StatelessWidget {
     required this.restingCalories,
     required this.dietaryCalories,
     required this.steps,
-    required this.goalDietaryCalories,
-    required this.goalNetCalories,
-    required this.goalSteps,
+    required this.goals,
   });
 
   @override
   Widget build(BuildContext context) {
     final double result = activeCalories + restingCalories - dietaryCalories;
     final double totalCalories = activeCalories + restingCalories;
-    final double percentTotalCalories = (totalCalories / goalDietaryCalories).clamp(0.0, 1.0);
-    final double percentDietaryCalories = (dietaryCalories / goalDietaryCalories).clamp(0.0, 1.0);
-    final double percentNetCalories = (result / goalNetCalories).clamp(0.0, 1.0);
-    final double percentSteps = (steps / goalSteps).clamp(0.0, 1.0);
+    final double percentTotalCalories = (totalCalories / goals.caloriesOutGoal).clamp(0.0, 1.0);
+    final double percentDietaryCalories = (dietaryCalories / goals.caloriesInGoal).clamp(0.0, 1.0);
+    final double percentNetCalories = goals.phaseType == PhaseType.none ? 1 : (result / (goals.caloriesInGoal - goals.caloriesOutGoal).abs()).clamp(0.0, 1.0);
+    final double percentSteps = (steps / goals.stepsGoal).clamp(0.0, 1.0);
 
     return SingleChildScrollView(
       child: Container(

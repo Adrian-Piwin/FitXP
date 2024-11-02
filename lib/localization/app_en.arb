@@ -7,22 +7,31 @@
   "@caloriesWidgetTitle": {
     "description": "Title for the calorie widget"
   },
+
   "proteinWidgetTitle": "Protein",
   "exerciseMinutesWidgetTitle": "Exercise Minutes",
   "stepsWidgetTitle": "Steps",
+
   "timeFrameDay": "Day",
   "timeFrameWeek": "Week",
   "timeFrameMonth": "Month",
   "timeFrameYear": "Year",
+
+  "phaseTypeNone": "None",
+  "phaseTypeCutting": "Cutting",
+  "phaseTypeBulking": "Bulking",
+
   "goalsPageTitle": "Goals",
   "currentPhaseTitle": "Current Phase",
-  "calorieGoalTitle": "Calorie Goal",
+  "caloriesInGoalTitle": "Calories In Goal",
+  "caloriesOutGoalTitle": "Calories Out Goal",
   "exerciseMinutesGoalTitle": "Exercise Minutes Goal",
   "weightGoalTitle": "Weight Goal",
   "bodyFatGoalTitle": "Body Fat % Goal",
   "proteinGoalTitle": "Protein Goal",
   "stepsGoalTitle": "Steps Goal",
   "sleepGoalTitle": "Sleep Goal",
+  
   "navBarHome": "Home",
   "navBarGoals": "Goals",
   "navBarSettings": "Settings"

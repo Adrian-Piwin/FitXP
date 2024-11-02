@@ -26,12 +26,22 @@ double getHealthTotal(List<HealthDataPoint> data) {
   );
 }
 
-double getWorkoutMinutes(List<HealthDataPoint> data) {
+double getWorkoutMinutesTotal(List<HealthDataPoint> data) {
   return data.fold(
     0.0,
     (previousValue, element) =>
         previousValue + element.dateTo.difference(element.dateFrom).inMinutes,
   );
+}
+
+double getWorkoutMinutesAverage(List<HealthDataPoint> data) {
+  double sum = data.fold(
+    0.0,
+    (previousValue, element) =>
+        previousValue + element.dateTo.difference(element.dateFrom).inMinutes,
+  );
+
+  return data.isNotEmpty ? sum / data.length : 0.0;
 }
 
 double getWorkoutEnergyBurned(List<HealthDataPoint> data) {
@@ -40,6 +50,16 @@ double getWorkoutEnergyBurned(List<HealthDataPoint> data) {
     (previousValue, element) =>
         previousValue + element.workoutSummary!.totalEnergyBurned,
   );
+}
+
+double getWorkoutEnergyBurnedAverage(List<HealthDataPoint> data) {
+  double sum = data.fold(
+    0.0,
+    (previousValue, element) =>
+        previousValue + element.workoutSummary!.totalEnergyBurned,
+  );
+
+  return data.isNotEmpty ? sum / data.length : 0.0;
 }
 
 // Extract strength training minutes

@@ -1,9 +1,9 @@
 import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:fitxp/enums/phasetype.enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
 import 'goals_controller.dart';
-import '../../enums/phasetype.enum.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GoalsView extends StatelessWidget {
@@ -16,128 +16,131 @@ class GoalsView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => GoalsController(),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.goalsPageTitle),
-          actions: [
-            Consumer<GoalsController>(
-              builder: (context, controller, _) {
-                return IconButton(
-                  icon: Icon(Icons.save),
-                  onPressed: controller.isLoading
-                      ? null
-                      : () {
-                          controller.saveGoals();
-                        },
-                );
-              },
-            ),
-          ],
-        ),
-        body: Consumer<GoalsController>(
-          builder: (context, controller, _) {
-            if (controller.isLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.goalsPageTitle),
+            actions: [
+              Consumer<GoalsController>(
+                builder: (context, controller, _) {
+                  return IconButton(
+                    icon: Icon(Icons.save),
+                    onPressed: controller.isLoading
+                        ? null
+                        : () {
+                            controller.saveGoals();
+                          },
+                  );
+                },
+              ),
+            ],
+          ),
+          body: Consumer<GoalsController>(
+            builder: (context, controller, _) {
+              if (controller.isLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            return ListView(
-              padding: EdgeInsets.all(PaddingSizes.large),
-              children: [
-                // Current Phase Dropdown
-                ListTile(
-                  title: Text(AppLocalizations.of(context)!.currentPhaseTitle),
-                  trailing: DropdownButton<PhaseType>(
-                    value: controller.goal!.phaseType,
-                    items: PhaseType.values.map((PhaseType phase) {
-                      return DropdownMenuItem<PhaseType>(
-                        value: phase,
-                        child: Text(phase.name),
-                      );
-                    }).toList(),
-                    onChanged: (PhaseType? newPhase) {
-                      if (newPhase != null) {
-                        controller.updateGoalField('phaseType', newPhase);
-                      }
+              return ListView(
+                padding: EdgeInsets.all(PaddingSizes.large),
+                children: [
+                  // Current Phase Dropdown
+                  ListTile(
+                    title:
+                        Text(AppLocalizations.of(context)!.currentPhaseTitle),
+                    trailing: Text(phaseTypeToString(context, controller.goal!.phaseType),
+                        style: const TextStyle(
+                          fontSize: FontSizes.medium,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  Divider(),
+                  // Calories In Goal
+                  _buildNumberInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.caloriesInGoalTitle,
+                    initialValue: controller.goal!.caloriesInGoal.toString(),
+                    onChanged: (value) {
+                      int intValue = int.tryParse(value) ?? 0;
+                      controller.updateGoalField('caloriesInGoal', intValue);
                     },
                   ),
-                ),
-                Divider(),
-                // Calorie Goal
-                _buildNumberInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.calorieGoalTitle,
-                  initialValue: controller.goal!.calorieGoal.toString(),
-                  onChanged: (value) {
-                    int intValue = int.tryParse(value) ?? 0;
-                    controller.updateGoalField('calorieGoal', intValue);
-                  },
-                ),
-                // Exercise Minutes Goal
-                _buildNumberInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.exerciseMinutesGoalTitle,
-                  initialValue:
-                      controller.goal!.exerciseMinutesGoal.toString(),
-                  onChanged: (value) {
-                    int intValue = int.tryParse(value) ?? 0;
-                    controller.updateGoalField('exerciseMinutesGoal', intValue);
-                  },
-                ),
-                // Weight Goal
-                _buildNumberInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.weightGoalTitle,
-                  initialValue: controller.goal!.weightGoal.toString(),
-                  onChanged: (value) {
-                    double doubleValue = double.tryParse(value) ?? 0.0;
-                    controller.updateGoalField('weightGoal', doubleValue);
-                  },
-                ),
-                // Body Fat Percentage Goal
-                _buildNumberInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.bodyFatGoalTitle,
-                  initialValue: controller.goal!.bodyFatGoal.toString(),
-                  onChanged: (value) {
-                    double doubleValue = double.tryParse(value) ?? 0.0;
-                    controller.updateGoalField('bodyFatGoal', doubleValue);
-                  },
-                ),
-                // Protein Goal
-                _buildNumberInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.proteinGoalTitle,
-                  initialValue: controller.goal!.proteinGoal.toString(),
-                  onChanged: (value) {
-                    int intValue = int.tryParse(value) ?? 0;
-                    controller.updateGoalField('proteinGoal', intValue);
-                  },
-                ),
-                // Steps Goal
-                _buildNumberInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.stepsGoalTitle,
-                  initialValue: controller.goal!.stepsGoal.toString(),
-                  onChanged: (value) {
-                    int intValue = int.tryParse(value) ?? 0;
-                    controller.updateGoalField('stepsGoal', intValue);
-                  },
-                ),
-                // Sleep Goal
-                _buildTimeInputTile(
-                  context,
-                  title: AppLocalizations.of(context)!.sleepGoalTitle,
-                  initialValue: _durationToString(controller.goal!.sleepGoal),
-                  onChanged: (value) {
-                    Duration duration = _parseDuration(value);
-                    controller.updateGoalField('sleepGoal', duration);
-                  },
-                ),
-              ],
-            );
-          },
-        ),
-        bottomNavigationBar: const BottomNavBar(currentIndex: 1)
-      ),
+                  // Calories Out Goal
+                  _buildNumberInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.caloriesOutGoalTitle,
+                    initialValue: controller.goal!.caloriesOutGoal.toString(),
+                    onChanged: (value) {
+                      int intValue = int.tryParse(value) ?? 0;
+                      controller.updateGoalField('caloriesOutGoal', intValue);
+                    },
+                  ),
+                  // Exercise Minutes Goal
+                  _buildNumberInputTile(
+                    context,
+                    title:
+                        AppLocalizations.of(context)!.exerciseMinutesGoalTitle,
+                    initialValue:
+                        controller.goal!.exerciseMinutesGoal.toString(),
+                    onChanged: (value) {
+                      int intValue = int.tryParse(value) ?? 0;
+                      controller.updateGoalField(
+                          'exerciseMinutesGoal', intValue);
+                    },
+                  ),
+                  // Weight Goal
+                  _buildNumberInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.weightGoalTitle,
+                    initialValue: controller.goal!.weightGoal.toString(),
+                    onChanged: (value) {
+                      double doubleValue = double.tryParse(value) ?? 0.0;
+                      controller.updateGoalField('weightGoal', doubleValue);
+                    },
+                  ),
+                  // Body Fat Percentage Goal
+                  _buildNumberInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.bodyFatGoalTitle,
+                    initialValue: controller.goal!.bodyFatGoal.toString(),
+                    onChanged: (value) {
+                      double doubleValue = double.tryParse(value) ?? 0.0;
+                      controller.updateGoalField('bodyFatGoal', doubleValue);
+                    },
+                  ),
+                  // Protein Goal
+                  _buildNumberInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.proteinGoalTitle,
+                    initialValue: controller.goal!.proteinGoal.toString(),
+                    onChanged: (value) {
+                      int intValue = int.tryParse(value) ?? 0;
+                      controller.updateGoalField('proteinGoal', intValue);
+                    },
+                  ),
+                  // Steps Goal
+                  _buildNumberInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.stepsGoalTitle,
+                    initialValue: controller.goal!.stepsGoal.toString(),
+                    onChanged: (value) {
+                      int intValue = int.tryParse(value) ?? 0;
+                      controller.updateGoalField('stepsGoal', intValue);
+                    },
+                  ),
+                  // Sleep Goal
+                  _buildTimeInputTile(
+                    context,
+                    title: AppLocalizations.of(context)!.sleepGoalTitle,
+                    initialValue: _durationToString(controller.goal!.sleepGoal),
+                    onChanged: (value) {
+                      Duration duration = _parseDuration(value);
+                      controller.updateGoalField('sleepGoal', duration);
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          bottomNavigationBar: const BottomNavBar(currentIndex: 1)),
     );
   }
 
