@@ -4,7 +4,7 @@ import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
-import 'calorie_widget_item.dart';
+import 'header_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
@@ -92,13 +92,14 @@ class HomeView extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
-                            child: CalorieWidgetItem(
+                            child: HeaderWidgetItem(
                               activeCalories: controller.activeCalories,
                               restingCalories: controller.restingCalories,
                               dietaryCalories: controller.dietaryCalories,
+                              steps: controller.steps,
                               goalDietaryCalories:
-                                  controller.goalDietaryCalories,
-                              goalActiveCalories: controller.goalActiveCalories,
+                              controller.goalDietaryCalories,
+                              goalSteps: controller.goalSteps,
                               goalNetCalories: controller.goalNetCalories,
                             ),
                           ),

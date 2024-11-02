@@ -1,7 +1,7 @@
 class FontSizes {
   static const double small = 8.0;
   static const double medium = 16.0;
-  static const double large = 28.0;
+  static const double large = 24.0;
   static const double xlarge = 32.0;
 }
 
@@ -12,8 +12,8 @@ class BorderRadiusSizes {
 }
 
 class IconSizes{
-  static const double small = 20.0;
-  static const double medium = 32.0;
+  static const double small = 24.0;
+  static const double medium = 28.0;
   static const double large = 40.0;
 }
 
@@ -21,6 +21,7 @@ class GapSizes {
   static const double small = 4.0;
   static const double medium = 8.0;
   static const double large = 16.0;
+  static const double xlarge = 20.0;
 }
 
 class PaddingSizes {

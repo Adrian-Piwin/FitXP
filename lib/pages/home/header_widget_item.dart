@@ -1,42 +1,44 @@
+import 'package:fitxp/constants/colors.constants.dart';
 import 'package:fitxp/constants/icons.constants.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../constants/animations.constants.dart';
 
-class CalorieWidgetItem extends StatelessWidget {
+class HeaderWidgetItem extends StatelessWidget {
   final double activeCalories;
   final double restingCalories;
   final double dietaryCalories;
+  final double steps;
   final int goalDietaryCalories;
-  final int goalActiveCalories;
   final int goalNetCalories;
+  final int goalSteps;
 
-  const CalorieWidgetItem({
+  const HeaderWidgetItem({
     super.key,
     required this.activeCalories,
     required this.restingCalories,
     required this.dietaryCalories,
+    required this.steps,
     required this.goalDietaryCalories,
-    required this.goalActiveCalories,
     required this.goalNetCalories,
+    required this.goalSteps,
   });
 
   @override
   Widget build(BuildContext context) {
     final double result = activeCalories + restingCalories - dietaryCalories;
     final double totalCalories = activeCalories + restingCalories;
-    final double percentTotalCalories = totalCalories / goalDietaryCalories;
-    final double percentDietaryCalories = dietaryCalories / goalDietaryCalories;
-    final double percentNetCalories = result / goalNetCalories;
-    final double percentActiveCalories = activeCalories / goalActiveCalories;
+    final double percentTotalCalories = (totalCalories / goalDietaryCalories).clamp(0.0, 1.0);
+    final double percentDietaryCalories = (dietaryCalories / goalDietaryCalories).clamp(0.0, 1.0);
+    final double percentNetCalories = (result / goalNetCalories).clamp(0.0, 1.0);
+    final double percentSteps = (steps / goalSteps).clamp(0.0, 1.0);
 
     return SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.teal,
+          color: WidgetColors.primaryColor,
           borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
         ),
         padding: const EdgeInsets.all(PaddingSizes.large),
@@ -46,25 +48,16 @@ class CalorieWidgetItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  FaIcon(IconTypes.caloriesIcon,
+                      size: IconSizes.medium,
+                      color: RepersentationColors.caloriesColor),
+                  const SizedBox(width: GapSizes.medium),
                   Text(
                     totalCalories.toStringAsFixed(0),
                     style: const TextStyle(
-                      fontSize: FontSizes.medium,
-                    ),
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.caloriesWidgetTitle,
-                    style: const TextStyle(
-                      fontSize: FontSizes.medium,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    goalDietaryCalories.toStringAsFixed(0),
-                    style: const TextStyle(
-                      fontSize: FontSizes.medium,
+                      fontSize: FontSizes.large,
                     ),
                   ),
                 ],
@@ -74,13 +67,14 @@ class CalorieWidgetItem extends StatelessWidget {
                 lineHeight: PercentIndicatorSizes.lineHeightLarge,
                 padding: EdgeInsets.zero,
                 percent: percentTotalCalories,
-                backgroundColor: Colors.grey,
-                progressColor: Colors.blue,
-                barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
+                backgroundColor: PercentIndicatorColors.backgroundColor,
+                progressColor: RepersentationColors.caloriesColor,
+                barRadius:
+                    const Radius.circular(PercentIndicatorSizes.barRadius),
                 animation: true,
                 animationDuration: PercentIndicatorAnimations.duration,
               ),
-              const SizedBox(height: GapSizes.large),
+              const SizedBox(height: GapSizes.xlarge),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -88,10 +82,11 @@ class CalorieWidgetItem extends StatelessWidget {
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
                     percent: percentDietaryCalories,
-                    center:
-                        FaIcon(IconTypes.dietaryIcon, size: IconSizes.small),
-                    progressColor: Colors.green,
-                    backgroundColor: Colors.grey,
+                    center: FaIcon(IconTypes.dietaryIcon,
+                        size: IconSizes.small,
+                        color: RepersentationColors.dietaryCaloriesColor),
+                    progressColor: RepersentationColors.dietaryCaloriesColor,
+                    backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
                     footer: Text(
@@ -105,9 +100,11 @@ class CalorieWidgetItem extends StatelessWidget {
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
                     percent: percentNetCalories,
-                    center: FaIcon(IconTypes.netCaloriesIcon, size: IconSizes.small),
-                    progressColor: Colors.orange,
-                    backgroundColor: Colors.grey,
+                    center: FaIcon(IconTypes.netCaloriesIcon,
+                        size: IconSizes.small,
+                        color: RepersentationColors.netCaloriesColor),
+                    progressColor: RepersentationColors.netCaloriesColor,
+                    backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
                     footer: Text(
@@ -120,14 +117,16 @@ class CalorieWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: percentActiveCalories,
-                    center: FaIcon(IconTypes.activeCaloriesIcon, size: IconSizes.small),
-                    progressColor: Colors.red,
-                    backgroundColor: Colors.grey,
+                    percent: percentSteps,
+                    center: FaIcon(IconTypes.stepsIcon,
+                        size: IconSizes.small,
+                        color: RepersentationColors.stepsColor),
+                    progressColor: RepersentationColors.stepsColor,
+                    backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
                     footer: Text(
-                      activeCalories.toStringAsFixed(0),
+                      steps.toStringAsFixed(0),
                       style: const TextStyle(
                         fontSize: FontSizes.medium,
                       ),

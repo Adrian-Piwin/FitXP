@@ -1,5 +1,6 @@
 import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
+import '../../constants/colors.constants.dart';
 
 class BasicWidgetItem extends StatelessWidget {
   final String title;
@@ -16,7 +17,7 @@ class BasicWidgetItem extends StatelessWidget {
     // Width is set in the parent
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blueAccent,
+        color: WidgetColors.primaryColor,
         borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
       ),
       child: Center(

@@ -16,6 +16,7 @@ class HomeController extends ChangeNotifier {
   int _goalDietaryCalories = 0;
   int _goalNetCalories = 500;
   int _goalActiveCalories = 500;
+  int _goalSteps = 1000;
   double _activeCalories = 0.0;
   double _restingCalories = 0.0;
   double _dietaryCalories = 0.0;
@@ -32,6 +33,7 @@ class HomeController extends ChangeNotifier {
   int get goalDietaryCalories => _goalDietaryCalories;
   int get goalNetCalories => _goalNetCalories;
   int get goalActiveCalories => _goalActiveCalories;
+  int get goalSteps => _goalSteps;
   double get activeCalories => _activeCalories;
   double get restingCalories => _restingCalories;
   double get dietaryCalories => _dietaryCalories;
