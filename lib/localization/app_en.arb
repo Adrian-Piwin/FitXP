@@ -11,6 +11,10 @@
   "proteinWidgetTitle": "Protein",
   "exerciseMinutesWidgetTitle": "Exercise Minutes",
   "stepsWidgetTitle": "Steps",
+  "strengthTrainingMinutesWidget": "Steps",
+
+  "unitGrams": "g",
+  "unitMinutes": "min",
 
   "timeFrameDay": "Day",
   "timeFrameWeek": "Week",

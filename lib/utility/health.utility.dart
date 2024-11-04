@@ -9,11 +9,7 @@ List<String> strengthTrainingTypes = [
 ];
 
 double getHealthAverage(List<HealthDataPoint> data) {
-  double sum = data.fold(
-    0.0,
-    (previousValue, element) =>
-        previousValue + (element.value as NumericHealthValue).numericValue,
-  );
+  double sum = getHealthTotal(data);
 
   return data.isNotEmpty ? sum / data.length : 0.0;
 }

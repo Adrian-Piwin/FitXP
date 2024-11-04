@@ -1,10 +1,12 @@
-import 'package:fitxp/utility/health.utility.dart';
+import 'package:fitxp/models/health_data.model.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import '../../constants/health_widget_config.constants.dart';
 import '../../models/goal.model.dart';
 import '../../services/health_service.dart';
 import '../../services/db_goals_service.dart';
 import '../../enums/timeframe.enum.dart';
+import 'basic_large_widget_item.dart';
 
 class HomeController extends ChangeNotifier {
   final HealthService _healthService = HealthService();
@@ -24,15 +26,7 @@ class HomeController extends ChangeNotifier {
     stepsGoal: 0,
     sleepGoal: Duration(hours: 0),
   );
-
-  double _activeCalories = 0.0;
-  double _restingCalories = 0.0;
-  double _dietaryCalories = 0.0;
-  double _protein = 0.0;
-  double _exerciseMinutes = 0.0;
-  double _strengthTrainingMinutes = 0.0;
-  double _cardioMinutes = 0.0;
-  double _steps = 0.0;
+  HealthData _healthData = HealthData();
   bool _isLoading = true;
 
   // Getters
@@ -40,15 +34,7 @@ class HomeController extends ChangeNotifier {
   int get offset => _offset;
 
   Goal get goals => _goals;
-
-  double get activeCalories => _activeCalories;
-  double get restingCalories => _restingCalories;
-  double get dietaryCalories => _dietaryCalories;
-  double get protein => _protein;
-  double get exerciseMinutes => _exerciseMinutes;
-  double get strengthTrainingMinutes => _strengthTrainingMinutes;
-  double get cardioMinutes => _cardioMinutes;
-  double get steps => _steps;
+  HealthData get healthData => _healthData;
   bool get isLoading => _isLoading;
 
   HomeController() {
@@ -85,50 +71,10 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<HealthDataPoint> activeCalories = await _healthService.fetchData(
-          HealthDataType.ACTIVE_ENERGY_BURNED, _selectedTimeFrame,
-          offset: _offset);
-      List<HealthDataPoint> restingCalories = await _healthService.fetchData(
-          HealthDataType.BASAL_ENERGY_BURNED, _selectedTimeFrame,
-          offset: _offset);
-      List<HealthDataPoint> dietaryCalories = await _healthService.fetchData(
-          HealthDataType.DIETARY_ENERGY_CONSUMED, _selectedTimeFrame,
-          offset: _offset);
-      List<HealthDataPoint> protein = await _healthService.fetchData(
-          HealthDataType.DIETARY_PROTEIN_CONSUMED, _selectedTimeFrame,
-          offset: _offset);
-      List<HealthDataPoint> excerciseMinutes = await _healthService.fetchData(
-          HealthDataType.EXERCISE_TIME, _selectedTimeFrame,
-          offset: _offset);
-      List<HealthDataPoint> steps = await _healthService
-          .fetchData(HealthDataType.STEPS, _selectedTimeFrame, offset: _offset);
-      List<HealthDataPoint> workouts = await _healthService.fetchData(
-          HealthDataType.WORKOUT, _selectedTimeFrame,
-          offset: _offset);
-
-      if (_selectedTimeFrame == TimeFrame.day) {
-        _activeCalories = getHealthTotal(activeCalories);
-        _restingCalories = getHealthTotal(restingCalories);
-        _dietaryCalories = getHealthTotal(dietaryCalories);
-        _protein = getHealthTotal(protein);
-        _exerciseMinutes = getHealthTotal(excerciseMinutes);
-        _steps = getHealthTotal(steps);
-        _strengthTrainingMinutes =
-            getWorkoutMinutesTotal(extractStrengthTrainingMinutes(workouts));
-        _cardioMinutes =
-            getWorkoutMinutesTotal(extractCardioMinutes(workouts));
-      } else {
-        _activeCalories = getHealthAverage(activeCalories);
-        _restingCalories = getHealthAverage(restingCalories);
-        _dietaryCalories = getHealthAverage(dietaryCalories);
-        _protein = getHealthAverage(protein);
-        _exerciseMinutes = getHealthAverage(excerciseMinutes);
-        _steps = getHealthAverage(steps);
-        _strengthTrainingMinutes =
-            getWorkoutMinutesAverage(extractStrengthTrainingMinutes(workouts));
-        _cardioMinutes =
-            getWorkoutMinutesAverage(extractCardioMinutes(workouts));
-      }
+      List<HealthDataPoint> data = await _healthService.fetchAll(_selectedTimeFrame, offset: _offset);
+      _healthData.averages = _selectedTimeFrame != TimeFrame.day; // Show averages when time frame is not day
+      _healthData.clearData();
+      _healthData.assignData(data);
     } catch (e) {
       // Handle errors as needed
       print('Error fetching data: $e');
@@ -136,5 +82,33 @@ class HomeController extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Map<String, dynamic> generateHealthWidget(
+    BuildContext context,
+    HomeController controller,
+    HealthDataType healthType,
+  ) {
+    final config = healthWidgetConfigs[healthType];
+
+    if (config == null) {
+      throw ArgumentError('Invalid health type: $healthType');
+    }
+
+    final goalValue = config.goalValue(_goals);
+    final currentValue = config.currentValue(_healthData);
+    double percent = (currentValue / goalValue).clamp(0, 1);
+
+    return {
+      "size": 2,
+      "widget": BasicLargeWidgetItem(
+        title: config.title(context),
+        subTitle: "${(goalValue - currentValue).toStringAsFixed(0) + config.unit(context)} left",
+        value: currentValue.toStringAsFixed(0) + config.unit(context),
+        icon: config.icon,
+        percent: percent,
+        color: config.color,
+      ),
+    };
   }
 }

@@ -30,6 +30,16 @@ class HealthService {
     _isAuthorized = await _health.hasPermissions(_dataTypes) == true;
   }
 
+  Future<List<HealthDataPoint>> fetchAll(TimeFrame timeFrame, {int offset = 0}) async {
+    final dateRange = calculateDateRange(timeFrame, offset: offset);
+
+    return await _health.getHealthDataFromTypes(
+      startTime: dateRange.start,
+      endTime: dateRange.end,
+      types: _dataTypes,
+    );
+  }
+
   Future<List<HealthDataPoint>> fetchData(
     HealthDataType type,
     TimeFrame timeFrame, {

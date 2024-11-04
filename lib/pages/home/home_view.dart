@@ -1,14 +1,13 @@
 import 'package:fitxp/components/timeframe_tabbar.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
-import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:flutter/material.dart';
+import 'package:health/health.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
 import 'header_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -37,44 +36,8 @@ class HomeView extends StatelessWidget {
             builder: (context, controller, _) {
               // Build the list of widgets to pass to GridLayout
               final List<Map<String, dynamic>> widgets = [
-                {
-                  "size": 1,
-                  "widget": BasicWidgetItem(
-                    title: AppLocalizations.of(context)!.proteinWidgetTitle,
-                    value: "${controller.protein.toStringAsFixed(0)}g",
-                  ),
-                },
-                {
-                  "size": 1,
-                  "widget": BasicWidgetItem(
-                    title: AppLocalizations.of(context)!
-                        .exerciseMinutesWidgetTitle,
-                    value:
-                        "${controller.exerciseMinutes.toStringAsFixed(0)}min",
-                  ),
-                },
-                {
-                  "size": 1,
-                  "widget": BasicWidgetItem(
-                    title: AppLocalizations.of(context)!.stepsWidgetTitle,
-                    value: controller.exerciseMinutes.toStringAsFixed(0),
-                  ),
-                },
-                {
-                  "size": 1,
-                  "widget": BasicWidgetItem(
-                    title: "Strength Training Minutes",
-                    value:
-                        controller.strengthTrainingMinutes.toStringAsFixed(0),
-                  ),
-                },
-                {
-                  "size": 1,
-                  "widget": BasicWidgetItem(
-                    title: "Cardio Minutes",
-                    value: controller.cardioMinutes.toStringAsFixed(0),
-                  ),
-                },
+                controller.generateHealthWidget(context, controller, HealthDataType.DIETARY_PROTEIN_CONSUMED),
+                controller.generateHealthWidget(context, controller, HealthDataType.EXERCISE_TIME),
               ];
 
               return Column(
@@ -93,10 +56,10 @@ class HomeView extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
                             child: HeaderWidgetItem(
-                              activeCalories: controller.activeCalories,
-                              restingCalories: controller.restingCalories,
-                              dietaryCalories: controller.dietaryCalories,
-                              steps: controller.steps,
+                              activeCalories: controller.healthData.getActiveCalories,
+                              restingCalories: controller.healthData.getRestingCalories,
+                              dietaryCalories: controller.healthData.getDietaryCalories,
+                              steps: controller.healthData.getSteps,
                               goals: controller.goals,
                             ),
                           ),

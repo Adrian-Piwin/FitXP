@@ -50,7 +50,7 @@ class HeaderWidgetItem extends StatelessWidget {
                 children: [
                   FaIcon(IconTypes.caloriesIcon,
                       size: IconSizes.medium,
-                      color: RepersentationColors.caloriesColor),
+                      color: RepresentationColors.caloriesColor),
                   const SizedBox(width: GapSizes.medium),
                   Text(
                     totalCalories.toStringAsFixed(0),
@@ -66,7 +66,7 @@ class HeaderWidgetItem extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 percent: percentTotalCalories,
                 backgroundColor: PercentIndicatorColors.backgroundColor,
-                progressColor: RepersentationColors.caloriesColor,
+                progressColor: RepresentationColors.caloriesColor,
                 barRadius:
                     const Radius.circular(PercentIndicatorSizes.barRadius),
                 animation: true,
@@ -82,15 +82,18 @@ class HeaderWidgetItem extends StatelessWidget {
                     percent: percentDietaryCalories,
                     center: FaIcon(IconTypes.dietaryIcon,
                         size: IconSizes.small,
-                        color: RepersentationColors.dietaryCaloriesColor),
-                    progressColor: RepersentationColors.dietaryCaloriesColor,
+                        color: RepresentationColors.dietaryCaloriesColor),
+                    progressColor: RepresentationColors.dietaryCaloriesColor,
                     backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
-                    footer: Text(
-                      dietaryCalories.toStringAsFixed(0),
-                      style: const TextStyle(
-                        fontSize: FontSizes.medium,
+                    footer: Padding(
+                      padding: const EdgeInsets.only(top: PaddingSizes.small),
+                      child: Text(
+                        dietaryCalories.toStringAsFixed(0),
+                        style: const TextStyle(
+                          fontSize: FontSizes.medium,
+                        ),
                       ),
                     ),
                   ),
@@ -100,15 +103,18 @@ class HeaderWidgetItem extends StatelessWidget {
                     percent: percentNetCalories,
                     center: FaIcon(IconTypes.netCaloriesIcon,
                         size: IconSizes.small,
-                        color: RepersentationColors.netCaloriesColor),
-                    progressColor: RepersentationColors.netCaloriesColor,
+                        color: RepresentationColors.netCaloriesColor),
+                    progressColor: RepresentationColors.netCaloriesColor,
                     backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
-                    footer: Text(
-                      result.toStringAsFixed(0),
-                      style: const TextStyle(
-                        fontSize: FontSizes.medium,
+                    footer: Padding(
+                      padding: const EdgeInsets.only(top: PaddingSizes.small),
+                      child: Text(
+                        result.toStringAsFixed(0),
+                        style: const TextStyle(
+                          fontSize: FontSizes.medium,
+                        ),
                       ),
                     ),
                   ),
@@ -118,15 +124,18 @@ class HeaderWidgetItem extends StatelessWidget {
                     percent: percentSteps,
                     center: FaIcon(IconTypes.stepsIcon,
                         size: IconSizes.small,
-                        color: RepersentationColors.stepsColor),
-                    progressColor: RepersentationColors.stepsColor,
+                        color: RepresentationColors.stepsColor),
+                    progressColor: RepresentationColors.stepsColor,
                     backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
-                    footer: Text(
-                      steps.toStringAsFixed(0),
-                      style: const TextStyle(
-                        fontSize: FontSizes.medium,
+                    footer: Padding(
+                      padding: const EdgeInsets.only(top: PaddingSizes.small),
+                      child: Text(
+                        steps.toStringAsFixed(0),
+                        style: const TextStyle(
+                          fontSize: FontSizes.medium,
+                        ),
                       ),
                     ),
                   ),
