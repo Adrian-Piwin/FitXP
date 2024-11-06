@@ -1,9 +1,9 @@
 import 'package:fitxp/components/timeframe_tabbar.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
-import 'package:health/health.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
+import '../../constants/health_widget_config.constants.dart';
 import 'header_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
@@ -36,8 +36,8 @@ class HomeView extends StatelessWidget {
             builder: (context, controller, _) {
               // Build the list of widgets to pass to GridLayout
               final List<Map<String, dynamic>> widgets = [
-                controller.generateHealthWidget(context, controller, HealthDataType.DIETARY_PROTEIN_CONSUMED),
-                controller.generateHealthWidget(context, controller, HealthDataType.EXERCISE_TIME),
+                healthWidgetConfigs["protein"]!.generateWidget(context, controller.goals, controller.healthData),
+                healthWidgetConfigs["exercise_time"]!.generateWidget(context, controller.goals, controller.healthData),
               ];
 
               return Column(

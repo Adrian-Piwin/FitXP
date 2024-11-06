@@ -1,12 +1,10 @@
 import 'package:fitxp/models/health_data.model.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
-import '../../constants/health_widget_config.constants.dart';
 import '../../models/goal.model.dart';
 import '../../services/health_service.dart';
 import '../../services/db_goals_service.dart';
 import '../../enums/timeframe.enum.dart';
-import 'basic_large_widget_item.dart';
 
 class HomeController extends ChangeNotifier {
   final HealthService _healthService = HealthService();
@@ -27,6 +25,7 @@ class HomeController extends ChangeNotifier {
     sleepGoal: Duration(hours: 0),
   );
   HealthData _healthData = HealthData();
+  
   bool _isLoading = true;
 
   // Getters
@@ -82,33 +81,5 @@ class HomeController extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  Map<String, dynamic> generateHealthWidget(
-    BuildContext context,
-    HomeController controller,
-    HealthDataType healthType,
-  ) {
-    final config = healthWidgetConfigs[healthType];
-
-    if (config == null) {
-      throw ArgumentError('Invalid health type: $healthType');
-    }
-
-    final goalValue = config.goalValue(_goals);
-    final currentValue = config.currentValue(_healthData);
-    double percent = (currentValue / goalValue).clamp(0, 1);
-
-    return {
-      "size": 2,
-      "widget": BasicLargeWidgetItem(
-        title: config.title(context),
-        subTitle: "${(goalValue - currentValue).toStringAsFixed(0) + config.unit(context)} left",
-        value: currentValue.toStringAsFixed(0) + config.unit(context),
-        icon: config.icon,
-        percent: percent,
-        color: config.color,
-      ),
-    };
   }
 }
