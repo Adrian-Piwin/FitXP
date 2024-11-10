@@ -1,0 +1,15 @@
+enum HealthItem {
+  proteinIntake,
+  exerciseTime,
+  sleepDuration,
+  sleepQuality,
+  activeCalories,
+  restingCalories,
+  dietaryCalories,
+  netCalories,
+  strengthTrainingMinutes,
+  strengthTrainingCaloriesBurned,
+  cardioMinutes,
+  cardioCaloriesBurned,
+  steps,
+}

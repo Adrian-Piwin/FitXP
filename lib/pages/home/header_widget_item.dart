@@ -1,7 +1,7 @@
 import 'package:fitxp/constants/colors.constants.dart';
 import 'package:fitxp/constants/icons.constants.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
-import 'package:fitxp/enums/phasetype.enum.dart';
+import 'package:fitxp/enums/phase_type.enum.dart';
 import 'package:fitxp/models/goal.model.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';

@@ -1,24 +1,15 @@
 import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:fitxp/models/health_widget_config.model.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import '../../constants/colors.constants.dart';
 
 class BasicLargeWidgetItem extends StatelessWidget {
-  final String title;
-  final String subTitle;
-  final String value;
-  final IconData icon;
-  final double? percent;
-  final Color color;
+  final HealthWidgetConfig config;
 
   const BasicLargeWidgetItem({
     super.key,
-    required this.title,
-    required this.subTitle,
-    required this.value,
-    required this.icon,
-    required this.color,
-    this.percent,
+    required this.config,
   });
 
   @override
@@ -37,7 +28,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
+                config.title,
                 style: const TextStyle(
                   fontSize: FontSizes.medium,
                 ),
@@ -45,7 +36,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
               ),
               const SizedBox(height: GapSizes.small),
               Text(
-                value,
+                config.displayValue,
                 style: TextStyle(
                   fontSize: FontSizes.xxlarge,
                   fontWeight: FontWeight.bold,
@@ -53,7 +44,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
               ),
               const SizedBox(height: GapSizes.small),
               Text(
-                subTitle,
+                config.subtitle,
                 style: TextStyle(
                   fontSize: FontSizes.medium,
                   color: Colors.grey,
@@ -61,14 +52,14 @@ class BasicLargeWidgetItem extends StatelessWidget {
               ),
             ],
           ),
-          percent != null
+          config.goalPercent != -1
               ? SizedBox(
                   width: 100,
                   height: 100,
                   child: AnimatedRadialGauge(
                     duration: const Duration(seconds: 1),
                     curve: Curves.elasticOut,
-                    value: percent!,
+                    value: config.goalPercent!,
                     axis: GaugeAxis(
                       min: 0,
                       max: 1,
@@ -79,14 +70,14 @@ class BasicLargeWidgetItem extends StatelessWidget {
                         background: PercentIndicatorColors.backgroundColor,
                       ),
                       progressBar: GaugeProgressBar.rounded(
-                        color: color,
+                        color: config.color,
                       ),
                     ),
                     builder: (context, child, value) => Center(
                       child: Icon(
-                        icon,
+                        config.icon,
                         size: 24,
-                        color: color,
+                        color: config.color,
                       ),
                     ),
                   ),
@@ -100,7 +91,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
                   ),
                   child: Center(
                     child: Icon(
-                      icon,
+                      config.icon,
                       size: 24,
                       color: Colors.white,
                     ),

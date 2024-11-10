@@ -1,4 +1,4 @@
-import 'package:fitxp/enums/phasetype.enum.dart';
+import 'package:fitxp/enums/phase_type.enum.dart';
 
 class Goal {
   PhaseType phaseType; // Using PhaseType enum
@@ -12,14 +12,14 @@ class Goal {
   Duration sleepGoal; // e.g., Duration(hours: 8, minutes: 30)
 
   Goal({
-    required this.caloriesInGoal,
-    required this.caloriesOutGoal,
-    required this.exerciseMinutesGoal,
-    required this.weightGoal,
-    required this.bodyFatGoal,
-    required this.proteinGoal,
-    required this.stepsGoal,
-    required this.sleepGoal,
+    this.caloriesInGoal = 0,
+    this.caloriesOutGoal = 0,
+    this.exerciseMinutesGoal = 0,
+    this.weightGoal = 0.0,
+    this.bodyFatGoal = 0.0,
+    this.proteinGoal = 0,
+    this.stepsGoal = 0,
+    this.sleepGoal = const Duration(hours: 0),
   }) : phaseType = _determinePhaseType(caloriesInGoal, caloriesOutGoal);
 
   Goal copyWith({

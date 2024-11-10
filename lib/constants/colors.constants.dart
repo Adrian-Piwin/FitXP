@@ -17,4 +17,5 @@ class RepresentationColors{
   static const Color dietaryCaloriesColor = Color(0xFFA1CCA5);
   static const Color proteinColor = Color.fromARGB(255, 198, 161, 204);
   static const Color exerciseColor = Color.fromARGB(255, 161, 204, 187);
+  static const Color sleepColor = Color.fromARGB(255, 204, 161, 203);
 }

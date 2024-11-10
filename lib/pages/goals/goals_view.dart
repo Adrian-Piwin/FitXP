@@ -1,5 +1,5 @@
 import 'package:fitxp/constants/sizes.constants.dart';
-import 'package:fitxp/enums/phasetype.enum.dart';
+import 'package:fitxp/enums/phase_type.enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';

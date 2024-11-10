@@ -1,7 +1,7 @@
-import '../../services/health_service.dart';
+import '../../services/health_fetcher_service.dart';
 
 class PermissionsController {
-  final HealthService _healthService = HealthService();
+  final HealthFetcherService _healthService = HealthFetcherService();
 
   bool isLoading = true;
   String? errorMessage;

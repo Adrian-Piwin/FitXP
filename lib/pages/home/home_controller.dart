@@ -1,34 +1,27 @@
 import 'package:fitxp/models/health_data.model.dart';
+import 'package:fitxp/services/health_widget_builder_service.dart';
 import 'package:flutter/material.dart';
-import 'package:health/health.dart';
+import '../../constants/healthdatatypes.constants.dart';
 import '../../models/goal.model.dart';
-import '../../services/health_service.dart';
+import '../../services/health_fetcher_service.dart';
 import '../../services/db_goals_service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HomeController extends ChangeNotifier {
-  final HealthService _healthService = HealthService();
   final DBGoalsService _goalsService = DBGoalsService();
+  final HealthWidgetBuilderService _healthWidgetBuilderService = HealthWidgetBuilderService();
 
   // State variables
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
 
-  Goal _goals = Goal(
-    caloriesInGoal: 0,
-    caloriesOutGoal: 0,
-    exerciseMinutesGoal: 0,
-    weightGoal: 0.0,
-    bodyFatGoal: 0.0,
-    proteinGoal: 0,
-    stepsGoal: 0,
-    sleepGoal: Duration(hours: 0),
-  );
-  HealthData _healthData = HealthData();
-  
+  Goal _goals = Goal();
+  HealthData _healthData = HealthData(HealthFetcherService());
+
   bool _isLoading = true;
 
   // Getters
+  HealthWidgetBuilderService get healthWidgetBuilderService => _healthWidgetBuilderService;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
 
@@ -36,8 +29,9 @@ class HomeController extends ChangeNotifier {
   HealthData get healthData => _healthData;
   bool get isLoading => _isLoading;
 
-  HomeController() {
-    fetchCalorieData();
+  HomeController(BuildContext context) {
+    _healthWidgetBuilderService.context = context;
+    fetchHealthData();
     fetchGoalsData();
   }
 
@@ -45,13 +39,13 @@ class HomeController extends ChangeNotifier {
   void updateTimeFrame(TimeFrame newTimeFrame) {
     _selectedTimeFrame = newTimeFrame;
     _offset = 0; // Reset offset when TimeFrame changes
-    fetchCalorieData();
+    fetchHealthData();
   }
 
   // Method to update the offset
   void updateOffset(int newOffset) {
     _offset = newOffset;
-    fetchCalorieData();
+    fetchHealthData();
   }
 
   // Fetch data from GoalsService
@@ -65,15 +59,14 @@ class HomeController extends ChangeNotifier {
   }
 
   // Fetch data from HealthService
-  Future<void> fetchCalorieData() async {
+  Future<void> fetchHealthData() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      List<HealthDataPoint> data = await _healthService.fetchAll(_selectedTimeFrame, offset: _offset);
+      _healthData.healthService.setTimeFrameAndOffset(_selectedTimeFrame, _offset);
       _healthData.averages = _selectedTimeFrame != TimeFrame.day; // Show averages when time frame is not day
-      _healthData.clearData();
-      _healthData.assignData(data);
+      await healthData.healthService.fetchData(healthDataTypes);
     } catch (e) {
       // Handle errors as needed
       print('Error fetching data: $e');

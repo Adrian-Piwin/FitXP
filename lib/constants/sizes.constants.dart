@@ -3,7 +3,7 @@ class FontSizes {
   static const double medium = 16.0;
   static const double large = 20.0;
   static const double xlarge = 24.0;
-  static const double xxlarge = 32.0;
+  static const double xxlarge = 28.0;
 }
 
 class BorderRadiusSizes {

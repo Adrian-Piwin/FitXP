@@ -1,9 +1,9 @@
 import 'package:fitxp/components/timeframe_tabbar.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:fitxp/enums/health_item.enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
-import '../../constants/health_widget_config.constants.dart';
 import 'header_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
@@ -17,7 +17,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => HomeController(),
+      create: (_) => HomeController(context),
       child: Scaffold(
           appBar: AppBar(
             titleSpacing: 0,
@@ -36,8 +36,9 @@ class HomeView extends StatelessWidget {
             builder: (context, controller, _) {
               // Build the list of widgets to pass to GridLayout
               final List<Map<String, dynamic>> widgets = [
-                healthWidgetConfigs["protein"]!.generateWidget(context, controller.goals, controller.healthData),
-                healthWidgetConfigs["exercise_time"]!.generateWidget(context, controller.goals, controller.healthData),
+                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.proteinIntake),
+                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.exerciseTime),
+                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.sleepDuration),
               ];
 
               return Column(

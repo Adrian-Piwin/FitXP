@@ -12,4 +12,5 @@ class IconTypes{
   static const IconData netCaloriesIcon = FontAwesomeIcons.scaleBalanced;
   static const IconData stepsIcon = FontAwesomeIcons.shoePrints;
   static const IconData exerciseIcon = FontAwesomeIcons.personRunning;
+  static const IconData sleepDurationIcon = FontAwesomeIcons.bed;
 }

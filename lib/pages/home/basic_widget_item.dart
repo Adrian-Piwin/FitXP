@@ -1,19 +1,15 @@
 import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:fitxp/models/health_widget_config.model.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import '../../constants/colors.constants.dart';
 
 class BasicWidgetItem extends StatelessWidget {
-  final String title;
-  final String subTitle = "testing";
-  final String value;
-  final IconData icon = Icons.home;
-  final double? percent = 0.5;
+  final HealthWidgetConfig config;
 
   const BasicWidgetItem({
     super.key,
-    required this.title,
-    required this.value,
+    required this.config,
   });
 
   @override
@@ -30,10 +26,10 @@ class BasicWidgetItem extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 18),
+                Icon(config.icon, size: 18),
                 const SizedBox(width: GapSizes.small),
                 Text(
-                  title,
+                  config.title,
                   style: const TextStyle(
                     fontSize: FontSizes.medium,
                   ),
@@ -43,14 +39,14 @@ class BasicWidgetItem extends StatelessWidget {
             ),
           ),
           const SizedBox(height: GapSizes.small),
-          percent != null
+          config.goalPercent != null
             ? SizedBox(
                 width: 70,
                 height: 70,
                 child: AnimatedRadialGauge(
                   duration: const Duration(seconds: 1),
                   curve: Curves.elasticOut,
-                  value: percent!,
+                  value: config.goalPercent!,
                   axis: GaugeAxis(
                     min: 0,
                     max: 1,
@@ -78,7 +74,7 @@ class BasicWidgetItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Icon(
-                    icon,
+                    config.icon,
                     size: 24,
                     color: Colors.white,
                   ),
@@ -86,7 +82,7 @@ class BasicWidgetItem extends StatelessWidget {
               ),
             const SizedBox(height: GapSizes.small),
             Text(
-              subTitle,
+              config.subtitle,
               style: TextStyle(
                 fontSize: FontSizes.small,
                 color: Colors.grey,

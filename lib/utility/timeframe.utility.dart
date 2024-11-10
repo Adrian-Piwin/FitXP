@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import '../enums/timeframe.enum.dart';
 
-DateTimeRange calculateDateRange(TimeFrame timeFrame, {int offset = 0}) {
+DateTimeRange calculateDateRange(TimeFrame timeFrame, int offset) {
   final now = DateTime.now();
 
   switch (timeFrame) {
