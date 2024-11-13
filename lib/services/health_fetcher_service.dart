@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:fitxp/constants/healthdatatypes.constants.dart';
+import 'package:fitxp/models/health_item_value.dart';
 import 'package:health/health.dart';
 import '../enums/timeframe.enum.dart';
 import '../utility/health.utility.dart';
@@ -71,18 +72,47 @@ class HealthFetcherService {
     _dataMap.clear();
   }
 
-  double getBasicHealthItemValue(HealthDataType type, bool averages) {
+  HealthItemValue getBasicHealthItemValue(HealthDataType type) {
     List<HealthDataPoint> dataPoints = _dataMap[type] ?? [];
-    return averages ? getHealthAverage(dataPoints) : getHealthTotal(dataPoints);
+    return HealthItemValue()
+      ..average = getHealthAverage(dataPoints)
+      ..total = getHealthTotal(dataPoints);
   }
 
-  double getStrengthTrainingMinutes(bool averages) {
+  HealthItemValue getStrengthTrainingMinutes() {
     List<HealthDataPoint> dataPoints = _dataMap[HealthDataType.WORKOUT] ?? [];
-    return averages ? getWorkoutMinutesAverage(extractStrengthTrainingMinutes(dataPoints)) : getWorkoutMinutesTotal(extractStrengthTrainingMinutes(dataPoints));
+
+    return HealthItemValue()
+      ..average = getWorkoutMinutesAverage(extractStrengthTrainingMinutes(dataPoints))
+      ..total = getWorkoutMinutesTotal(extractStrengthTrainingMinutes(dataPoints)); 
   }
 
-  double getCardioMinutes(bool averages) {
+  HealthItemValue getCardioMinutes() {
     List<HealthDataPoint> dataPoints = _dataMap[HealthDataType.WORKOUT] ?? [];
-    return averages ? getWorkoutMinutesAverage(extractCardioMinutes(dataPoints)) : getWorkoutMinutesTotal(extractCardioMinutes(dataPoints));
+    return HealthItemValue()
+      ..average = getWorkoutMinutesAverage(extractCardioMinutes(dataPoints))
+      ..total = getWorkoutMinutesTotal(extractCardioMinutes(dataPoints)); 
+  }
+
+  double getLatestWeight() {
+    List<HealthDataPoint> dataPoints = _dataMap[HealthDataType.WEIGHT] ?? [];
+
+    if (dataPoints.isEmpty) {
+      return 0;
+    }
+
+    dataPoints.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
+    return (dataPoints.last.value as NumericHealthValue).numericValue.toDouble();
+  }
+
+  double getOldestWeight() {
+    List<HealthDataPoint> dataPoints = _dataMap[HealthDataType.WEIGHT] ?? [];
+
+    if (dataPoints.isEmpty) {
+      return 0;
+    }
+
+    dataPoints.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
+    return (dataPoints.first.value as NumericHealthValue).numericValue.toDouble();
   }
 }

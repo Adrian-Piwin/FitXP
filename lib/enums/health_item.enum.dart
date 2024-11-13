@@ -12,4 +12,6 @@ enum HealthItem {
   cardioMinutes,
   cardioCaloriesBurned,
   steps,
+  weight,
+  bodyFatPercentage,
 }

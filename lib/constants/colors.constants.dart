@@ -18,4 +18,5 @@ class RepresentationColors{
   static const Color proteinColor = Color.fromARGB(255, 198, 161, 204);
   static const Color exerciseColor = Color.fromARGB(255, 161, 204, 187);
   static const Color sleepColor = Color.fromARGB(255, 204, 161, 203);
+  static const Color weightColor = Color.fromARGB(255, 161, 204, 201);
 }

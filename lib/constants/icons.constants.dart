@@ -13,4 +13,5 @@ class IconTypes{
   static const IconData stepsIcon = FontAwesomeIcons.shoePrints;
   static const IconData exerciseIcon = FontAwesomeIcons.personRunning;
   static const IconData sleepDurationIcon = FontAwesomeIcons.bed;
+  static const IconData weightIcon = FontAwesomeIcons.weightScale;
 }

@@ -83,17 +83,17 @@ class BasicLargeWidgetItem extends StatelessWidget {
                   ),
                 )
               : Container(
-                  width: 100,
-                  height: 100,
+                  width: 95,
+                  height: 95,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey,
+                    color: PercentIndicatorColors.backgroundColor,
                   ),
                   child: Center(
                     child: Icon(
                       config.icon,
                       size: 24,
-                      color: Colors.white,
+                      color: config.color,
                     ),
                   ),
                 ),

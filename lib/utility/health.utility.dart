@@ -111,8 +111,7 @@ double getWorkoutEnergyBurnedAverage(List<HealthDataPoint> data) {
 }
 
 // Extract strength training minutes
-List<HealthDataPoint> extractStrengthTrainingMinutes(
-    List<HealthDataPoint> dataPoints) {
+List<HealthDataPoint> extractStrengthTrainingMinutes(List<HealthDataPoint> dataPoints) {
   return dataPoints
       .where((point) =>
           strengthTrainingTypes.contains(point.workoutSummary?.workoutType))

@@ -39,6 +39,7 @@ class HomeView extends StatelessWidget {
                 controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.proteinIntake),
                 controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.exerciseTime),
                 controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.sleepDuration),
+                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.weight),
               ];
 
               return Column(
@@ -57,10 +58,10 @@ class HomeView extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
                             child: HeaderWidgetItem(
-                              activeCalories: controller.healthData.getActiveCalories,
-                              restingCalories: controller.healthData.getRestingCalories,
-                              dietaryCalories: controller.healthData.getDietaryCalories,
-                              steps: controller.healthData.getSteps,
+                              activeCalories: controller.healthData.getActiveCalories.total,
+                              restingCalories: controller.healthData.getRestingCalories.total,
+                              dietaryCalories: controller.healthData.getDietaryCalories.total,
+                              steps: controller.healthData.getSteps.total,
                               goals: controller.goals,
                             ),
                           ),
