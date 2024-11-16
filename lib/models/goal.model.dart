@@ -2,13 +2,13 @@ import 'package:fitxp/enums/phase_type.enum.dart';
 
 class Goal {
   PhaseType phaseType; // Using PhaseType enum
-  int caloriesInGoal; // e.g., 2000
-  int caloriesOutGoal; // e.g., 2000
-  int exerciseMinutesGoal; // e.g., 50
+  double caloriesInGoal; // e.g., 2000
+  double caloriesOutGoal; // e.g., 2000
+  double exerciseMinutesGoal; // e.g., 50
   double weightGoal; // e.g., 200.0
   double bodyFatGoal; // e.g., 10.0
-  int proteinGoal; // e.g., 150
-  int stepsGoal; // e.g., 10000
+  double proteinGoal; // e.g., 150
+  double stepsGoal; // e.g., 10000
   Duration sleepGoal; // e.g., Duration(hours: 8, minutes: 30)
 
   Goal({
@@ -23,13 +23,13 @@ class Goal {
   }) : phaseType = _determinePhaseType(caloriesInGoal, caloriesOutGoal);
 
   Goal copyWith({
-    int? caloriesInGoal,
-    int? caloriesOutGoal,
-    int? exerciseMinutesGoal,
+    double? caloriesInGoal,
+    double? caloriesOutGoal,
+    double? exerciseMinutesGoal,
     double? weightGoal,
     double? bodyFatGoal,
-    int? proteinGoal,
-    int? stepsGoal,
+    double? proteinGoal,
+    double? stepsGoal,
     Duration? sleepGoal,
   }) {
     final newcaloriesInGoal = caloriesInGoal ?? this.caloriesInGoal;
@@ -46,7 +46,7 @@ class Goal {
     );
   }
 
-  static PhaseType _determinePhaseType(int caloriesInGoal, int caloriesOutGoal) {
+  static PhaseType _determinePhaseType(double caloriesInGoal, double caloriesOutGoal) {
     if (caloriesInGoal > caloriesOutGoal) {
       return PhaseType.bulking;
     } else if (caloriesInGoal < caloriesOutGoal) {
@@ -73,17 +73,17 @@ class Goal {
 
   // Create Goal from Map (Firestore data)
   factory Goal.fromMap(Map<String, dynamic> map) {
-    final caloriesInGoal = map['caloriesInGoal'] ?? 0;
-    final caloriesOutGoal = map['caloriesOutGoal'] ?? 0;
+    final caloriesInGoal = (map['caloriesInGoal'] ?? 0).toDouble();
+    final caloriesOutGoal = (map['caloriesOutGoal'] ?? 0).toDouble();
     return Goal(
       caloriesInGoal: caloriesInGoal,
       caloriesOutGoal: caloriesOutGoal,
-      exerciseMinutesGoal: map['exerciseMinutesGoal'] ?? 0,
+      exerciseMinutesGoal: (map['exerciseMinutesGoal'] ?? 0).toDouble(),
       weightGoal: (map['weightGoal'] ?? 0).toDouble(),
       bodyFatGoal: (map['bodyFatGoal'] ?? 0).toDouble(),
-      proteinGoal: map['proteinGoal'] ?? 0,
-      stepsGoal: map['stepsGoal'] ?? 0,
-      sleepGoal: Duration(minutes: map['sleepGoal'] ?? 0),
+      proteinGoal: (map['proteinGoal'] ?? 0).toDouble(),
+      stepsGoal: (map['stepsGoal'] ?? 0).toDouble(),
+      sleepGoal: Duration(minutes: (map['sleepGoal'] ?? 0).toDouble().toInt()),
     );
   }
 }

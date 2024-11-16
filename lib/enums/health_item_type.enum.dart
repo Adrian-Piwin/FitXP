@@ -1,8 +1,9 @@
-enum HealthItem {
+enum HealthItemType {
   proteinIntake,
   exerciseTime,
   sleepDuration,
   sleepQuality,
+  expendedEnergy,
   activeCalories,
   restingCalories,
   dietaryCalories,

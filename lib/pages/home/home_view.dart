@@ -1,6 +1,5 @@
 import 'package:fitxp/components/timeframe_tabbar.dart';
 import 'package:fitxp/constants/sizes.constants.dart';
-import 'package:fitxp/enums/health_item.enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
@@ -34,14 +33,6 @@ class HomeView extends StatelessWidget {
           ),
           body: Consumer<HomeController>(
             builder: (context, controller, _) {
-              // Build the list of widgets to pass to GridLayout
-              final List<Map<String, dynamic>> widgets = [
-                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.proteinIntake),
-                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.exerciseTime),
-                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.sleepDuration),
-                controller.healthWidgetBuilderService.generateWidget(controller.goals, controller.healthData, HealthItem.weight),
-              ];
-
               return Column(
                 children: [
                   DateSelector(
@@ -55,17 +46,17 @@ class HomeView extends StatelessWidget {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
-                            child: HeaderWidgetItem(
-                              activeCalories: controller.healthData.getActiveCalories.total,
-                              restingCalories: controller.healthData.getRestingCalories.total,
-                              dietaryCalories: controller.healthData.getDietaryCalories.total,
-                              steps: controller.healthData.getSteps.total,
-                              goals: controller.goals,
+                          if (controller.headerWidgets.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
+                              child: HeaderWidgetItem(
+                                barWidgetConfig: controller.headerWidgets[0].getConfig,
+                                subWidgetFirstConfig: controller.headerWidgets[1].getConfig,
+                                subWidgetSecondConfig: controller.headerWidgets[2].getConfig,
+                                subWidgetThirdConfig: controller.headerWidgets[3].getConfig,
+                              ),
                             ),
-                          ),
-                          GridLayout(widgets: widgets),
+                          GridLayout(widgets: controller.displayWidgets.map((obj) => obj.generateWidget()).toList()),
                         ],
                       ),
                     ),

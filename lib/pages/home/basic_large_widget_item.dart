@@ -59,7 +59,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
                   child: AnimatedRadialGauge(
                     duration: const Duration(seconds: 1),
                     curve: Curves.elasticOut,
-                    value: config.goalPercent!,
+                    value: config.goalPercent,
                     axis: GaugeAxis(
                       min: 0,
                       max: 1,
