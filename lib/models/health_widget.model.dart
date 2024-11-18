@@ -51,8 +51,7 @@ class HealthWidget{
 
   String get _getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
-      var total = _goal - _total;
-      return total > 0 ? 
+      return _goal - _total >= 0 ? 
           "${(_goal - _total).toStringAsFixed(0)}${healthItem.unit} left" : 
           "${(_total - _goal).toStringAsFixed(0)}${healthItem.unit} over";
     } else {
@@ -171,7 +170,7 @@ class SleepHealthWidget extends HealthWidget {
   String _formatMinutes(int totalMinutes) {
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
-    return hours > 0 ? "$hours:${minutes.toString().padLeft(2, '0')} hrs" : "$minutes min";
+    return hours > 0 ? "$hours:${minutes.toString().padLeft(2, '0')} hrs" : "${minutes}min";
   }
 
   @override
@@ -181,7 +180,9 @@ class SleepHealthWidget extends HealthWidget {
       int actualSleepMinutes = _getTotal.toInt();
       int differenceMinutes = (sleepGoalMinutes - actualSleepMinutes).abs();
 
-      return "${_formatMinutes(differenceMinutes)} from goal";
+      return _goal - _getTotal >= 0 ? 
+          "${_formatMinutes(differenceMinutes)} left" : 
+          "${_formatMinutes(differenceMinutes)} over";
     }
 
     return "${_formatMinutes(_getAverage.toInt())} avg";
