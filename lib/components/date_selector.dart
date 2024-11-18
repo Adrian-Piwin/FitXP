@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../constants/sizes.constants.dart';
 import '../enums/timeframe.enum.dart';
 
-class DateSelector extends StatelessWidget {
+class DateSelector extends StatefulWidget {
   final TimeFrame selectedTimeFrame;
   final int offset;
   final ValueChanged<int> onOffsetChanged;
@@ -16,29 +16,65 @@ class DateSelector extends StatelessWidget {
   });
 
   @override
+  DateSelectorState createState() => DateSelectorState();
+}
+
+class DateSelectorState extends State<DateSelector> with WidgetsBindingObserver {
+  late DateTime now;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    now = DateTime.now();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      checkAndUpdateDate();
+    }
+  }
+
+  void checkAndUpdateDate() {
+    DateTime currentDate = DateTime.now();
+    if (now.day != currentDate.day || now.month != currentDate.month || now.year != currentDate.year) {
+      setState(() {
+        now = currentDate;
+      });
+      widget.onOffsetChanged(0);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Calculate the displayed date based on selectedTimeFrame and offset
-    DateTime now = DateTime.now();
     DateTime displayedDate;
 
-    switch (selectedTimeFrame) {
+    switch (widget.selectedTimeFrame) {
       case TimeFrame.day:
-        displayedDate = now.subtract(Duration(days: offset * -1));
+        displayedDate = now.subtract(Duration(days: widget.offset * -1));
       case TimeFrame.week:
-        displayedDate = now.subtract(Duration(days: offset * -7));
+        displayedDate = now.subtract(Duration(days: widget.offset * -7));
       case TimeFrame.month:
-        displayedDate = DateTime(now.year, now.month - offset * -1, 1);
+        displayedDate = DateTime(now.year, now.month - widget.offset * -1, 1);
       case TimeFrame.year:
-        displayedDate = DateTime(now.year - offset * -1, 1, 1);
+        displayedDate = DateTime(now.year - widget.offset * -1, 1, 1);
     }
 
     // Determine if right arrow should be disabled (can't go into the future)
-    bool isRightArrowDisabled = offset == 0;
+    bool isRightArrowDisabled = widget.offset == 0;
 
     // Displayed date string
     String displayedDateString = '';
 
-    switch (selectedTimeFrame) {
+    switch (widget.selectedTimeFrame) {
       case TimeFrame.day:
         displayedDateString = DateFormat('MMMM d, yyyy').format(displayedDate);
       case TimeFrame.week:
@@ -57,7 +93,7 @@ class DateSelector extends StatelessWidget {
     Widget leftArrow = IconButton(
       icon: Icon(Icons.arrow_left),
       onPressed: () {
-        onOffsetChanged(offset - 1);
+        widget.onOffsetChanged(widget.offset - 1);
       },
     );
 
@@ -65,7 +101,7 @@ class DateSelector extends StatelessWidget {
       icon: Icon(Icons.arrow_right),
       onPressed: !isRightArrowDisabled
           ? () {
-              onOffsetChanged(offset + 1);
+              widget.onOffsetChanged(widget.offset + 1);
             }
           : null,
     );

@@ -43,21 +43,24 @@ class HomeView extends StatelessWidget {
                     },
                   ),
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          if (controller.headerWidgets.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
-                              child: HeaderWidgetItem(
-                                barWidgetConfig: controller.headerWidgets[0].getConfig,
-                                subWidgetFirstConfig: controller.headerWidgets[1].getConfig,
-                                subWidgetSecondConfig: controller.headerWidgets[2].getConfig,
-                                subWidgetThirdConfig: controller.headerWidgets[3].getConfig,
+                    child: RefreshIndicator(
+                      onRefresh: controller.refresh,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            if (controller.headerWidgets.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
+                                child: HeaderWidgetItem(
+                                  barWidgetConfig: controller.headerWidgets[0].getConfig,
+                                  subWidgetFirstConfig: controller.headerWidgets[1].getConfig,
+                                  subWidgetSecondConfig: controller.headerWidgets[2].getConfig,
+                                  subWidgetThirdConfig: controller.headerWidgets[3].getConfig,
+                                ),
                               ),
-                            ),
-                          GridLayout(widgets: controller.displayWidgets.map((obj) => obj.generateWidget()).toList()),
-                        ],
+                            GridLayout(widgets: controller.displayWidgets.map((obj) => obj.generateWidget()).toList()),
+                          ],
+                        ),
                       ),
                     ),
                   )
