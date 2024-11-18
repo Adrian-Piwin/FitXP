@@ -56,7 +56,7 @@ class HealthItemDefinitions {
     ..getGoal = (Goal goal) => goal.exerciseMinutesGoal;
 
   static HealthItem sleepDuration = HealthItem()
-    ..dataType = [HealthDataType.SLEEP_ASLEEP]
+    ..dataType = [HealthDataType.SLEEP_ASLEEP, HealthDataType.SLEEP_REM, HealthDataType.SLEEP_LIGHT, HealthDataType.SLEEP_DEEP]
     ..itemType = HealthItemType.sleepDuration
     ..title = "Sleep"
     ..unit = "hrs"
@@ -98,7 +98,9 @@ class HealthItemDefinitions {
     ..unit = "cal"
     ..color = RepresentationColors.netCaloriesColor
     ..icon = IconTypes.netCaloriesIcon
-    ..getGoal = (Goal goal) => goal.caloriesOutGoal - goal.caloriesInGoal;
+    ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
+    ..widgetFactory = ((service, item, goals, widgetSize) =>
+        NetCaloriesyHealthWidget(service, item, goals, widgetSize));
 
   static HealthItem steps = HealthItem()
     ..dataType = [HealthDataType.STEPS]
@@ -107,5 +109,7 @@ class HealthItemDefinitions {
     ..unit = " steps"
     ..color = RepresentationColors.stepsColor
     ..icon = IconTypes.stepsIcon
-    ..getGoal = (Goal goal) => goal.stepsGoal;
+    ..getGoal = ((Goal goal) => goal.stepsGoal)
+    ..widgetFactory = ((service, item, goals, widgetSize) =>
+        StepsHealthWidget(service, item, goals, widgetSize));
 }

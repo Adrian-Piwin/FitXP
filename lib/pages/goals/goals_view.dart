@@ -59,8 +59,8 @@ class GoalsView extends StatelessWidget {
                     title: AppLocalizations.of(context)!.caloriesInGoalTitle,
                     initialValue: controller.goal!.caloriesInGoal.toString(),
                     onChanged: (value) {
-                      int intValue = int.tryParse(value) ?? 0;
-                      controller.updateGoalField('caloriesInGoal', intValue);
+                      double doubleValue = double.tryParse(value) ?? 0.0;
+                      controller.updateGoalField('caloriesInGoal', doubleValue);
                     },
                   ),
                   // Calories Out Goal
@@ -69,8 +69,8 @@ class GoalsView extends StatelessWidget {
                     title: AppLocalizations.of(context)!.caloriesOutGoalTitle,
                     initialValue: controller.goal!.caloriesOutGoal.toString(),
                     onChanged: (value) {
-                      int intValue = int.tryParse(value) ?? 0;
-                      controller.updateGoalField('caloriesOutGoal', intValue);
+                      double doubleValue = double.tryParse(value) ?? 0.0;
+                      controller.updateGoalField('caloriesOutGoal', doubleValue);
                     },
                   ),
                   // Exercise Minutes Goal
@@ -81,9 +81,9 @@ class GoalsView extends StatelessWidget {
                     initialValue:
                         controller.goal!.exerciseMinutesGoal.toString(),
                     onChanged: (value) {
-                      int intValue = int.tryParse(value) ?? 0;
+                      double doubleValue = double.tryParse(value) ?? 0.0;
                       controller.updateGoalField(
-                          'exerciseMinutesGoal', intValue);
+                          'exerciseMinutesGoal', doubleValue);
                     },
                   ),
                   // Weight Goal
@@ -112,8 +112,8 @@ class GoalsView extends StatelessWidget {
                     title: AppLocalizations.of(context)!.proteinGoalTitle,
                     initialValue: controller.goal!.proteinGoal.toString(),
                     onChanged: (value) {
-                      int intValue = int.tryParse(value) ?? 0;
-                      controller.updateGoalField('proteinGoal', intValue);
+                      double doubleValue = double.tryParse(value) ?? 0.0;
+                      controller.updateGoalField('proteinGoal', doubleValue);
                     },
                   ),
                   // Steps Goal
@@ -122,8 +122,8 @@ class GoalsView extends StatelessWidget {
                     title: AppLocalizations.of(context)!.stepsGoalTitle,
                     initialValue: controller.goal!.stepsGoal.toString(),
                     onChanged: (value) {
-                      int intValue = int.tryParse(value) ?? 0;
-                      controller.updateGoalField('stepsGoal', intValue);
+                      double doubleValue = double.tryParse(value) ?? 0.0;
+                      controller.updateGoalField('stepsGoal', doubleValue);
                     },
                   ),
                   // Sleep Goal

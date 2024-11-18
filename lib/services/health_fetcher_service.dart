@@ -52,6 +52,12 @@ class HealthFetcherService {
     }
   }
 
+  Future<int> getSteps(TimeFrame timeframe, int offset) async {
+    final dateRange = calculateDateRange(timeframe, offset);
+    final data = await _health.getTotalStepsInInterval(dateRange.start, dateRange.end);
+    return data ?? 0;
+  }
+
   String _generateCacheKey(List<HealthDataType> types, TimeFrame timeframe, int offset) {
     final typeString = types.map((type) => type.toString()).join(',');
     return '$typeString|$timeframe|$offset';

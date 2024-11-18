@@ -66,7 +66,10 @@ class DBGoalsService extends DBService {
         _cachedGoal = goal;
         return goal;
       } else {
-        return null;
+        // Create a new empty Goal object with initialized values set to 0
+        Goal newGoal = Goal();
+        await saveGoals(newGoal);
+        return newGoal;
       }
     } catch (e) {
       print('Error retrieving goals: $e');

@@ -4,6 +4,7 @@ import 'package:fitxp/models/health_widget_config.model.dart';
 import 'package:fitxp/pages/home/basic_large_widget_item.dart';
 import 'package:fitxp/pages/home/basic_widget_item.dart';
 import 'package:fitxp/services/health_fetcher_service.dart';
+import 'package:fitxp/utility/timeframe.utility.dart';
 import 'package:health/health.dart';
 import '../constants/health_item_definitions.constants.dart';
 import '../utility/health.utility.dart';
@@ -50,9 +51,12 @@ class HealthWidget{
 
   String get _getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
-      return "${(_goal - _total).toStringAsFixed(0)}${healthItem.unit} left";
+      var total = _goal - _total;
+      return total > 0 ? 
+          "${(_goal - _total).toStringAsFixed(0)}${healthItem.unit} left" : 
+          "${(_total - _goal).toStringAsFixed(0)}${healthItem.unit} over";
     } else {
-      return "$_average avg";
+      return "${_average.toStringAsFixed(0)} avg";
     }
   }
 
@@ -61,9 +65,9 @@ class HealthWidget{
   }
 
   double get _getGoalPercent {
-  if (_goal == 0) return 0.0;
-  if (_goal == -1) return -1;
-  return (_total / _goal).clamp(0, 1);
+    if (_goal == 0) return 0.0;
+    if (_goal == -1) return -1;
+    return (_total / _goal).clamp(0, 1);
   }
 
   HealthWidgetConfig get getConfig {
@@ -93,6 +97,35 @@ class HealthWidget{
   }
 }
 
+class StepsHealthWidget extends HealthWidget {
+  StepsHealthWidget(
+    super.healthFetcherService,
+    super.healthItem,
+    super.goals,
+    super.timeFrame,
+  );
+
+  int _steps = 0;
+
+  @override
+  Future<void> fetchData() async {
+    _steps = await healthFetcherService.getSteps(_timeFrame, _offset);
+    _total = _getTotal;
+    _average = _getAverage;
+  }
+
+  @override
+  double get _getTotal {
+    return _steps.toDouble();
+  }
+
+  @override
+  double get _getAverage {
+    final dateRange = calculateDateRange(_timeFrame, _offset);
+    return _steps.toDouble() / dateRange.duration.inDays;
+  }
+}
+
 class NetCaloriesyHealthWidget extends HealthWidget{
   NetCaloriesyHealthWidget(
     super.healthFetcherService,
@@ -101,24 +134,29 @@ class NetCaloriesyHealthWidget extends HealthWidget{
     super.timeFrame,
   );
 
-  Map<HealthDataType, List<HealthDataPoint>> _subtractData = {};
-
   @override
   Future<void> fetchData() async {
-    _data = await healthFetcherService.fetchData([HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED],_timeFrame, _offset);
-    _subtractData = await healthFetcherService.fetchData([HealthDataType.DIETARY_ENERGY_CONSUMED], _timeFrame, _offset);
-    _total = _getTotal;
-    _average = _getAverage;
+    var energyBurnedData = await healthFetcherService.fetchData([HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED],_timeFrame, _offset);
+    var energyConsumedData = await healthFetcherService.fetchData([HealthDataType.DIETARY_ENERGY_CONSUMED], _timeFrame, _offset);
+    
+    var totalEnergyBurned = getHealthTotal(energyBurnedData[HealthDataType.ACTIVE_ENERGY_BURNED]!) + getHealthTotal(energyBurnedData[HealthDataType.BASAL_ENERGY_BURNED]!);
+    var totalEnergyConsumed = getHealthTotal(energyConsumedData[HealthDataType.DIETARY_ENERGY_CONSUMED]!);
+    var avgEnergyBurned = getHealthAverage(energyBurnedData[HealthDataType.ACTIVE_ENERGY_BURNED]!) + getHealthAverage(energyBurnedData[HealthDataType.BASAL_ENERGY_BURNED]!);
+    var avgEnergyConsumed = getHealthAverage(energyConsumedData[HealthDataType.DIETARY_ENERGY_CONSUMED]!);
+
+    _total = totalEnergyConsumed - totalEnergyBurned;
+    _average = avgEnergyConsumed - avgEnergyBurned;
   }
 
   @override
-  double get _getTotal {
-    return getHealthTotal(_data[HealthDataType.ACTIVE_ENERGY_BURNED]!) + getHealthTotal(_data[HealthDataType.BASAL_ENERGY_BURNED]!) - getHealthTotal(_subtractData[HealthDataType.DIETARY_ENERGY_CONSUMED]!);
-  }
+  double get _getGoalPercent {
+    if (_goal == 0) return 0.0;
 
-  @override
-  double get _getAverage {
-    return getHealthAverage(_data[HealthDataType.ACTIVE_ENERGY_BURNED]!) + getHealthAverage(_data[HealthDataType.BASAL_ENERGY_BURNED]!) - getHealthAverage(_subtractData[HealthDataType.DIETARY_ENERGY_CONSUMED]!);
+    var total = _total;
+    if (_goal < 0) {
+      total = _total.abs();
+    }
+    return (total / _goal.abs()).clamp(0, 1);
   }
 }
 
