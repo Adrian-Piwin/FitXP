@@ -122,7 +122,6 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
-    _healthFetcherService.clearCache();
     await fetchHealthData();
   }
 }

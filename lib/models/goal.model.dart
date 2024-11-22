@@ -1,4 +1,4 @@
-import 'package:fitxp/enums/phase_type.enum.dart';
+import 'package:xpfitness/enums/phase_type.enum.dart';
 
 class Goal {
   PhaseType phaseType; // Using PhaseType enum

@@ -1,6 +1,6 @@
-import 'package:fitxp/models/goal.model.dart';
-import 'package:fitxp/models/health_widget.model.dart';
-import 'package:fitxp/services/health_fetcher_service.dart';
+import 'package:xpfitness/models/goal.model.dart';
+import 'package:xpfitness/models/health_widget.model.dart';
+import 'package:xpfitness/services/health_fetcher_service.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import '../enums/health_item_type.enum.dart';

@@ -1,5 +1,5 @@
-import 'package:fitxp/components/timeframe_tabbar.dart';
-import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:xpfitness/components/timeframe_tabbar.dart';
+import 'package:xpfitness/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';

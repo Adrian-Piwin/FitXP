@@ -1,7 +1,7 @@
-import 'package:fitxp/pages/auth/auth_gate.dart';
-import 'package:fitxp/pages/home/home_view.dart';
-import 'package:fitxp/pages/permissions/permissions_view.dart';
-import 'package:fitxp/pages/settings/settings_view.dart';
+import 'package:xpfitness/pages/auth/auth_gate.dart';
+import 'package:xpfitness/pages/home/home_view.dart';
+import 'package:xpfitness/pages/permissions/permissions_view.dart';
+import 'package:xpfitness/pages/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

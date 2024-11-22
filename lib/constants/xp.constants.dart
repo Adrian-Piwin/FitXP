@@ -1,4 +1,4 @@
-import 'package:fitxp/enums/xp_type.enum.dart';
+import 'package:xpfitness/enums/xp_type.enum.dart';
 
 const int levelUpXPAmt = 1000;
 

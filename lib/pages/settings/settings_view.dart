@@ -1,14 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fitxp/constants/sizes.constants.dart';
+import 'package:xpfitness/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
-
 import '../../components/bottom_nav_bar.dart';
 import 'settings_controller.dart';
 
-/// Displays the various settings that can be customized by the user.
-///
-/// When a user changes a setting, the SettingsController is updated and
-/// Widgets that listen to the SettingsController are rebuilt.
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key, required this.controller});
 
@@ -24,10 +18,6 @@ class SettingsView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(PaddingSizes.large),
-        // Glue the SettingsController to the theme selection DropdownButton.
-        //
-        // When a user selects a theme from the dropdown list, the
-        // SettingsController is updated, which rebuilds the MaterialApp.
         child: Column(
           children: [
             DropdownButton<ThemeMode>(
@@ -57,14 +47,26 @@ class SettingsView extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
+              onPressed: controller.connectFitbit,
+              child: const Text('Connect to fitbit'),
+            ),
+            const SizedBox(height: 16.0),
+            if (controller.isFitbitConnected) ...[
+              const Text('Choose what to sync from fitbit'),
+              SwitchListTile(
+                title: const Text('Food Intake'),
+                value: controller.syncFoodIntake,
+                onChanged: (bool value) {
+                  controller.setSyncFoodIntake(value);
+                },
+              ),
+            ],
+            const SizedBox(height: 16.0),
+            ElevatedButton(
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                // navigate to the AuthGate
-                if (context.mounted) {
-                  Navigator.of(context).pushNamed('/');
-                }
+                await controller.logout(context);
               },
-              child: const Text('Sign Out'),
+              child: const Text('Sign Out'),  
             ),
           ],
         ),

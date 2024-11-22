@@ -1,5 +1,5 @@
-import 'package:fitxp/services/db_goals_service.dart';
-import 'package:fitxp/services/health_fetcher_service.dart';
+import 'package:xpfitness/services/db_goals_service.dart';
+import 'package:xpfitness/services/health_fetcher_service.dart';
 
 import '../models/goal.model.dart';
 

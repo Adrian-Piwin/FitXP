@@ -1,3 +1,4 @@
+import 'package:xpfitness/models/data_point.model.dart';
 import 'package:health/health.dart';
 
 List<String> strengthTrainingTypes = [
@@ -8,7 +9,7 @@ List<String> strengthTrainingTypes = [
   "strengthTraining"
 ];
 
-double getHealthAverage(List<HealthDataPoint> data) {
+double getHealthAverage(List<DataPoint> data) {
   if (data.isEmpty) return 0.0;
 
   // Create a map to store the sum of health points for each day
@@ -33,7 +34,7 @@ double getHealthAverage(List<HealthDataPoint> data) {
   return totalSum / dailySums.length;
 }
 
-double getHealthTotal(List<HealthDataPoint> data) {
+double getHealthTotal(List<DataPoint> data) {
   return data.fold(
     0.0,
     (previousValue, element) =>
@@ -41,7 +42,7 @@ double getHealthTotal(List<HealthDataPoint> data) {
   );
 }
 
-double getWorkoutMinutesTotal(List<HealthDataPoint> data) {
+double getWorkoutMinutesTotal(List<DataPoint> data) {
   return data.fold(
     0.0,
     (previousValue, element) =>
@@ -49,7 +50,7 @@ double getWorkoutMinutesTotal(List<HealthDataPoint> data) {
   );
 }
 
-double getWorkoutMinutesAverage(List<HealthDataPoint> data) {
+double getWorkoutMinutesAverage(List<DataPoint> data) {
   if (data.isEmpty) return 0.0;
 
   // Create a map to store the sum of workout minutes for each day

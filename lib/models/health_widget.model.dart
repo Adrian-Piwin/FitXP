@@ -1,10 +1,11 @@
-import 'package:fitxp/enums/timeframe.enum.dart';
-import 'package:fitxp/models/goal.model.dart';
-import 'package:fitxp/models/health_widget_config.model.dart';
-import 'package:fitxp/pages/home/basic_large_widget_item.dart';
-import 'package:fitxp/pages/home/basic_widget_item.dart';
-import 'package:fitxp/services/health_fetcher_service.dart';
-import 'package:fitxp/utility/timeframe.utility.dart';
+import 'package:xpfitness/enums/timeframe.enum.dart';
+import 'package:xpfitness/models/data_point.model.dart';
+import 'package:xpfitness/models/goal.model.dart';
+import 'package:xpfitness/models/health_widget_config.model.dart';
+import 'package:xpfitness/pages/home/basic_large_widget_item.dart';
+import 'package:xpfitness/pages/home/basic_widget_item.dart';
+import 'package:xpfitness/services/health_fetcher_service.dart';
+import 'package:xpfitness/utility/timeframe.utility.dart';
 import 'package:health/health.dart';
 import '../constants/health_item_definitions.constants.dart';
 import '../utility/health.utility.dart';
@@ -15,7 +16,7 @@ class HealthWidget{
   final Goal goals;
   final int widgetSize;
 
-  Map<HealthDataType, List<HealthDataPoint>> _data = {};
+  Map<HealthDataType, List<DataPoint>> _data = {};
   TimeFrame _timeFrame = TimeFrame.day;
   int _offset = 0;
   double _total = 0;
@@ -33,11 +34,12 @@ class HealthWidget{
 
   Future<void> fetchData() async {
    _data = await healthFetcherService.fetchData(healthItem.dataType, _timeFrame, _offset);
+   print(_data);
    _total = _getTotal;
    _average = _getAverage;
   }
 
-  List<HealthDataPoint> _getCombinedData() {
+  List<DataPoint> _getCombinedData() {
     return _data.values.expand((list) => list).toList();
   }
 
@@ -104,24 +106,10 @@ class StepsHealthWidget extends HealthWidget {
     super.timeFrame,
   );
 
-  int _steps = 0;
-
-  @override
-  Future<void> fetchData() async {
-    _steps = await healthFetcherService.getSteps(_timeFrame, _offset);
-    _total = _getTotal;
-    _average = _getAverage;
-  }
-
-  @override
-  double get _getTotal {
-    return _steps.toDouble();
-  }
-
   @override
   double get _getAverage {
     final dateRange = calculateDateRange(_timeFrame, _offset);
-    return _steps.toDouble() / dateRange.duration.inDays;
+    return _getTotal / dateRange.duration.inDays;
   }
 }
 

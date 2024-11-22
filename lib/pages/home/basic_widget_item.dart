@@ -1,5 +1,5 @@
-import 'package:fitxp/constants/sizes.constants.dart';
-import 'package:fitxp/models/health_widget_config.model.dart';
+import 'package:xpfitness/constants/sizes.constants.dart';
+import 'package:xpfitness/models/health_widget_config.model.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import '../../constants/colors.constants.dart';
@@ -39,14 +39,14 @@ class BasicWidgetItem extends StatelessWidget {
             ),
           ),
           const SizedBox(height: GapSizes.small),
-          config.goalPercent != null
+          config.goalPercent != -1
             ? SizedBox(
                 width: 70,
                 height: 70,
                 child: AnimatedRadialGauge(
                   duration: const Duration(seconds: 1),
                   curve: Curves.elasticOut,
-                  value: config.goalPercent!,
+                  value: config.goalPercent,
                   axis: GaugeAxis(
                     min: 0,
                     max: 1,

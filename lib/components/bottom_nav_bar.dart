@@ -1,4 +1,4 @@
-import 'package:fitxp/constants/icons.constants.dart';
+import 'package:xpfitness/constants/icons.constants.dart';
 import 'package:flutter/material.dart';
 import '../pages/home/home_view.dart';
 import '../pages/goals/goals_view.dart';

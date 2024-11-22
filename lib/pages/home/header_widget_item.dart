@@ -1,6 +1,6 @@
-import 'package:fitxp/constants/colors.constants.dart';
-import 'package:fitxp/constants/sizes.constants.dart';
-import 'package:fitxp/models/health_widget_config.model.dart';
+import 'package:xpfitness/constants/colors.constants.dart';
+import 'package:xpfitness/constants/sizes.constants.dart';
+import 'package:xpfitness/models/health_widget_config.model.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
