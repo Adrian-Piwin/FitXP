@@ -42,7 +42,15 @@ class HomeView extends StatelessWidget {
                       controller.updateOffset(newOffset);
                     },
                   ),
-                  Expanded(
+                  if (controller.isLoading)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: GapSizes.xlarge),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else
+                    Expanded(
                     child: RefreshIndicator(
                       onRefresh: controller.refresh,
                       child: SingleChildScrollView(
