@@ -4,14 +4,12 @@ import 'package:xpfitness/models/goal.model.dart';
 import 'package:xpfitness/models/health_widget_config.model.dart';
 import 'package:xpfitness/pages/home/basic_large_widget_item.dart';
 import 'package:xpfitness/pages/home/basic_widget_item.dart';
-import 'package:xpfitness/services/health_fetcher_service.dart';
 import 'package:xpfitness/utility/timeframe.utility.dart';
 import 'package:health/health.dart';
 import '../constants/health_item_definitions.constants.dart';
 import '../utility/health.utility.dart';
 
 class HealthWidget{
-  final HealthFetcherService healthFetcherService;
   final HealthItem healthItem;
   final Goal goals;
   final int widgetSize;
@@ -23,7 +21,7 @@ class HealthWidget{
   double _average = 0;
   double _goal = 0;
 
-  HealthWidget(this.healthFetcherService, this.healthItem, this.goals, this.widgetSize){
+  HealthWidget(this.healthItem, this.goals, this.widgetSize){
     _goal = healthItem.getGoal != null && healthItem.getGoal!(goals) != -1 ? healthItem.getGoal!(goals) : -1;
   }
 
@@ -32,11 +30,14 @@ class HealthWidget{
     _offset = newOffset;
   }
 
-  Future<void> fetchData() async {
-   _data = await healthFetcherService.fetchData(healthItem.dataType, _timeFrame, _offset);
-   print(_data);
-   _total = _getTotal;
-   _average = _getAverage;
+  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
+    _data = Map.fromEntries(
+      healthItem.dataType.map((type) => 
+        MapEntry(type, batchData[type] ?? [])
+      )
+    );
+    _total = _getTotal;
+    _average = _getAverage;
   }
 
   List<DataPoint> _getCombinedData() {
@@ -84,6 +85,7 @@ class HealthWidget{
 
   Map<String, dynamic> generateWidget() {
     HealthWidgetConfig config = getConfig;
+    config.data = _getCombinedData();
 
     return {
       "size": config.size,
@@ -100,7 +102,6 @@ class HealthWidget{
 
 class StepsHealthWidget extends HealthWidget {
   StepsHealthWidget(
-    super.healthFetcherService,
     super.healthItem,
     super.goals,
     super.timeFrame,
@@ -113,23 +114,25 @@ class StepsHealthWidget extends HealthWidget {
   }
 }
 
-class NetCaloriesyHealthWidget extends HealthWidget{
-  NetCaloriesyHealthWidget(
-    super.healthFetcherService,
+class NetCaloriesHealthWidget extends HealthWidget {
+  NetCaloriesHealthWidget(
     super.healthItem,
     super.goal,
     super.timeFrame,
   );
 
   @override
-  Future<void> fetchData() async {
-    var energyBurnedData = await healthFetcherService.fetchData([HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED],_timeFrame, _offset);
-    var energyConsumedData = await healthFetcherService.fetchData([HealthDataType.DIETARY_ENERGY_CONSUMED], _timeFrame, _offset);
-    
-    var totalEnergyBurned = getHealthTotal(energyBurnedData[HealthDataType.ACTIVE_ENERGY_BURNED]!) + getHealthTotal(energyBurnedData[HealthDataType.BASAL_ENERGY_BURNED]!);
-    var totalEnergyConsumed = getHealthTotal(energyConsumedData[HealthDataType.DIETARY_ENERGY_CONSUMED]!);
-    var avgEnergyBurned = getHealthAverage(energyBurnedData[HealthDataType.ACTIVE_ENERGY_BURNED]!) + getHealthAverage(energyBurnedData[HealthDataType.BASAL_ENERGY_BURNED]!);
-    var avgEnergyConsumed = getHealthAverage(energyConsumedData[HealthDataType.DIETARY_ENERGY_CONSUMED]!);
+  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
+    var energyBurnedActive = batchData[HealthDataType.ACTIVE_ENERGY_BURNED] ?? [];
+    var energyBurnedBasal = batchData[HealthDataType.BASAL_ENERGY_BURNED] ?? [];
+    var energyConsumed = batchData[HealthDataType.DIETARY_ENERGY_CONSUMED] ?? [];
+
+    var totalEnergyBurned = getHealthTotal(energyBurnedActive) + 
+                           getHealthTotal(energyBurnedBasal);
+    var totalEnergyConsumed = getHealthTotal(energyConsumed);
+    var avgEnergyBurned = getHealthAverage(energyBurnedActive) + 
+                         getHealthAverage(energyBurnedBasal);
+    var avgEnergyConsumed = getHealthAverage(energyConsumed);
 
     _total = totalEnergyConsumed - totalEnergyBurned;
     _average = avgEnergyConsumed - avgEnergyBurned;
@@ -149,7 +152,6 @@ class NetCaloriesyHealthWidget extends HealthWidget{
 
 class SleepHealthWidget extends HealthWidget {
   SleepHealthWidget(
-    super.healthFetcherService,
     super.healthItem,
     super.goals,
     super.timeFrame,

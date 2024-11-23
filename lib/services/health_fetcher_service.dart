@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'package:xpfitness/constants/health_data_types.constants.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fitbitter/fitbitter.dart';
 import 'package:health/health.dart';
+import 'package:xpfitness/services/fitbit_service.dart';
 import '../models/data_point.model.dart';
 import '../enums/timeframe.enum.dart';
 import '../utility/timeframe.utility.dart';
+import '../services/health_data_cache_service.dart';
 
 class HealthFetcherService {
   final Health _health = Health();
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final FitbitService _fitbitService = FitbitService();
+  final HealthDataCache _cache = HealthDataCache();
   bool _isAuthorized = false;
 
   HealthFetcherService() {
@@ -18,21 +19,8 @@ class HealthFetcherService {
   }
 
   Future<void> _initialize() async {
+    await dotenv.load(fileName: ".env"); // Load env file first
     _isAuthorized = await _health.hasPermissions(healthDataTypes) == true;
-  }
-
-  Future<bool> _canUseFitbit(List<HealthDataType> healthtypes) async {
-    String? accessToken = await _secureStorage.read(key: 'accessToken');
-    if (accessToken == null || accessToken.isEmpty) {
-      return false;
-    }
-
-    for (var healthtype in healthtypes) {
-      if (_mapHealthItemTypeToFitbitEndpoint(healthtype) == null) {
-        return false;
-      }
-    }
-    return true;
   }
 
   Future<bool> checkAndRequestPermissions() async {
@@ -43,97 +31,81 @@ class HealthFetcherService {
     return _isAuthorized;
   }
 
-  Future<Map<HealthDataType, List<DataPoint>>> fetchData(
-      List<HealthDataType> items, TimeFrame timeframe, int offset) async {
-    if (await _canUseFitbit(items)) {
-      return _fetchFitbitData(items, timeframe, offset);
-    } else {
-      return _fetchHealthData(items, timeframe, offset);
+  Future<Map<HealthDataType, List<DataPoint>>> fetchBatchData(
+      Set<HealthDataType> items, TimeFrame timeframe, int offset) async {
+    // Check cache first
+    final cachedData = _cache.getData(timeframe, offset);
+    if (cachedData != null) {
+      return Map.from(cachedData);
     }
+
+    Map<HealthDataType, List<DataPoint>> allData = {};
+
+    // Get list of Fitbit-supported types
+    final supportedTypes = await _fitbitService.getSupportedHealthTypes(items.toList());
+    
+    // Split items into Fitbit and Health types
+    final fitbitTypes = items.where((type) => supportedTypes.contains(type)).toSet();
+    final healthTypes = items.where((type) => !supportedTypes.contains(type)).toSet();
+
+    // Fetch Fitbit data for supported types
+    final dateRange = calculateDateRange(timeframe, offset);
+    if (fitbitTypes.isNotEmpty) {
+      try {
+        final fitbitData = await _fitbitService.fetchBatchData(
+            fitbitTypes, dateRange.start, dateRange.end);
+        allData.addAll(fitbitData);
+      } catch (e) {
+        print('Fitbit fetch failed, falling back to Health for those types: $e');
+        final fallbackData = await _fetchHealthBatchData(fitbitTypes, dateRange.start, dateRange.end);
+        allData.addAll(fallbackData);
+      }
+    }
+
+    // Fetch remaining data from Health
+    if (healthTypes.isNotEmpty) {
+      final healthData = await _fetchHealthBatchData(healthTypes, dateRange.start, dateRange.end);
+      allData.addAll(healthData);
+    }
+
+    // Cache the results
+    _cache.cacheData(timeframe, offset, allData);
+    return allData;
   }
 
-  Future<Map<HealthDataType, List<DataPoint>>> _fetchHealthData(
-      List<HealthDataType> items, TimeFrame timeframe, int offset) async {
-    final dateRange = calculateDateRange(timeframe, offset);
+  void clearCache() {
+    _cache.clearCache();
+  }
 
+  Future<Map<HealthDataType, List<DataPoint>>> _fetchHealthBatchData(
+      Set<HealthDataType> items, DateTime startDate, DateTime endDate) async {
     Map<HealthDataType, List<DataPoint>> data = {};
-    for (var item in items) {
-      // Steps arent fetched properly unless we do this
-      if (item == HealthDataType.STEPS){
-        final dateRange = calculateDateRange(timeframe, offset);
-        final steps = await _health.getTotalStepsInInterval(dateRange.start, dateRange.end) ?? 0;
-        data[item] = [DataPoint(dateFrom: dateRange.start, dateTo: dateRange.end, value: steps.toDouble())];
-        continue;
-      }
 
-      final points = await _health.getHealthDataFromTypes(
-        types: [item],
-        startTime: dateRange.start,
-        endTime: dateRange.end,
+    List<HealthDataPoint> points = [];
+    try {
+      print('fetching health data for ${items.toList()}');
+      points = await _health.getHealthDataFromTypes(
+        startTime: startDate,
+        endTime: endDate,
+        types: items.toList(),
       );
-      data[item] = points.map((p) {
+      points = _health.removeDuplicates(points);
+    } catch (e) {
+      print('Error fetching health data: $e');
+    }
+
+    for (var item in items) {
+      data[item] = points.where((p) => p.type == item).map((p) {
         return DataPoint(
           value: (p.value as NumericHealthValue).numericValue.toDouble(),
           dateFrom: p.dateFrom,
           dateTo: p.dateTo,
+          activityType:
+              '${p.recordingMethod} ${p.sourceName} ${p.sourcePlatform}',
         );
       }).toList();
     }
+    
     return data;
-  }
-
-  Future<Map<HealthDataType, List<DataPoint>>> _fetchFitbitData(
-      List<HealthDataType> items, TimeFrame timeframe, int offset) async {
-    final accessToken = await _secureStorage.read(key: 'accessToken');
-    final dateRange = calculateDateRange(timeframe, offset);
-    final userId = await _secureStorage.read(key: 'userID');
-    final refreshToken = await _secureStorage.read(key: 'refreshToken');
-
-    FitbitActivityTimeseriesDataManager fitbitActivityTimeseriesDataManager = FitbitActivityTimeseriesDataManager(
-      clientID: dotenv.env['FITBIT_CLIENTID'] ?? '',
-      clientSecret: dotenv.env['FITBIT_SECRET'] ?? '',
-    );
-    FitbitCredentials fitbitCredentials = FitbitCredentials(
-      fitbitAccessToken: accessToken!,
-      fitbitRefreshToken: refreshToken!,
-      userID: userId!
-    );
-
-    Map<HealthDataType, List<DataPoint>> data = {};
-
-    for (var item in items) {
-      final endpoint = _mapHealthItemTypeToFitbitEndpoint(item);
-      if (endpoint != null) {
-        var fitbitActivityTimeseriesApiUrl = FitbitActivityTimeseriesAPIURL.dateRangeWithResource(
-          fitbitCredentials: fitbitCredentials, 
-          startDate: dateRange.start, 
-          endDate: dateRange.end,
-          resource: endpoint, 
-        );
-
-        List<FitbitActivityTimeseriesData> fitbitData = await fitbitActivityTimeseriesDataManager.getResponse(fitbitActivityTimeseriesApiUrl);
-
-        data[item] = fitbitData.map((f) {
-          return DataPoint(
-            value: f.value!,
-            dateFrom: f.dateOfMonitoring!,
-            dateTo: f.dateOfMonitoring!,
-          );
-        }).toList();
-      }
-    }
-
-    return data;
-  }
-
-  Resource? _mapHealthItemTypeToFitbitEndpoint(HealthDataType item) {
-    switch (item) {
-      case HealthDataType.STEPS:
-        return Resource.steps;
-      case HealthDataType.ACTIVE_ENERGY_BURNED:
-        return Resource.activityCalories;
-      default:
-        return null; // Not available in Fitbit API
-    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpfitness/models/data_point.model.dart';
 
 class HealthWidgetConfig {
   final String title;
@@ -8,6 +9,7 @@ class HealthWidgetConfig {
   final Color color;
   final int size;
   final double goalPercent;
+  late List<DataPoint> data;
 
   HealthWidgetConfig({
     required this.title,

@@ -1,6 +1,5 @@
 import 'package:xpfitness/models/goal.model.dart';
 import 'package:xpfitness/models/health_widget.model.dart';
-import 'package:xpfitness/services/health_fetcher_service.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import '../enums/health_item_type.enum.dart';
@@ -8,7 +7,7 @@ import 'colors.constants.dart';
 import 'icons.constants.dart';
 
 typedef GoalGetter = double Function(Goal goal);
-typedef WidgetFactory = HealthWidget Function(HealthFetcherService service,
+typedef WidgetFactory = HealthWidget Function(
     HealthItem item, Goal goals, int widgetSize);
 
 class HealthItem {
@@ -20,8 +19,8 @@ class HealthItem {
   late IconData icon;
   GoalGetter? getGoal;
   WidgetFactory widgetFactory =
-      ((service, item, goals, widgetSize) =>
-          HealthWidget(service, item, goals, widgetSize));
+      ((item, goals, widgetSize) =>
+          HealthWidget(item, goals, widgetSize));
 }
 
 class HealthItemDefinitions {
@@ -63,8 +62,8 @@ class HealthItemDefinitions {
     ..color = RepresentationColors.sleepColor
     ..icon = IconTypes.sleepDurationIcon
     ..getGoal = ((Goal goal) => goal.sleepGoal.inMinutes.toDouble())
-    ..widgetFactory = ((service, item, goals, widgetSize) =>
-        SleepHealthWidget(service, item, goals, widgetSize));
+    ..widgetFactory = ((item, goals, widgetSize) =>
+        SleepHealthWidget(item, goals, widgetSize));
 
   static HealthItem activeCalories = HealthItem()
     ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED]
@@ -99,8 +98,8 @@ class HealthItemDefinitions {
     ..color = RepresentationColors.netCaloriesColor
     ..icon = IconTypes.netCaloriesIcon
     ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
-    ..widgetFactory = ((service, item, goals, widgetSize) =>
-        NetCaloriesyHealthWidget(service, item, goals, widgetSize));
+    ..widgetFactory = ((item, goals, widgetSize) =>
+        NetCaloriesHealthWidget(item, goals, widgetSize));
 
   static HealthItem steps = HealthItem()
     ..dataType = [HealthDataType.STEPS]
@@ -109,7 +108,5 @@ class HealthItemDefinitions {
     ..unit = " steps"
     ..color = RepresentationColors.stepsColor
     ..icon = IconTypes.stepsIcon
-    ..getGoal = ((Goal goal) => goal.stepsGoal)
-    ..widgetFactory = ((service, item, goals, widgetSize) =>
-        StepsHealthWidget(service, item, goals, widgetSize));
+    ..getGoal = ((Goal goal) => goal.stepsGoal);
 }

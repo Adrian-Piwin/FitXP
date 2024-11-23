@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health/health.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/goal.model.dart';
 import '../../models/health_widget.model.dart';
@@ -38,10 +39,21 @@ class HomeController extends ChangeNotifier {
         HealthItemDefinitions.exerciseTime,
         HealthItemDefinitions.sleepDuration,
         HealthItemDefinitions.steps,
+        HealthItemDefinitions.expendedEnergy,
+        HealthItemDefinitions.dietaryCalories,
+        HealthItemDefinitions.netCalories,
       ];
 
   List<HealthWidget> headerWidgets = [];
   List<HealthWidget> displayWidgets = [];
+
+  Set<HealthDataType> get _allRequiredHealthTypes {
+    Set<HealthDataType> types = {};
+    for (var item in [...headerHealthItems, ...healthItems]) {
+      types.addAll(item.dataType);
+    }
+    return types;
+  }
 
   HomeController(BuildContext context) {
     _initialize();
@@ -68,7 +80,6 @@ class HomeController extends ChangeNotifier {
     for (var healthItem in headerHealthItems) {
       var widgetFactory = healthItem.widgetFactory;
       HealthWidget widget = widgetFactory(
-        _healthFetcherService,
         healthItem,
         _goals!,
         2,
@@ -79,7 +90,6 @@ class HomeController extends ChangeNotifier {
     for (var healthItem in healthItems) {
       var widgetFactory = healthItem.widgetFactory;
       HealthWidget widget = widgetFactory(
-        _healthFetcherService,
         healthItem,
         _goals!,
         2,
@@ -104,14 +114,17 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      for (var widget in headerWidgets) {
-        widget.update(_selectedTimeFrame, _offset);
-        await widget.fetchData();
-      }
+      // Fetch all required data in one batch
+      final batchData = await _healthFetcherService.fetchBatchData(
+        _allRequiredHealthTypes,
+        _selectedTimeFrame,
+        _offset
+      );
 
-      for (var widget in displayWidgets) {
+      // Update each widget with the relevant data
+      for (var widget in [...headerWidgets, ...displayWidgets]) {
         widget.update(_selectedTimeFrame, _offset);
-        await widget.fetchData();
+        widget.updateData(batchData);
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -122,6 +135,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
+    _healthFetcherService.clearCache();
     await fetchHealthData();
   }
 }

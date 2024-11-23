@@ -21,9 +21,9 @@ double getHealthAverage(List<DataPoint> data) {
 
     // Add the value to the corresponding day in the map
     if (dailySums.containsKey(date)) {
-      dailySums[date] = dailySums[date]! + (point.value as NumericHealthValue).numericValue;
+      dailySums[date] = dailySums[date]! + point.value;
     } else {
-      dailySums[date] = (point.value as NumericHealthValue).numericValue.toDouble();
+      dailySums[date] = point.value;
     }
   }
 
@@ -38,7 +38,7 @@ double getHealthTotal(List<DataPoint> data) {
   return data.fold(
     0.0,
     (previousValue, element) =>
-        previousValue + (element.value as NumericHealthValue).numericValue,
+        previousValue + element.value,
   );
 }
 

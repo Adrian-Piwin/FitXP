@@ -21,21 +21,17 @@ class AuthGate extends StatelessWidget {
               GoogleProvider(clientId: "896043199805-p3gv6veoitiib3jqgmkl8825ihst51nv.apps.googleusercontent.com")
             ],
             headerBuilder: (context, constraints, shrinkOffset) {
-             return Padding(
-               padding: const EdgeInsets.all(20),
-               child: Text(
-                  'Welcome to FitXP',
-               ),
-             );
-           },
-           subtitleBuilder: (context, action) {
-             return Padding(
-               padding: const EdgeInsets.symmetric(vertical: 8.0),
-               child: action == AuthAction.signIn
-                   ? const Text('Welcome to fitXP, please sign in!')
-                   : const Text('Welcome to fitXP, please sign up!'),
-             );
-           },
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Image.asset(
+                    'assets/images/logo-1024.png',
+                    width: constraints.maxWidth * 0.8,  // 80% of screen width
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              );
+            },
           );
         }
 
