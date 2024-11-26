@@ -1,5 +1,5 @@
-import 'package:xpfitness/constants/sizes.constants.dart';
-import 'package:xpfitness/models/health_widget_config.model.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/models/health_widget_config.model.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import '../../constants/colors.constants.dart';

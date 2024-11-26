@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:xpfitness/services/fitbit_service.dart';
+import 'package:healthxp/services/fitbit_service.dart';
 import 'settings_service.dart';
 
 class SettingsController with ChangeNotifier {

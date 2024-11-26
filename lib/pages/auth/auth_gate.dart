@@ -25,7 +25,7 @@ class AuthGate extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Image.asset(
-                    'assets/images/logo-1024.png',
+                    'assets/images/logo.png',
                     width: constraints.maxWidth * 0.8,  // 80% of screen width
                     fit: BoxFit.contain,
                   ),

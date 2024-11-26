@@ -1,5 +1,5 @@
-import 'package:xpfitness/models/goal.model.dart';
-import 'package:xpfitness/models/health_widget.model.dart';
+import 'package:healthxp/models/goal.model.dart';
+import 'package:healthxp/models/health_widget.model.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import '../enums/health_item_type.enum.dart';

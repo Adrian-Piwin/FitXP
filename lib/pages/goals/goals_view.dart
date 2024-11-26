@@ -1,5 +1,5 @@
-import 'package:xpfitness/constants/sizes.constants.dart';
-import 'package:xpfitness/enums/phase_type.enum.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/enums/phase_type.enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';

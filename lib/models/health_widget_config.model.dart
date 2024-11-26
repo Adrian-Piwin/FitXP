@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xpfitness/models/data_point.model.dart';
+import 'package:healthxp/models/data_point.model.dart';
 
 class HealthWidgetConfig {
   final String title;

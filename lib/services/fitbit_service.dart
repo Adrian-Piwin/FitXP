@@ -2,7 +2,7 @@ import 'package:fitbitter/fitbitter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
-import 'package:xpfitness/models/data_point.model.dart';
+import 'package:healthxp/models/data_point.model.dart';
 
 class FitbitService {
   static final FitbitService _instance = FitbitService._internal();
@@ -105,40 +105,35 @@ class FitbitService {
     }
 
     Map<HealthDataType, List<DataPoint>> batchData = {};
-    Map<Resource, List<HealthDataType>> resourceGroups = {};
 
-    // Group health types by their Fitbit resource to minimize API calls
-    for (var item in items) {
-      final resource = mapHealthItemTypeToFitbitEndpoint(item);
-      if (resource != null) {
-        resourceGroups.putIfAbsent(resource, () => []).add(item);
-      }
-    }
-
-    // Fetch data for each resource group
-    for (var entry in resourceGroups.entries) {
-      final resource = entry.key;
-      final healthTypes = entry.value;
-      
-      try {
-        print('fetching fitbit data for $resource');
-        final fitbitData = await _getFitbitDataInternal(startDate, endDate, resource);
+    // Process each health type
+    for (var healthType in items) {
+      final resources = mapHealthItemTypeToFitbitEndpoint(healthType);
+      if (resources != null) {
+        List<DataPoint> combinedData = [];
         
-        // Convert Fitbit data to DataPoint format for each health type
-        for (var healthType in healthTypes) {
-          batchData[healthType] = fitbitData.map((f) {
-            return DataPoint(
-              value: f.value?.toDouble() ?? 0,
-              dateFrom: f.dateOfMonitoring ?? DateTime.now(),
-              dateTo: f.dateOfMonitoring ?? DateTime.now(),
-              activityType: 'Fitbit',
-            );
-          }).toList();
+        // Fetch data for each resource
+        for (var resource in resources) {
+          try {
+            print('fetching fitbit data for $resource');
+            final fitbitData = await _getFitbitDataInternal(startDate, endDate, resource);
+            
+            // Convert and add to combined data
+            combinedData.addAll(fitbitData.map((f) {
+              return DataPoint(
+                value: f.value?.toDouble() ?? 0,
+                dateFrom: f.dateOfMonitoring ?? DateTime.now(),
+                dateTo: f.dateOfMonitoring ?? DateTime.now(),
+                activityType: 'Fitbit',
+              );
+            }));
+          } catch (e) {
+            print('Error fetching Fitbit data for $resource: $e');
+            rethrow;
+          }
         }
-      } catch (e) {
-        print('Error fetching Fitbit data for $resource: $e');
-        // Let the caller handle the error and fallback to Health data
-        rethrow;
+        
+        batchData[healthType] = combinedData;
       }
     }
 
@@ -198,14 +193,16 @@ class FitbitService {
     }
   }
 
-  Resource? mapHealthItemTypeToFitbitEndpoint(HealthDataType item) {
+  List<Resource>? mapHealthItemTypeToFitbitEndpoint(HealthDataType item) {
     switch (item) {
       case HealthDataType.STEPS:
-        return Resource.steps;
+        return [Resource.steps];
       case HealthDataType.ACTIVE_ENERGY_BURNED:
-        return Resource.activityCalories;
+        return [Resource.activityCalories];
       case HealthDataType.BASAL_ENERGY_BURNED:
-        return Resource.caloriesBMR;
+        return [Resource.caloriesBMR];
+      case HealthDataType.EXERCISE_TIME:
+        return [Resource.minutesFairlyActive, Resource.minutesVeryActive];
       default:
         return null;
     }

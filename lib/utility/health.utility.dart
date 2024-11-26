@@ -1,4 +1,4 @@
-import 'package:xpfitness/models/data_point.model.dart';
+import 'package:healthxp/models/data_point.model.dart';
 import 'package:health/health.dart';
 
 List<String> strengthTrainingTypes = [
@@ -125,4 +125,88 @@ List<HealthDataPoint> extractCardioMinutes(List<HealthDataPoint> dataPoints) {
       .where((point) =>
           !strengthTrainingTypes.contains(point.workoutSummary?.workoutType))
       .toList();
+}
+
+List<HealthDataPoint> removeOverlappingData(List<HealthDataPoint> points) {
+  if (points.isEmpty) return points;
+
+  // Group points by type to handle each type separately
+  Map<HealthDataType, List<HealthDataPoint>> pointsByType = {};
+  for (var point in points) {
+    if (!pointsByType.containsKey(point.type)) {
+      pointsByType[point.type] = [];
+    }
+    pointsByType[point.type]!.add(point);
+  }
+
+  List<HealthDataPoint> result = [];
+
+  // Process each type separately
+  for (var type in pointsByType.keys) {
+    var typePoints = pointsByType[type]!;
+
+    // Get unique sources for this type
+    Set<String> sources = typePoints.map((p) => p.sourceName).toSet();
+
+    // If only one source, add all points for this type
+    if (sources.length <= 1) {
+      result.addAll(typePoints);
+      continue;
+    }
+
+    // Group points by source
+    Map<String, List<HealthDataPoint>> pointsBySource = {};
+    for (var point in typePoints) {
+      if (!pointsBySource.containsKey(point.sourceName)) {
+        pointsBySource[point.sourceName] = [];
+      }
+      pointsBySource[point.sourceName]!.add(point);
+    }
+
+    // Count points per source
+    Map<String, int> sourceCount = {};
+    for (var source in sources) {
+      sourceCount[source] = pointsBySource[source]!.length;
+    }
+
+    // Sort sources by count
+    final sortedSources = sourceCount.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    // Create priority map
+    Map<String, int> sourcePriority = {};
+    for (var i = 0; i < sortedSources.length; i++) {
+      sourcePriority[sortedSources[i].key] = i;
+    }
+
+    // Process each source's points separately
+    for (var source in sources) {
+      var sourcePoints = pointsBySource[source]!;
+      
+      // For each point from this source, check if it overlaps with higher priority sources
+      for (var point in sourcePoints) {
+        bool hasOverlap = false;
+        
+        // Check against points from higher priority sources
+        for (var otherSource in sources) {
+          if (sourcePriority[otherSource]! < sourcePriority[source]!) {
+            for (var otherPoint in pointsBySource[otherSource]!) {
+              if (point.dateFrom.isBefore(otherPoint.dateTo) && 
+                  point.dateTo.isAfter(otherPoint.dateFrom)) {
+                hasOverlap = true;
+                break;
+              }
+            }
+            if (hasOverlap) break;
+          }
+        }
+        
+        if (!hasOverlap) {
+          result.add(point);
+        }
+      }
+    }
+  }
+
+  return result;
 }

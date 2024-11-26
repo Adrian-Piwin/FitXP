@@ -1,10 +1,10 @@
-import 'package:xpfitness/enums/timeframe.enum.dart';
-import 'package:xpfitness/models/data_point.model.dart';
-import 'package:xpfitness/models/goal.model.dart';
-import 'package:xpfitness/models/health_widget_config.model.dart';
-import 'package:xpfitness/pages/home/basic_large_widget_item.dart';
-import 'package:xpfitness/pages/home/basic_widget_item.dart';
-import 'package:xpfitness/utility/timeframe.utility.dart';
+import 'package:healthxp/enums/timeframe.enum.dart';
+import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/goal.model.dart';
+import 'package:healthxp/models/health_widget_config.model.dart';
+import 'package:healthxp/pages/home/basic_large_widget_item.dart';
+import 'package:healthxp/pages/home/basic_widget_item.dart';
+import 'package:healthxp/utility/timeframe.utility.dart';
 import 'package:health/health.dart';
 import '../constants/health_item_definitions.constants.dart';
 import '../utility/health.utility.dart';

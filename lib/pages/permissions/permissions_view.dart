@@ -1,4 +1,4 @@
-import 'package:xpfitness/constants/sizes.constants.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'permissions_controller.dart';
 import '../home/home_view.dart';
