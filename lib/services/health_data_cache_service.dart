@@ -25,4 +25,9 @@ class HealthDataCache {
   void clearCache() {
     _cache.clear();
   }
+
+  void clearCacheForKey(TimeFrame timeframe, int offset) {
+    final key = _generateKey(timeframe, offset);
+    _cache.remove(key);
+  }
 } 

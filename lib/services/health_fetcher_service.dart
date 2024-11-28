@@ -78,6 +78,10 @@ class HealthFetcherService {
     _cache.clearCache();
   }
 
+  void clearCacheForKey(TimeFrame timeframe, int offset) {
+    _cache.clearCacheForKey(timeframe, offset);
+  }
+
   Future<Map<HealthDataType, List<DataPoint>>> _fetchHealthBatchData(
       Set<HealthDataType> items, DateTime startDate, DateTime endDate) async {
     Map<HealthDataType, List<DataPoint>> data = {};
