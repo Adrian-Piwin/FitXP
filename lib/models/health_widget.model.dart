@@ -144,6 +144,9 @@ class NetCaloriesHealthWidget extends HealthWidget {
 
     var total = _total;
     if (_goal < 0) {
+      if (total > 0) {
+        return 0;
+      }
       total = _total.abs();
     }
     return (total / _goal.abs()).clamp(0, 1);
