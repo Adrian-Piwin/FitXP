@@ -65,7 +65,7 @@ class HealthDataDetailPage extends StatelessWidget {
                   }
                   else {
                     return SingleChildScrollView(
-                      child: GridLayout(widgets: [controller.buildBarChartWidget()]),
+                      child: GridLayout(widgets: controller.buildWidgets()),
                     );
                   }
                 },

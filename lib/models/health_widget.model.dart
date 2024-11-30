@@ -36,12 +36,32 @@ class HealthWidget{
     return data.values.expand((list) => list).toList();
   }
 
-  double get _getTotal {
+  double get getTotal {
     return getHealthTotal(_getCombinedData);
   }
 
-  double get _getAverage {
+  double get getAverage {
     return getHealthAverage(_getCombinedData);
+  }
+
+  double get getGoal {
+    return _goal;
+  }
+
+  double get getGoalPercent {
+    if (_goal == 0) return 0.0;
+    if (_goal == -1) return -1;
+    return (_total / _goal).clamp(0, 1);
+  }
+
+  double get getGoalAveragePercent {
+    if (_goal == 0) return 0.0;
+    if (_goal == -1) return -1;
+    return (_average / _goal).clamp(0, 1);
+  }
+
+  String get getUnit {
+    return healthItem.unit;
   }
 
   String get _getSubtitle {
@@ -54,25 +74,19 @@ class HealthWidget{
     }
   }
 
-  String get _getValue {
+  String get _getDisplayValue {
     return (_total).toStringAsFixed(0);
-  }
-
-  double get _getGoalPercent {
-    if (_goal == 0) return 0.0;
-    if (_goal == -1) return -1;
-    return (_total / _goal).clamp(0, 1);
   }
 
   HealthWidgetConfig get getConfig {
     return HealthWidgetConfig(
       title: healthItem.title, 
       subtitle: _getSubtitle, 
-      displayValue: _getValue, 
+      displayValue: _getDisplayValue, 
       icon: healthItem.icon, 
       color: healthItem.color, 
       size: widgetSize, 
-      goalPercent: _getGoalPercent,
+      goalPercent: getGoalPercent,
     );
   }
 
@@ -87,8 +101,8 @@ class HealthWidget{
         MapEntry(type, batchData[type] ?? [])
       )
     );
-    _total = _getTotal;
-    _average = _getAverage;
+    _total = getTotal;
+    _average = getAverage;
   }
 
   Map<String, dynamic> generateWidget() {
@@ -122,9 +136,9 @@ class StepsHealthWidget extends HealthWidget {
   );
 
   @override
-  double get _getAverage {
+  double get getAverage {
     final dateRange = calculateDateRange(_timeFrame, _offset);
-    return _getTotal / dateRange.duration.inDays;
+    return getTotal / dateRange.duration.inDays;
   }
 }
 
@@ -153,7 +167,7 @@ class NetCaloriesHealthWidget extends HealthWidget {
   }
 
   @override
-  double get _getGoalPercent {
+  double get getGoalPercent {
     if (_goal == 0) return 0.0;
 
     var total = _total;
@@ -184,19 +198,19 @@ class SleepHealthWidget extends HealthWidget {
   String get _getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
       int sleepGoalMinutes = _goal.toInt();
-      int actualSleepMinutes = _getTotal.toInt();
+      int actualSleepMinutes = getTotal.toInt();
       int differenceMinutes = (sleepGoalMinutes - actualSleepMinutes).abs();
 
-      return _goal - _getTotal >= 0 ? 
+      return _goal - getTotal >= 0 ? 
           "${_formatMinutes(differenceMinutes)} left" : 
           "${_formatMinutes(differenceMinutes)} over";
     }
 
-    return "${_formatMinutes(_getAverage.toInt())} avg";
+    return "${_formatMinutes(getAverage.toInt())} avg";
   }
 
   @override
-  String get _getValue {
+  String get _getDisplayValue {
     int totalMinutes = _total.toInt();
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'health_details_controller.dart';
+import 'package:healthxp/models/bar_data.model.dart';
 
 class HealthDetailsBarChart extends StatelessWidget {
   final List<BarData> groupedData;

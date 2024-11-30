@@ -44,7 +44,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   Text(
                     barWidgetConfig.displayValue,
                     style: const TextStyle(
-                      fontSize: FontSizes.large,
+                      fontSize: FontSizes.xlarge,
                     ),
                   ),
                 ],

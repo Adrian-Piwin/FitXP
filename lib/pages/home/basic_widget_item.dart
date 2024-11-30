@@ -60,7 +60,7 @@ class BasicWidgetItem extends StatelessWidget {
                   builder: (context, child, value) => RadialGaugeLabel(
                               value: value,
                               style: const TextStyle(
-                                fontSize: FontSizes.large,
+                                fontSize: FontSizes.xlarge,
                               ),
                             ),
                 ),
