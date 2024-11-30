@@ -116,7 +116,7 @@ class HomeController extends ChangeNotifier {
     try {
       // Fetch all required data in one batch
       final batchData = await _healthFetcherService.fetchBatchData(
-        _allRequiredHealthTypes,
+        _allRequiredHealthTypes.toList(),
         _selectedTimeFrame,
         _offset
       );

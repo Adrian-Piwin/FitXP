@@ -210,3 +210,55 @@ List<HealthDataPoint> removeOverlappingData(List<HealthDataPoint> points) {
 
   return result;
 }
+
+List<DataPoint> combineDataPoints(Map<HealthDataType, List<DataPoint>> points) {
+  // Flatten all points into a single list
+  List<DataPoint> allPoints = points.values.expand((x) => x).toList();
+  
+  // Sort points by start date
+  allPoints.sort((a, b) => a.dateFrom.compareTo(b.dateFrom));
+
+  List<DataPoint> result = [];
+  
+  if (allPoints.isEmpty) {
+    return result;
+  }
+
+  DataPoint current = allPoints[0];
+  double combinedValue = current.value;
+  
+  for (int i = 1; i < allPoints.length; i++) {
+    DataPoint next = allPoints[i];
+    
+    // Check if points overlap
+    if (current.dateTo.isAfter(next.dateFrom)) {
+      // Combine values and extend end date if needed
+      combinedValue += next.value;
+      if (next.dateTo.isAfter(current.dateTo)) {
+        current = DataPoint(
+          value: combinedValue,
+          dateFrom: current.dateFrom,
+          dateTo: next.dateTo,
+        );
+      }
+    } else {
+      // No overlap - add current point and start new one
+      result.add(DataPoint(
+        value: combinedValue,
+        dateFrom: current.dateFrom,
+        dateTo: current.dateTo,
+      ));
+      current = next;
+      combinedValue = next.value;
+    }
+  }
+  
+  // Add final point
+  result.add(DataPoint(
+    value: combinedValue,
+    dateFrom: current.dateFrom,
+    dateTo: current.dateTo,
+  ));
+
+  return result;
+}

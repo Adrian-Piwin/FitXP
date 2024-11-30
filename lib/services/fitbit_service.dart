@@ -124,7 +124,6 @@ class FitbitService {
                 value: f.value?.toDouble() ?? 0,
                 dateFrom: f.dateOfMonitoring ?? DateTime.now(),
                 dateTo: f.dateOfMonitoring ?? DateTime.now(),
-                activityType: 'Fitbit',
               );
             }));
           } catch (e) {

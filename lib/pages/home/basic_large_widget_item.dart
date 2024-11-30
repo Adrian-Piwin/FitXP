@@ -1,16 +1,17 @@
+import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/health_widget_config.model.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
+import 'package:healthxp/models/health_widget.model.dart';
 import '../../constants/colors.constants.dart';
-import '../health_data_detail_page.dart';
+import '../home_details/health_details_view.dart';
 
 class BasicLargeWidgetItem extends StatelessWidget {
-  final HealthWidgetConfig config;
+  final HealthWidget widget;
 
   const BasicLargeWidgetItem({
     super.key,
-    required this.config,
+    required this.widget,
   });
 
   @override
@@ -20,16 +21,11 @@ class BasicLargeWidgetItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HealthDataDetailPage(config: config),
+            builder: (context) => HealthDataDetailPage(widget: widget),
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: WidgetColors.primaryColor,
-          borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-        ),
-        padding: const EdgeInsets.all(16.0),
+      child: WidgetFrame(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -38,7 +34,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  config.title,
+                  widget.getConfig.title,
                   style: const TextStyle(
                     fontSize: FontSizes.medium,
                   ),
@@ -46,30 +42,30 @@ class BasicLargeWidgetItem extends StatelessWidget {
                 ),
                 const SizedBox(height: GapSizes.small),
                 Text(
-                  config.displayValue,
-                  style: TextStyle(
+                  widget.getConfig.displayValue,
+                  style: const TextStyle(
                     fontSize: FontSizes.xxlarge,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: GapSizes.small),
                 Text(
-                  config.subtitle,
-                  style: TextStyle(
+                  widget.getConfig.subtitle,
+                  style: const TextStyle(
                     fontSize: FontSizes.medium,
                     color: Colors.grey,
                   ),
                 ),
               ],
             ),
-            config.goalPercent != -1
+            widget.getConfig.goalPercent != -1
                 ? SizedBox(
                     width: 100,
                     height: 100,
                     child: AnimatedRadialGauge(
                       duration: const Duration(seconds: 1),
                       curve: Curves.elasticOut,
-                      value: config.goalPercent,
+                      value: widget.getConfig.goalPercent,
                       axis: GaugeAxis(
                         min: 0,
                         max: 1,
@@ -80,14 +76,14 @@ class BasicLargeWidgetItem extends StatelessWidget {
                           background: PercentIndicatorColors.backgroundColor,
                         ),
                         progressBar: GaugeProgressBar.rounded(
-                          color: config.color,
+                          color: widget.getConfig.color,
                         ),
                       ),
                       builder: (context, child, value) => Center(
                         child: Icon(
-                          config.icon,
+                          widget.getConfig.icon,
                           size: 24,
-                          color: config.color,
+                          color: widget.getConfig.color,
                         ),
                       ),
                     ),
@@ -101,9 +97,9 @@ class BasicLargeWidgetItem extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        config.icon,
+                        widget.getConfig.icon,
                         size: 24,
-                        color: config.color,
+                        color: widget.getConfig.color,
                       ),
                     ),
                   ),

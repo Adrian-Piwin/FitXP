@@ -1,3 +1,4 @@
+import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -20,12 +21,13 @@ class GridLayout extends StatelessWidget {
         crossAxisSpacing: GapSizes.medium,
         children: widgets.map((widgetInfo) {
           final size = widgetInfo['size'] as int;
+          final height = widgetInfo['height'] as double?;
           final widget = widgetInfo['widget'] as Widget;
       
           return StaggeredGridTile.extent(
             crossAxisCellCount: size == 2 ? 2 : 1, // Spans 2 columns if size == 2
-            mainAxisExtent: WidgetSizes.height, 
-            child: widget,
+            mainAxisExtent: height ?? WidgetSizes.smallHeight, 
+            child: widget
           );
         }).toList(),
       ),

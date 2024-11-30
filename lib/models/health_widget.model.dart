@@ -14,7 +14,7 @@ class HealthWidget{
   final Goal goals;
   final int widgetSize;
 
-  Map<HealthDataType, List<DataPoint>> _data = {};
+  Map<HealthDataType, List<DataPoint>> data = {};
   TimeFrame _timeFrame = TimeFrame.day;
   int _offset = 0;
   double _total = 0;
@@ -25,31 +25,23 @@ class HealthWidget{
     _goal = healthItem.getGoal != null && healthItem.getGoal!(goals) != -1 ? healthItem.getGoal!(goals) : -1;
   }
 
-  void update(TimeFrame newTimeFrame, int newOffset) {
-    _timeFrame = newTimeFrame;
-    _offset = newOffset;
+  TimeFrame get getTimeFrame => _timeFrame;
+  int get getOffset => _offset;
+
+  List<DataPoint> get getCombinedData {
+    return combineDataPoints(data);
   }
 
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
-    _data = Map.fromEntries(
-      healthItem.dataType.map((type) => 
-        MapEntry(type, batchData[type] ?? [])
-      )
-    );
-    _total = _getTotal;
-    _average = _getAverage;
-  }
-
-  List<DataPoint> _getCombinedData() {
-    return _data.values.expand((list) => list).toList();
+  List<DataPoint> get _getCombinedData {
+    return data.values.expand((list) => list).toList();
   }
 
   double get _getTotal {
-    return getHealthTotal(_getCombinedData());
+    return getHealthTotal(_getCombinedData);
   }
 
   double get _getAverage {
-    return getHealthAverage(_getCombinedData());
+    return getHealthAverage(_getCombinedData);
   }
 
   String get _getSubtitle {
@@ -80,12 +72,28 @@ class HealthWidget{
       icon: healthItem.icon, 
       color: healthItem.color, 
       size: widgetSize, 
-      goalPercent: _getGoalPercent);
+      goalPercent: _getGoalPercent,
+    );
+  }
+
+  void update(TimeFrame newTimeFrame, int newOffset) {
+    _timeFrame = newTimeFrame;
+    _offset = newOffset;
+  }
+
+  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
+    data = Map.fromEntries(
+      healthItem.dataType.map((type) => 
+        MapEntry(type, batchData[type] ?? [])
+      )
+    );
+    _total = _getTotal;
+    _average = _getAverage;
   }
 
   Map<String, dynamic> generateWidget() {
     HealthWidgetConfig config = getConfig;
-    config.data = _getCombinedData();
+    config.data = _getCombinedData;
 
     return {
       "size": config.size,
@@ -94,9 +102,15 @@ class HealthWidget{
               config: config,
             )
           : BasicLargeWidgetItem(
-              config: config,
+              widget: this,
             )
     };
+  }
+
+  static HealthWidget from(HealthWidget widget) {
+    var newWidget = HealthWidget(widget.healthItem, widget.goals, widget.widgetSize);
+    newWidget.data = widget.data;
+    return newWidget;
   }
 }
 

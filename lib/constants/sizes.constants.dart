@@ -46,5 +46,7 @@ class InputSizes {
 }
 
 class WidgetSizes {
-  static const double height = 150.0;
+  static const double smallHeight = 150.0;
+  static const double mediumHeight = 200.0;
+  static const double largeHeight = 250.0;
 }

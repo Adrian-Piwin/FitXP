@@ -33,21 +33,27 @@ class HealthFetcherService {
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> fetchBatchData(
-      Set<HealthDataType> items, TimeFrame timeframe, int offset) async {
-    // Check cache first
-    final cachedData = _cache.getData(timeframe, offset);
-    if (cachedData != null) {
-      return Map.from(cachedData);
+      List<HealthDataType> items, TimeFrame timeframe, int offset) async {
+    // Check cache first for all requested types
+    final cachedData = _cache.getData(timeframe, offset, items);
+    
+    // Determine which types need to be fetched
+    final uncachedTypes = items
+        .where((type) => !cachedData.containsKey(type))
+        .toList();
+
+    if (uncachedTypes.isEmpty) {
+      return cachedData; // All data was in cache
     }
 
-    Map<HealthDataType, List<DataPoint>> allData = {};
-
-    // Get list of Fitbit-supported types
-    final supportedTypes = await _fitbitService.getSupportedHealthTypes(items.toList());
+    // Get list of Fitbit-supported types from uncached types only
+    final supportedTypes = await _fitbitService.getSupportedHealthTypes(uncachedTypes);
     
-    // Split items into Fitbit and Health types
-    final fitbitTypes = items.where((type) => supportedTypes.contains(type)).toSet();
-    final healthTypes = items.where((type) => !supportedTypes.contains(type)).toSet();
+    // Split uncached items into Fitbit and Health types
+    final fitbitTypes = uncachedTypes.where((type) => supportedTypes.contains(type)).toSet();
+    final healthTypes = uncachedTypes.where((type) => !supportedTypes.contains(type)).toSet();
+
+    Map<HealthDataType, List<DataPoint>> newData = {};
 
     // Fetch Fitbit data for supported types
     final dateRange = calculateDateRange(timeframe, offset);
@@ -55,23 +61,28 @@ class HealthFetcherService {
       try {
         final fitbitData = await _fitbitService.fetchBatchData(
             fitbitTypes, dateRange.start, dateRange.end);
-        allData.addAll(fitbitData);
+        newData.addAll(fitbitData);
       } catch (e) {
         print('Fitbit fetch failed, falling back to Health for those types: $e');
         final fallbackData = await _fetchHealthBatchData(fitbitTypes, dateRange.start, dateRange.end);
-        allData.addAll(fallbackData);
+        newData.addAll(fallbackData);
       }
     }
 
     // Fetch remaining data from Health
     if (healthTypes.isNotEmpty) {
       final healthData = await _fetchHealthBatchData(healthTypes, dateRange.start, dateRange.end);
-      allData.addAll(healthData);
+      newData.addAll(healthData);
     }
 
-    // Cache the results
-    _cache.cacheData(timeframe, offset, allData);
-    return allData;
+    // Cache the new data
+    _cache.cacheData(timeframe, offset, newData);
+
+    // Combine cached and new data
+    return {
+      ...cachedData,
+      ...newData,
+    };
   }
 
   void clearCache() {
@@ -79,7 +90,7 @@ class HealthFetcherService {
   }
 
   void clearCacheForKey(TimeFrame timeframe, int offset) {
-    _cache.clearCacheForKey(timeframe, offset);
+    _cache.clearCacheForTimeFrameAndOffset(timeframe, offset);
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> _fetchHealthBatchData(
@@ -88,7 +99,6 @@ class HealthFetcherService {
 
     List<HealthDataPoint> points = [];
     try {
-      print('fetching health data for ${items.toList()}');
       points = await _health.getHealthDataFromTypes(
         startTime: startDate,
         endTime: endDate,
@@ -105,8 +115,6 @@ class HealthFetcherService {
           value: (p.value as NumericHealthValue).numericValue.toDouble(),
           dateFrom: p.dateFrom,
           dateTo: p.dateTo,
-          activityType:
-              '${p.recordingMethod} ${p.sourceName} ${p.sourcePlatform}',
         );
       }).toList();
     }
