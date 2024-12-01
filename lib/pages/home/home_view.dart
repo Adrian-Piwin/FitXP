@@ -38,7 +38,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       final now = DateTime.now();
-      if (_lastResumeTime == null || 
+      if (_lastResumeTime == null ||
           now.difference(_lastResumeTime!).inMinutes >= 10) {
         _controller.refreshToday();
         _lastResumeTime = now;
@@ -78,15 +78,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       controller.updateOffset(newOffset);
                     },
                   ),
-                  if (controller.isLoading)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: GapSizes.xlarge),
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  else
-                    Expanded(
+                  Expanded(
                     child: RefreshIndicator(
                       onRefresh: controller.refresh,
                       child: SingleChildScrollView(
@@ -94,15 +86,26 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                           children: [
                             if (controller.headerWidgets.isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
+                                padding: const EdgeInsets.fromLTRB(
+                                    GapSizes.medium,
+                                    GapSizes.medium,
+                                    GapSizes.medium,
+                                    0),
                                 child: HeaderWidgetItem(
-                                  barWidgetConfig: controller.headerWidgets[0].getConfig,
-                                  subWidgetFirstConfig: controller.headerWidgets[1].getConfig,
-                                  subWidgetSecondConfig: controller.headerWidgets[2].getConfig,
-                                  subWidgetThirdConfig: controller.headerWidgets[3].getConfig,
+                                  barWidgetConfig:
+                                      controller.headerWidgets[0].getConfig,
+                                  subWidgetFirstConfig:
+                                      controller.headerWidgets[1].getConfig,
+                                  subWidgetSecondConfig:
+                                      controller.headerWidgets[2].getConfig,
+                                  subWidgetThirdConfig:
+                                      controller.headerWidgets[3].getConfig,
                                 ),
                               ),
-                            GridLayout(widgets: controller.displayWidgets.map((obj) => obj.generateWidget()).toList()),
+                            GridLayout(
+                                widgets: controller.displayWidgets
+                                    .map((obj) => obj.generateWidget())
+                                    .toList()),
                           ],
                         ),
                       ),

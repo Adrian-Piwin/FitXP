@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/grid_layout.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/health_widget.model.dart';
 import 'package:provider/provider.dart';
 import '../../components/timeframe_tabbar.dart';
@@ -55,19 +54,9 @@ class HealthDataDetailPage extends StatelessWidget {
             Expanded(
               child: Consumer<HealthDetailsController>(
                 builder: (context, controller, _) {
-                  if (controller.isLoading) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: GapSizes.xlarge),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                  else {
-                    return SingleChildScrollView(
-                      child: GridLayout(widgets: controller.buildWidgets()),
-                    );
-                  }
+                  return SingleChildScrollView(
+                    child: GridLayout(widgets: controller.buildWidgets()),
+                  );
                 },
               ),
             ),
@@ -76,4 +65,4 @@ class HealthDataDetailPage extends StatelessWidget {
       ),
     );
   }
-} 
+}

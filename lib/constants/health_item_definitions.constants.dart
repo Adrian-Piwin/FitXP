@@ -92,6 +92,7 @@ class HealthItemDefinitions {
     ..getGoal = (Goal goal) => goal.caloriesInGoal;
 
   static HealthItem netCalories = HealthItem()
+    ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED, HealthDataType.DIETARY_ENERGY_CONSUMED]
     ..itemType = HealthItemType.netCalories
     ..title = "Net Calories"
     ..unit = "cal"

@@ -116,10 +116,12 @@ class HealthWidget{
     };
   }
 
+  HealthWidget clone() {
+    return HealthWidget(healthItem, goals, widgetSize)..data = data;
+  }
+
   static HealthWidget from(HealthWidget widget) {
-    var newWidget = HealthWidget(widget.healthItem, widget.goals, widget.widgetSize);
-    newWidget.data = widget.data;
-    return newWidget;
+    return widget.clone();
   }
 }
 
@@ -135,12 +137,17 @@ class StepsHealthWidget extends HealthWidget {
     final dateRange = calculateDateRange(_timeFrame, _offset);
     return getTotal / dateRange.duration.inDays;
   }
+
+  @override
+  HealthWidget clone() {
+    return StepsHealthWidget(healthItem, goals, widgetSize)..data = data;
+  }
 }
 
 class NetCaloriesHealthWidget extends HealthWidget {
   NetCaloriesHealthWidget(
     super.healthItem,
-    super.goal,
+    super.goals,
     super.timeFrame,
   );
 
@@ -157,8 +164,25 @@ class NetCaloriesHealthWidget extends HealthWidget {
                          getHealthAverage(energyBurnedBasal);
     var avgEnergyConsumed = getHealthAverage(energyConsumed);
 
+    data = batchData;
     _total = totalEnergyConsumed - totalEnergyBurned;
     _average = avgEnergyConsumed - avgEnergyBurned;
+  }
+
+  @override
+  List<DataPoint> get getCombinedData {
+    var allPoints = <HealthDataType, List<DataPoint>>{
+      HealthDataType.ACTIVE_ENERGY_BURNED: data[HealthDataType.ACTIVE_ENERGY_BURNED] ?? [],
+      HealthDataType.BASAL_ENERGY_BURNED: data[HealthDataType.BASAL_ENERGY_BURNED] ?? [],
+      HealthDataType.DIETARY_ENERGY_CONSUMED: (data[HealthDataType.DIETARY_ENERGY_CONSUMED] ?? [])
+          .map((point) => DataPoint(
+                value: -point.value,
+                dateFrom: point.dateFrom,
+                dateTo: point.dateTo))
+          .toList()
+    };
+
+    return combineDataPoints(allPoints);
   }
 
   @override
@@ -173,6 +197,11 @@ class NetCaloriesHealthWidget extends HealthWidget {
       total = _total.abs();
     }
     return (total / _goal.abs()).clamp(0, double.infinity);
+  }
+
+  @override
+  HealthWidget clone() {
+    return NetCaloriesHealthWidget(healthItem, goals, widgetSize)..data = data;
   }
 }
 
@@ -210,5 +239,10 @@ class SleepHealthWidget extends HealthWidget {
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
     return "$hours:${minutes.toString().padLeft(2, '0')} hrs";
+  }
+
+  @override
+  HealthWidget clone() {
+    return SleepHealthWidget(healthItem, goals, widgetSize)..data = data;
   }
 }
