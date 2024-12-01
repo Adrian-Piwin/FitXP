@@ -36,13 +36,8 @@ class HealthWidget{
     return data.values.expand((list) => list).toList();
   }
 
-  double get getTotal {
-    return getHealthTotal(_getCombinedData);
-  }
-
-  double get getAverage {
-    return getHealthAverage(_getCombinedData);
-  }
+  double get getTotal => _total;
+  double get getAverage => _average;
 
   double get getGoal {
     return _goal;
@@ -51,7 +46,7 @@ class HealthWidget{
   double get getGoalPercent {
     if (_goal == 0) return 0.0;
     if (_goal == -1) return -1;
-    return (_total / _goal).clamp(0, 1);
+    return (_total / _goal).clamp(0, double.infinity);
   }
 
   double get getGoalAveragePercent {
@@ -101,8 +96,8 @@ class HealthWidget{
         MapEntry(type, batchData[type] ?? [])
       )
     );
-    _total = getTotal;
-    _average = getAverage;
+    _total = getHealthTotal(_getCombinedData);
+    _average = getHealthAverage(_getCombinedData);
   }
 
   Map<String, dynamic> generateWidget() {
@@ -177,7 +172,7 @@ class NetCaloriesHealthWidget extends HealthWidget {
       }
       total = _total.abs();
     }
-    return (total / _goal.abs()).clamp(0, 1);
+    return (total / _goal.abs()).clamp(0, double.infinity);
   }
 }
 

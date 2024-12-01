@@ -18,6 +18,12 @@ class HealthDetailsBarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxY = groupedData.map((d) => d.y).reduce((a, b) => a > b ? a : b);
     
+    // Calculate bar width based on number of bars
+    // Ensure minimum gap of 4 pixels between bars
+    final barWidth = (MediaQuery.of(context).size.width - 32) / groupedData.length - 4;
+    // Cap maximum bar width at 16
+    final adjustedBarWidth = barWidth.clamp(4.0, 16.0);
+    
     return BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
@@ -76,7 +82,7 @@ class HealthDetailsBarChart extends StatelessWidget {
                 BarChartRodData(
                   toY: value == 0 ? maxY * 0.02 : value, // Show tiny bar for zero values
                   color: value == 0 ? Colors.grey.withOpacity(0.3) : barColor,
-                  width: 16,
+                  width: adjustedBarWidth,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(4),
                   ),

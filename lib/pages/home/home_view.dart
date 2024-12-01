@@ -32,10 +32,17 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  DateTime? _lastResumeTime;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _controller.refreshToday();
+      final now = DateTime.now();
+      if (_lastResumeTime == null || 
+          now.difference(_lastResumeTime!).inMinutes >= 10) {
+        _controller.refreshToday();
+        _lastResumeTime = now;
+      }
     }
   }
 

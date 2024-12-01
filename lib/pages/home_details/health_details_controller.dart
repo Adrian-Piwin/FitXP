@@ -17,14 +17,15 @@ class HealthDetailsController extends ChangeNotifier {
   bool _isLoading = false;
   TimeFrame _selectedTimeFrame;
   int _offset;
-  List<DataPoint> _data;
+  List<DataPoint> _data = [];
 
   HealthDetailsController({
     required HealthWidget widget,
   }) : _widget = HealthWidget.from(widget),
        _selectedTimeFrame = widget.getTimeFrame,
-       _offset = widget.getOffset,
-       _data = widget.getCombinedData;
+       _offset = widget.getOffset{
+        _fetchData();
+       }
 
   bool get isLoading => _isLoading;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
