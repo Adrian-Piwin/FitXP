@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 
 class FitbitService {
   static final FitbitService _instance = FitbitService._internal();
@@ -67,7 +68,7 @@ class FitbitService {
       }
       return false;
     } catch (e) {
-      print('Error connecting to Fitbit: $e');
+      await ErrorLogger.logError('Error connecting to Fitbit: $e');
       return false;
     }
   }
@@ -115,7 +116,7 @@ class FitbitService {
         // Fetch data for each resource
         for (var resource in resources) {
           try {
-            print('fetching fitbit data for $resource');
+            await ErrorLogger.logError('fetching fitbit data for $resource');
             final fitbitData = await _getFitbitDataInternal(startDate, endDate, resource);
             
             // Convert and add to combined data
@@ -127,7 +128,7 @@ class FitbitService {
               );
             }));
           } catch (e) {
-            print('Error fetching Fitbit data for $resource: $e');
+            await ErrorLogger.logError('Error fetching Fitbit data for $resource: $e');
             rethrow;
           }
         }
@@ -186,7 +187,7 @@ class FitbitService {
           key: 'refreshToken', value: newCredentials.fitbitRefreshToken);
       await _loadCredentials();
     } catch (e) {
-      print('Error refreshing token: $e');
+      await ErrorLogger.logError('Error refreshing token: $e');
       await disconnect();
       throw Exception('Failed to refresh token, user needs to reconnect');
     }

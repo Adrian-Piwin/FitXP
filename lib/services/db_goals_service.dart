@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:healthxp/services/error_logger.service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'db_service.dart';
 import '../models/goal.model.dart';
@@ -28,7 +29,7 @@ class DBGoalsService extends DBService {
       // Update in-memory cache
       _cachedGoal = goal;
     } catch (e) {
-      print('Error saving goals: $e');
+      await ErrorLogger.logError('Error saving goals: $e');
       rethrow;
     }
   }
@@ -72,7 +73,7 @@ class DBGoalsService extends DBService {
         return newGoal;
       }
     } catch (e) {
-      print('Error retrieving goals: $e');
+      await ErrorLogger.logError('Error retrieving goals: $e');
       rethrow;
     }
   }
@@ -119,7 +120,7 @@ class DBGoalsService extends DBService {
         _cachedGoal = updatedGoal;
       }
     } catch (e) {
-      print('Error updating goals: $e');
+      await ErrorLogger.logError('Error updating goals: $e');
       rethrow;
     }
   }
@@ -141,7 +142,7 @@ class DBGoalsService extends DBService {
       await prefs.remove('goal_$userId');
       _cachedGoal = null;
     } catch (e) {
-      print('Error deleting goals: $e');
+      await ErrorLogger.logError('Error deleting goals: $e');
       rethrow;
     }
   }

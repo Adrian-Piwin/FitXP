@@ -6,6 +6,7 @@ import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_widget.model.dart';
 import 'package:healthxp/pages/home_details/health_details_barchart.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
 import '../../utility/chart.utility.dart';
@@ -56,7 +57,7 @@ class HealthDetailsController extends ChangeNotifier {
       _data = _widget.getCombinedData;
     } catch (e) {
       _data = [];
-      print('Error fetching health data: $e');
+      await ErrorLogger.logError('Error fetching health data: $e');
     }
 
     _isLoading = false;

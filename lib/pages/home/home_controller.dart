@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/goal.model.dart';
 import '../../models/health_widget.model.dart';
@@ -74,27 +75,35 @@ class HomeController extends ChangeNotifier {
     try {
       await fetchGoalsData();
     } catch (e) {
-      print('Error fetching goals: $e');
+      await ErrorLogger.logError('Error fetching goals: $e');
     }
 
-    for (var healthItem in headerHealthItems) {
-      var widgetFactory = healthItem.widgetFactory;
+    try {
+      for (var healthItem in headerHealthItems) {
+        var widgetFactory = healthItem.widgetFactory;
       HealthWidget widget = widgetFactory(
         healthItem,
         _goals!,
         2,
       );
-      headerWidgets.add(widget);
+        headerWidgets.add(widget);
+      }
+    } catch (e) {
+      await ErrorLogger.logError('Error fetching header widgets: $e');
     }
 
-    for (var healthItem in healthItems) {
+    try {
+      for (var healthItem in healthItems) {
       var widgetFactory = healthItem.widgetFactory;
       HealthWidget widget = widgetFactory(
         healthItem,
         _goals!,
-        2,
-      );
-      displayWidgets.add(widget);
+          2,
+        );
+        displayWidgets.add(widget);
+      }
+    } catch (e) {
+      await ErrorLogger.logError('Error fetching display widgets: $e');
     }
 
     await fetchHealthData();
@@ -127,7 +136,7 @@ class HomeController extends ChangeNotifier {
         widget.updateData(batchData);
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      await ErrorLogger.logError('Error fetching data: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

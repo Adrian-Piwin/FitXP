@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 
 class DBService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -21,7 +22,7 @@ class DBService {
     try {
       await _firestore.collection(collectionPath).doc(documentId).set(data);
     } catch (e) {
-      print('Error creating document: $e');
+      await ErrorLogger.logError('Error creating document: $e');
       rethrow;
     }
   }
@@ -36,7 +37,7 @@ class DBService {
           await _firestore.collection(collectionPath).doc(documentId).get();
       return snapshot;
     } catch (e) {
-      print('Error reading document: $e');
+      await ErrorLogger.logError('Error reading document: $e');
       rethrow;
     }
   }
@@ -50,7 +51,7 @@ class DBService {
     try {
       await _firestore.collection(collectionPath).doc(documentId).update(data);
     } catch (e) {
-      print('Error updating document: $e');
+      await ErrorLogger.logError('Error updating document: $e');
       rethrow;
     }
   }
@@ -63,7 +64,7 @@ class DBService {
     try {
       await _firestore.collection(collectionPath).doc(documentId).delete();
     } catch (e) {
-      print('Error deleting document: $e');
+      await ErrorLogger.logError('Error deleting document: $e');
       rethrow;
     }
   }
@@ -83,7 +84,7 @@ class DBService {
       QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
       return snapshot;
     } catch (e) {
-      print('Error querying collection: $e');
+      await ErrorLogger.logError('Error querying collection: $e');
       rethrow;
     }
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/services/fitbit_service.dart';
 import '../models/data_point.model.dart';
 import '../enums/timeframe.enum.dart';
@@ -63,7 +64,7 @@ class HealthFetcherService {
             fitbitTypes, dateRange.start, dateRange.end);
         newData.addAll(fitbitData);
       } catch (e) {
-        print('Fitbit fetch failed, falling back to Health for those types: $e');
+        await ErrorLogger.logError('Fitbit fetch failed, falling back to Health for those types: $e');
         final fallbackData = await _fetchHealthBatchData(fitbitTypes, dateRange.start, dateRange.end);
         newData.addAll(fallbackData);
       }
@@ -106,7 +107,7 @@ class HealthFetcherService {
       );
       points = removeOverlappingData(points);
     } catch (e) {
-      print('Error fetching health data: $e');
+      await ErrorLogger.logError('Error fetching health data: $e');
     }
 
     for (var item in items) {

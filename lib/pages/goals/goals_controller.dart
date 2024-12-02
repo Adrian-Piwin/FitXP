@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 import '../../models/goal.model.dart';
 import '../../services/db_goals_service.dart';
 class GoalsController extends ChangeNotifier {
@@ -32,7 +33,7 @@ class GoalsController extends ChangeNotifier {
           sleepGoal: Duration(hours: 0),
         );
     } catch (e) {
-      print('Error loading goals: $e');
+      await ErrorLogger.logError('Error loading goals: $e');
       // Handle error as needed
     } finally {
       _isLoading = false;
@@ -50,7 +51,7 @@ class GoalsController extends ChangeNotifier {
     try {
       await _dbGoalsService.saveGoals(_goal!);
     } catch (e) {
-      print('Error saving goals: $e');
+      await ErrorLogger.logError('Error saving goals: $e');
       // Handle error as needed
     } finally {
       _isLoading = false;
