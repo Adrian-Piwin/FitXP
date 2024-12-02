@@ -72,49 +72,53 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> _initialize() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
+      // 1. First fetch goals
       await fetchGoalsData();
-    } catch (e) {
-      await ErrorLogger.logError('Error fetching goals: $e');
-    }
-
-    try {
-      for (var healthItem in headerHealthItems) {
-        var widgetFactory = healthItem.widgetFactory;
-      HealthWidget widget = widgetFactory(
-        healthItem,
-        _goals!,
-        2,
-      );
-        headerWidgets.add(widget);
+      
+      if (_goals == null) {
+        throw Exception('Failed to load goals');
       }
-    } catch (e) {
-      await ErrorLogger.logError('Error fetching header widgets: $e');
-    }
 
-    try {
-      for (var healthItem in healthItems) {
-      var widgetFactory = healthItem.widgetFactory;
-      HealthWidget widget = widgetFactory(
-        healthItem,
-        _goals!,
+      // 2. Create widgets only after goals are loaded
+      headerWidgets = headerHealthItems.map((healthItem) {
+        return healthItem.widgetFactory(
+          healthItem,
+          _goals!,
           2,
         );
-        displayWidgets.add(widget);
-      }
-    } catch (e) {
-      await ErrorLogger.logError('Error fetching display widgets: $e');
-    }
+      }).toList();
 
-    await fetchHealthData();
+      displayWidgets = healthItems.map((healthItem) {
+        return healthItem.widgetFactory(
+          healthItem,
+          _goals!,
+          2,
+        );
+      }).toList();
+
+      // 3. Fetch health data only after widgets are created
+      await fetchHealthData();
+    } catch (e, stackTrace) {
+      await ErrorLogger.logError(
+        'Error during initialization: $e', 
+        stackTrace: stackTrace
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> fetchGoalsData() async {
-    if (_goals != null) return;
-
     Goal? goals = await _goalsService.getGoals();
     if (goals != null) {
       _goals = goals;
+    } else {
+      throw Exception('Failed to load goals data');
     }
   }
 

@@ -32,17 +32,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  DateTime? _lastResumeTime;
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      final now = DateTime.now();
-      if (_lastResumeTime == null ||
-          now.difference(_lastResumeTime!).inMinutes >= 10) {
-        _controller.refreshToday();
-        _lastResumeTime = now;
-      }
+      _controller.refreshToday();
     }
   }
 
@@ -69,14 +62,34 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           ),
           body: Consumer<HomeController>(
             builder: (context, controller, _) {
+              if (controller.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (controller.headerWidgets.isEmpty || controller.displayWidgets.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Failed to load widgets'),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: controller.refresh,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
               return Column(
                 children: [
                   DateSelector(
                     selectedTimeFrame: controller.selectedTimeFrame,
                     offset: controller.offset,
-                    onOffsetChanged: (newOffset) {
-                      controller.updateOffset(newOffset);
-                    },
+                    onOffsetChanged: controller.updateOffset,
                   ),
                   Expanded(
                     child: RefreshIndicator(
@@ -86,26 +99,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                           children: [
                             if (controller.headerWidgets.isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    GapSizes.medium,
-                                    GapSizes.medium,
-                                    GapSizes.medium,
-                                    0),
+                                padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
                                 child: HeaderWidgetItem(
-                                  barWidgetConfig:
-                                      controller.headerWidgets[0].getConfig,
-                                  subWidgetFirstConfig:
-                                      controller.headerWidgets[1].getConfig,
-                                  subWidgetSecondConfig:
-                                      controller.headerWidgets[2].getConfig,
-                                  subWidgetThirdConfig:
-                                      controller.headerWidgets[3].getConfig,
+                                  barWidgetConfig: controller.headerWidgets[0].getConfig,
+                                  subWidgetFirstConfig: controller.headerWidgets[1].getConfig,
+                                  subWidgetSecondConfig: controller.headerWidgets[2].getConfig,
+                                  subWidgetThirdConfig: controller.headerWidgets[3].getConfig,
                                 ),
                               ),
-                            GridLayout(
-                                widgets: controller.displayWidgets
-                                    .map((obj) => obj.generateWidget())
-                                    .toList()),
+                            GridLayout(widgets: controller.displayWidgets.map((obj) => obj.generateWidget()).toList()),
                           ],
                         ),
                       ),
