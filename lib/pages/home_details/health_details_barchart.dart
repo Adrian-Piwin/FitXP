@@ -17,6 +17,7 @@ class HealthDetailsBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maxY = groupedData.map((d) => d.y).reduce((a, b) => a > b ? a : b);
+    final minY = groupedData.map((d) => d.y).reduce((a, b) => a < b ? a : b);
     
     // Calculate bar width based on number of bars
     // Ensure minimum gap of 4 pixels between bars
@@ -30,10 +31,14 @@ class HealthDetailsBarChart extends StatelessWidget {
           BarChartData(
             alignment: BarChartAlignment.spaceAround,
             maxY: maxY * 1.2,
+            minY: minY < 0 ? minY * 1.2 : 0, // Add space below for negative values
             barTouchData: BarTouchData(
               touchTooltipData: BarTouchTooltipData(
                 tooltipPadding: const EdgeInsets.all(8),
-                tooltipMargin: 0, // Reduces space between bar and tooltip
+                tooltipMargin: 8,
+                fitInsideVertically: false, // Prevents tooltip from being constrained vertically
+                fitInsideHorizontally: true,
+                direction: TooltipDirection.top, // Forces tooltip to always show above
                 getTooltipItem: (group, groupIndex, rod, rodIndex) {
                   return BarTooltipItem(
                     '${groupedData[groupIndex].label}\n${rod.toY.toStringAsFixed(1)}',
