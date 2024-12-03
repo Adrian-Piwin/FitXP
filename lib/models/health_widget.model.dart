@@ -55,7 +55,7 @@ class HealthWidget{
   double get getGoalAveragePercent {
     if (_goal == 0) return 0.0;
     if (_goal == -1) return -1;
-    return (_average / _goal).clamp(0, 1);
+    return (_average / _goal).clamp(0, double.infinity);
   }
 
   String get getUnit {
@@ -78,14 +78,19 @@ class HealthWidget{
 
   // #region Bar Chart
 
-  List<BarData> get barchartData {
-    if (data.isEmpty) return [];
-    return ChartUtility.groupDataByTimeFrame(getMergedData, _timeFrame, _offset);
+  List<BarData> get getBarchartData {
+    print(_getCombinedData);
+    if (_getCombinedData.isEmpty) return [];
+    return ChartUtility.groupDataByTimeFrame(_getCombinedData, _timeFrame, _offset);
+  }
+
+  String getBarchartValue(double value) {
+    return value.toStringAsFixed(0);
   }
 
   // #endregion
 
-  void update(TimeFrame newTimeFrame, int newOffset) {
+  void updateQueryOptions(TimeFrame newTimeFrame, int newOffset) {
     _timeFrame = newTimeFrame;
     _offset = newOffset;
   }
@@ -236,6 +241,11 @@ class SleepHealthWidget extends HealthWidget {
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
     return "$hours:${minutes.toString().padLeft(2, '0')} hrs";
+  }
+
+  @override
+  String getBarchartValue(double value) {
+    return _formatMinutes(value.toInt());
   }
 
   @override

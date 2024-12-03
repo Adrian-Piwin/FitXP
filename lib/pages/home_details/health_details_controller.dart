@@ -47,12 +47,13 @@ class HealthDetailsController extends ChangeNotifier {
     notifyListeners();
 
     try {
+      _widget.updateQueryOptions(_selectedTimeFrame, _offset);
       _widget.updateData(await _healthFetcherService.fetchBatchData(
         _widget.healthItem.dataType,
         _selectedTimeFrame,
         _offset
       ));
-      _barchartData = _widget.barchartData;
+      _barchartData = _widget.getBarchartData;
     } catch (e) {
       _barchartData = [];
       await ErrorLogger.logError('Error fetching health data: $e');
@@ -116,6 +117,7 @@ class HealthDetailsController extends ChangeNotifier {
           groupedData: _barchartData,
           barColor: _widget.healthItem.color,
           getXAxisLabel: getXAxisLabel,
+          getBarchartValue: _widget.getBarchartValue,
         )
       )
     };

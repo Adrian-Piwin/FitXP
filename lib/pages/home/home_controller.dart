@@ -136,7 +136,7 @@ class HomeController extends ChangeNotifier {
 
       // Update each widget with the relevant data
       for (var widget in [...headerWidgets, ...displayWidgets]) {
-        widget.update(_selectedTimeFrame, _offset);
+        widget.updateQueryOptions(_selectedTimeFrame, _offset);
         widget.updateData(batchData);
       }
     } catch (e) {

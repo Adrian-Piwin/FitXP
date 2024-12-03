@@ -6,12 +6,14 @@ class HealthDetailsBarChart extends StatelessWidget {
   final List<BarData> groupedData;
   final Color barColor;
   final Function(double) getXAxisLabel;
+  final Function(double) getBarchartValue;
 
   const HealthDetailsBarChart({
     super.key,
     required this.groupedData,
     required this.barColor,
     required this.getXAxisLabel,
+    required this.getBarchartValue,
   });
 
   @override
@@ -41,7 +43,7 @@ class HealthDetailsBarChart extends StatelessWidget {
                 direction: TooltipDirection.top, // Forces tooltip to always show above
                 getTooltipItem: (group, groupIndex, rod, rodIndex) {
                   return BarTooltipItem(
-                    '${groupedData[groupIndex].label}\n${rod.toY.toStringAsFixed(1)}',
+                    '${groupedData[groupIndex].label}\n${getBarchartValue(rod.toY)}',
                     const TextStyle(color: Colors.white),
                   );
                 },
