@@ -1,23 +1,23 @@
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/health_widget_config.model.dart';
+import 'package:healthxp/models/health_widget.model.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../constants/animations.constants.dart';
 
 class HeaderWidgetItem extends StatelessWidget {
-  final HealthWidgetConfig barWidgetConfig;
-  final HealthWidgetConfig subWidgetFirstConfig;
-  final HealthWidgetConfig subWidgetSecondConfig;
-  final HealthWidgetConfig subWidgetThirdConfig;
+  final HealthWidget barWidget;
+  final HealthWidget subWidgetFirst;
+  final HealthWidget subWidgetSecond;
+  final HealthWidget subWidgetThird;
 
   const HeaderWidgetItem({
     super.key,
-    required this.barWidgetConfig, 
-    required this.subWidgetFirstConfig, 
-    required this.subWidgetSecondConfig, 
-    required this.subWidgetThirdConfig,
+    required this.barWidget, 
+    required this.subWidgetFirst, 
+    required this.subWidgetSecond, 
+    required this.subWidgetThird,
   });
 
   @override
@@ -37,12 +37,12 @@ class HeaderWidgetItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FaIcon(barWidgetConfig.icon,
+                  FaIcon(barWidget.healthItem.icon,
                       size: IconSizes.medium,
-                      color: barWidgetConfig.color),
+                      color: barWidget.healthItem.color),
                   const SizedBox(width: GapSizes.medium),
                   Text(
-                    barWidgetConfig.displayValue,
+                    barWidget.getDisplayValue,
                     style: const TextStyle(
                       fontSize: FontSizes.xlarge,
                     ),
@@ -53,9 +53,9 @@ class HeaderWidgetItem extends StatelessWidget {
               LinearPercentIndicator(
                 lineHeight: PercentIndicatorSizes.lineHeightLarge,
                 padding: EdgeInsets.zero,
-                percent: barWidgetConfig.goalPercentClamped,
+                percent: barWidget.getGoalPercentClamped,
                 backgroundColor: PercentIndicatorColors.backgroundColor,
-                progressColor: barWidgetConfig.color,
+                progressColor: barWidget.healthItem.color,
                 barRadius:
                     const Radius.circular(PercentIndicatorSizes.barRadius),
                 animation: true,
@@ -68,18 +68,18 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetFirstConfig.goalPercentClamped,
-                    center: FaIcon(subWidgetFirstConfig.icon,
+                    percent: subWidgetFirst.getGoalPercentClamped,
+                    center: FaIcon(subWidgetFirst.healthItem.icon,
                         size: IconSizes.small,
-                        color: subWidgetFirstConfig.color),
-                    progressColor: subWidgetFirstConfig.color,
+                        color: subWidgetFirst.healthItem.color),
+                    progressColor: subWidgetFirst.healthItem.color,
                     backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
                     footer: Padding(
                       padding: const EdgeInsets.only(top: PaddingSizes.small),
                       child: Text(
-                        subWidgetFirstConfig.displayValue,
+                        subWidgetFirst.getDisplayValue,
                         style: const TextStyle(
                           fontSize: FontSizes.medium,
                         ),
@@ -89,18 +89,18 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetSecondConfig.goalPercentClamped,
-                    center: FaIcon(subWidgetSecondConfig.icon,
+                    percent: subWidgetSecond.getGoalPercentClamped,
+                    center: FaIcon(subWidgetSecond.healthItem.icon,
                         size: IconSizes.small,
-                        color: subWidgetSecondConfig.color),
-                    progressColor: subWidgetSecondConfig.color,
+                        color: subWidgetSecond.healthItem.color),
+                    progressColor: subWidgetSecond.healthItem.color,
                     backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
                     footer: Padding(
                       padding: const EdgeInsets.only(top: PaddingSizes.small),
                       child: Text(
-                        subWidgetSecondConfig.displayValue,
+                        subWidgetSecond.getDisplayValue,
                         style: const TextStyle(
                           fontSize: FontSizes.medium,
                         ),
@@ -110,18 +110,18 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetThirdConfig.goalPercentClamped,
-                    center: FaIcon(subWidgetThirdConfig.icon,
+                    percent: subWidgetThird.getGoalPercentClamped,
+                    center: FaIcon(subWidgetThird.healthItem.icon,
                         size: IconSizes.small,
-                        color: subWidgetThirdConfig.color),
-                    progressColor: subWidgetThirdConfig.color,
+                        color: subWidgetThird.healthItem.color),
+                    progressColor: subWidgetThird.healthItem.color,
                     backgroundColor: PercentIndicatorColors.backgroundColor,
                     animation: true,
                     animationDuration: PercentIndicatorAnimations.duration,
                     footer: Padding(
                       padding: const EdgeInsets.only(top: PaddingSizes.small),
                       child: Text(
-                        subWidgetThirdConfig.displayValue,
+                        subWidgetThird.getDisplayValue,
                         style: const TextStyle(
                           fontSize: FontSizes.medium,
                         ),

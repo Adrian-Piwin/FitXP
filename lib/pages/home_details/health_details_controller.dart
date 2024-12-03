@@ -3,7 +3,6 @@ import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/bar_data.model.dart';
-import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_widget.model.dart';
 import 'package:healthxp/pages/home_details/health_details_barchart.dart';
 import 'package:healthxp/services/error_logger.service.dart';
@@ -18,7 +17,7 @@ class HealthDetailsController extends ChangeNotifier {
   bool _isLoading = false;
   TimeFrame _selectedTimeFrame;
   int _offset;
-  List<DataPoint> _data = [];
+  List<BarData> _barchartData = [];
 
   HealthDetailsController({
     required HealthWidget widget,
@@ -31,7 +30,6 @@ class HealthDetailsController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
-  List<DataPoint> get data => _data;
 
   Future<void> updateTimeFrame(TimeFrame newTimeFrame) async {
     _selectedTimeFrame = newTimeFrame;
@@ -54,9 +52,9 @@ class HealthDetailsController extends ChangeNotifier {
         _selectedTimeFrame,
         _offset
       ));
-      _data = _widget.getCombinedData;
+      _barchartData = _widget.barchartData;
     } catch (e) {
-      _data = [];
+      _barchartData = [];
       await ErrorLogger.logError('Error fetching health data: $e');
     }
 
@@ -112,24 +110,19 @@ class HealthDetailsController extends ChangeNotifier {
     return {
       "size": 2,
       "height": WidgetSizes.mediumHeight,
-      "widget": WidgetFrame(child: groupedData.isEmpty 
+      "widget": WidgetFrame(child: _barchartData.isEmpty 
         ? const Center(child: Text('No data available')) 
         : HealthDetailsBarChart(
-          groupedData: groupedData,
-          barColor: _widget.getConfig.color,
+          groupedData: _barchartData,
+          barColor: _widget.healthItem.color,
           getXAxisLabel: getXAxisLabel,
         )
       )
     };
   }
 
-  List<BarData> get groupedData {
-    if (_data.isEmpty) return [];
-    return ChartUtility.groupDataByTimeFrame(_data, _selectedTimeFrame, _offset);
-  }
-
   String getXAxisLabel(double value) {
-    return ChartUtility.getXAxisLabel(groupedData, _selectedTimeFrame, value);
+    return ChartUtility.getXAxisLabel(_barchartData, _selectedTimeFrame, value);
   }
 }
 // #endregion

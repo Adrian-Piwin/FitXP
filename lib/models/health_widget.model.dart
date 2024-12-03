@@ -1,9 +1,10 @@
 import 'package:healthxp/enums/timeframe.enum.dart';
+import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/goal.model.dart';
-import 'package:healthxp/models/health_widget_config.model.dart';
 import 'package:healthxp/pages/home/basic_large_widget_item.dart';
 import 'package:healthxp/pages/home/basic_widget_item.dart';
+import 'package:healthxp/utility/chart.utility.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
 import 'package:health/health.dart';
 import '../constants/health_item_definitions.constants.dart';
@@ -28,7 +29,7 @@ class HealthWidget{
   TimeFrame get getTimeFrame => _timeFrame;
   int get getOffset => _offset;
 
-  List<DataPoint> get getCombinedData {
+  List<DataPoint> get getMergedData {
     return combineDataPoints(data);
   }
 
@@ -49,6 +50,8 @@ class HealthWidget{
     return (_total / _goal).clamp(0, double.infinity);
   }
 
+  double get getGoalPercentClamped => getGoalPercent.clamp(0.0, 1.0);
+
   double get getGoalAveragePercent {
     if (_goal == 0) return 0.0;
     if (_goal == -1) return -1;
@@ -59,7 +62,7 @@ class HealthWidget{
     return healthItem.unit;
   }
 
-  String get _getSubtitle {
+  String get getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
       return _goal - _total >= 0 ? 
           "${(_goal - _total).toStringAsFixed(0)}${healthItem.unit} left" : 
@@ -69,21 +72,18 @@ class HealthWidget{
     }
   }
 
-  String get _getDisplayValue {
+  String get getDisplayValue {
     return (_total).toStringAsFixed(0);
   }
 
-  HealthWidgetConfig get getConfig {
-    return HealthWidgetConfig(
-      title: healthItem.title, 
-      subtitle: _getSubtitle, 
-      displayValue: _getDisplayValue, 
-      icon: healthItem.icon, 
-      color: healthItem.color, 
-      size: widgetSize, 
-      goalPercent: getGoalPercent,
-    );
+  // #region Bar Chart
+
+  List<BarData> get barchartData {
+    if (data.isEmpty) return [];
+    return ChartUtility.groupDataByTimeFrame(getMergedData, _timeFrame, _offset);
   }
+
+  // #endregion
 
   void update(TimeFrame newTimeFrame, int newOffset) {
     _timeFrame = newTimeFrame;
@@ -101,14 +101,11 @@ class HealthWidget{
   }
 
   Map<String, dynamic> generateWidget() {
-    HealthWidgetConfig config = getConfig;
-    config.data = _getCombinedData;
-
     return {
-      "size": config.size,
-      "widget": config.size == 1
+      "size": widgetSize,
+      "widget": widgetSize == 1
           ? BasicWidgetItem(
-              config: config,
+              widget: this,
             )
           : BasicLargeWidgetItem(
               widget: this,

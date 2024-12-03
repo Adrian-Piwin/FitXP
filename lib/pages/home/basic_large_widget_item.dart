@@ -34,7 +34,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.getConfig.title,
+                  widget.healthItem.title,
                   style: const TextStyle(
                     fontSize: FontSizes.medium,
                   ),
@@ -42,7 +42,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
                 ),
                 const SizedBox(height: GapSizes.small),
                 Text(
-                  widget.getConfig.displayValue,
+                  widget.getDisplayValue,
                   style: const TextStyle(
                     fontSize: FontSizes.xxlarge,
                     fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class BasicLargeWidgetItem extends StatelessWidget {
                 ),
                 const SizedBox(height: GapSizes.small),
                 Text(
-                  widget.getConfig.subtitle,
+                  widget.getSubtitle,
                   style: const TextStyle(
                     fontSize: FontSizes.medium,
                     color: Colors.grey,
@@ -58,14 +58,14 @@ class BasicLargeWidgetItem extends StatelessWidget {
                 ),
               ],
             ),
-            widget.getConfig.goalPercent != -1
+            widget.getGoalPercent != -1
                 ? SizedBox(
                     width: 100,
                     height: 100,
                     child: AnimatedRadialGauge(
                       duration: const Duration(seconds: 1),
                       curve: Curves.elasticOut,
-                      value: widget.getConfig.goalPercentClamped,
+                      value: widget.getGoalPercentClamped,
                       axis: GaugeAxis(
                         min: 0,
                         max: 1,
@@ -76,14 +76,14 @@ class BasicLargeWidgetItem extends StatelessWidget {
                           background: PercentIndicatorColors.backgroundColor,
                         ),
                         progressBar: GaugeProgressBar.rounded(
-                          color: widget.getConfig.color,
+                          color: widget.healthItem.color,
                         ),
                       ),
                       builder: (context, child, value) => Center(
                         child: Icon(
-                          widget.getConfig.icon,
+                          widget.healthItem.icon,
                           size: 24,
-                          color: widget.getConfig.color,
+                          color: widget.healthItem.color,
                         ),
                       ),
                     ),
@@ -97,9 +97,9 @@ class BasicLargeWidgetItem extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        widget.getConfig.icon,
+                        widget.healthItem.icon,
                         size: 24,
-                        color: widget.getConfig.color,
+                        color: widget.healthItem.color,
                       ),
                     ),
                   ),

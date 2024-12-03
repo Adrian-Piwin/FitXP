@@ -62,12 +62,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           ),
           body: Consumer<HomeController>(
             builder: (context, controller, _) {
-              if (controller.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
               if (controller.headerWidgets.isEmpty ||
                   controller.displayWidgets.isEmpty) {
                 return Center(
@@ -105,14 +99,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                                   GapSizes.medium,
                                   0),
                               child: HeaderWidgetItem(
-                                barWidgetConfig:
-                                    controller.headerWidgets[0].getConfig,
-                                subWidgetFirstConfig:
-                                    controller.headerWidgets[1].getConfig,
-                                subWidgetSecondConfig:
-                                    controller.headerWidgets[2].getConfig,
-                                subWidgetThirdConfig:
-                                    controller.headerWidgets[3].getConfig,
+                                barWidget: controller.headerWidgets[0],
+                                subWidgetFirst: controller.headerWidgets[1],
+                                subWidgetSecond: controller.headerWidgets[2],
+                                subWidgetThird: controller.headerWidgets[3],
                               ),
                             ),
                             GridLayout(

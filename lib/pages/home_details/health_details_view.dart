@@ -22,7 +22,7 @@ class HealthDataDetailPage extends StatelessWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.getConfig.title),
+          title: Text(widget.healthItem.title),
           titleSpacing: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
