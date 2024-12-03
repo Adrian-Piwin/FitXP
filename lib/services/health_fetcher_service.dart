@@ -23,6 +23,7 @@ class HealthFetcherService {
   Future<void> _initialize() async {
     await dotenv.load(fileName: ".env"); // Load env file first
     _isAuthorized = await _health.hasPermissions(healthDataTypes) == true;
+    await _cache.initialize();
   }
 
   Future<bool> checkAndRequestPermissions() async {
@@ -77,7 +78,7 @@ class HealthFetcherService {
     }
 
     // Cache the new data
-    _cache.cacheData(timeframe, offset, newData);
+    await _cache.cacheData(timeframe, offset, newData);
 
     // Combine cached and new data
     return {
@@ -86,12 +87,12 @@ class HealthFetcherService {
     };
   }
 
-  void clearCache() {
-    _cache.clearCache();
+  Future<void> clearCache() async {
+    await _cache.clearCache();
   }
 
-  void clearCacheForKey(TimeFrame timeframe, int offset) {
-    _cache.clearCacheForTimeFrameAndOffset(timeframe, offset);
+  Future<void> clearCacheForKey(TimeFrame timeframe, int offset) async {
+    await _cache.clearCacheForTimeFrameAndOffset(timeframe, offset);
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> _fetchHealthBatchData(

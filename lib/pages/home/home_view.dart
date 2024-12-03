@@ -68,7 +68,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                 );
               }
 
-              if (controller.headerWidgets.isEmpty || controller.displayWidgets.isEmpty) {
+              if (controller.headerWidgets.isEmpty ||
+                  controller.displayWidgets.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,17 +98,27 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            if (controller.headerWidgets.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(GapSizes.medium, GapSizes.medium, GapSizes.medium, 0),
-                                child: HeaderWidgetItem(
-                                  barWidgetConfig: controller.headerWidgets[0].getConfig,
-                                  subWidgetFirstConfig: controller.headerWidgets[1].getConfig,
-                                  subWidgetSecondConfig: controller.headerWidgets[2].getConfig,
-                                  subWidgetThirdConfig: controller.headerWidgets[3].getConfig,
-                                ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  GapSizes.medium,
+                                  GapSizes.medium,
+                                  GapSizes.medium,
+                                  0),
+                              child: HeaderWidgetItem(
+                                barWidgetConfig:
+                                    controller.headerWidgets[0].getConfig,
+                                subWidgetFirstConfig:
+                                    controller.headerWidgets[1].getConfig,
+                                subWidgetSecondConfig:
+                                    controller.headerWidgets[2].getConfig,
+                                subWidgetThirdConfig:
+                                    controller.headerWidgets[3].getConfig,
                               ),
-                            GridLayout(widgets: controller.displayWidgets.map((obj) => obj.generateWidget()).toList()),
+                            ),
+                            GridLayout(
+                                widgets: controller.displayWidgets
+                                    .map((obj) => obj.generateWidget())
+                                    .toList()),
                           ],
                         ),
                       ),

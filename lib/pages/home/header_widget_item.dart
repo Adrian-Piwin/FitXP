@@ -53,7 +53,7 @@ class HeaderWidgetItem extends StatelessWidget {
               LinearPercentIndicator(
                 lineHeight: PercentIndicatorSizes.lineHeightLarge,
                 padding: EdgeInsets.zero,
-                percent: barWidgetConfig.goalPercent,
+                percent: barWidgetConfig.goalPercentClamped,
                 backgroundColor: PercentIndicatorColors.backgroundColor,
                 progressColor: barWidgetConfig.color,
                 barRadius:
@@ -68,7 +68,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetFirstConfig.goalPercent,
+                    percent: subWidgetFirstConfig.goalPercentClamped,
                     center: FaIcon(subWidgetFirstConfig.icon,
                         size: IconSizes.small,
                         color: subWidgetFirstConfig.color),
@@ -89,7 +89,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetSecondConfig.goalPercent,
+                    percent: subWidgetSecondConfig.goalPercentClamped,
                     center: FaIcon(subWidgetSecondConfig.icon,
                         size: IconSizes.small,
                         color: subWidgetSecondConfig.color),
@@ -110,7 +110,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetThirdConfig.goalPercent,
+                    percent: subWidgetThirdConfig.goalPercentClamped,
                     center: FaIcon(subWidgetThirdConfig.icon,
                         size: IconSizes.small,
                         color: subWidgetThirdConfig.color),

@@ -20,4 +20,6 @@ class HealthWidgetConfig {
     required this.size,
     required this.goalPercent,
   });
+
+  double get goalPercentClamped => goalPercent.clamp(0.0, 1.0);
 }
