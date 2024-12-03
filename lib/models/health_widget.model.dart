@@ -127,25 +127,6 @@ class HealthWidget{
   }
 }
 
-class StepsHealthWidget extends HealthWidget {
-  StepsHealthWidget(
-    super.healthItem,
-    super.goals,
-    super.timeFrame,
-  );
-
-  @override
-  double get getAverage {
-    final dateRange = calculateDateRange(_timeFrame, _offset);
-    return getTotal / dateRange.duration.inDays;
-  }
-
-  @override
-  HealthWidget clone() {
-    return StepsHealthWidget(healthItem, goals, widgetSize)..data = data;
-  }
-}
-
 class NetCaloriesHealthWidget extends HealthWidget {
   NetCaloriesHealthWidget(
     super.healthItem,
