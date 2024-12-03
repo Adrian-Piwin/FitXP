@@ -211,7 +211,7 @@ List<HealthDataPoint> removeOverlappingData(List<HealthDataPoint> points) {
   return result;
 }
 
-List<DataPoint> combineDataPoints(Map<HealthDataType, List<DataPoint>> points) {
+List<DataPoint> mergeDataPoints(Map<HealthDataType, List<DataPoint>> points) {
   // Flatten all points into a single list
   List<DataPoint> allPoints = points.values.expand((x) => x).toList();
   

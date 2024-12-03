@@ -30,7 +30,7 @@ class HealthWidget{
   int get getOffset => _offset;
 
   List<DataPoint> get getMergedData {
-    return combineDataPoints(data);
+    return mergeDataPoints(data);
   }
 
   List<DataPoint> get _getCombinedData {
@@ -167,7 +167,7 @@ class NetCaloriesHealthWidget extends HealthWidget {
   }
 
   @override
-  List<DataPoint> get getCombinedData {
+  List<DataPoint> get getMergedData {
     var allPoints = <HealthDataType, List<DataPoint>>{
       HealthDataType.ACTIVE_ENERGY_BURNED: data[HealthDataType.ACTIVE_ENERGY_BURNED] ?? [],
       HealthDataType.BASAL_ENERGY_BURNED: data[HealthDataType.BASAL_ENERGY_BURNED] ?? [],
@@ -179,7 +179,7 @@ class NetCaloriesHealthWidget extends HealthWidget {
           .toList()
     };
 
-    return combineDataPoints(allPoints);
+    return mergeDataPoints(allPoints);
   }
 
   @override
@@ -216,7 +216,7 @@ class SleepHealthWidget extends HealthWidget {
   }
 
   @override
-  String get _getSubtitle {
+  String get getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
       int sleepGoalMinutes = _goal.toInt();
       int actualSleepMinutes = getTotal.toInt();
@@ -231,7 +231,7 @@ class SleepHealthWidget extends HealthWidget {
   }
 
   @override
-  String get _getDisplayValue {
+  String get getDisplayValue {
     int totalMinutes = _total.toInt();
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
