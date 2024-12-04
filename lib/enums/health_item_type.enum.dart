@@ -1,8 +1,7 @@
 enum HealthItemType {
   proteinIntake,
   exerciseTime,
-  sleepDuration,
-  sleepQuality,
+  sleep,
   expendedEnergy,
   activeCalories,
   restingCalories,

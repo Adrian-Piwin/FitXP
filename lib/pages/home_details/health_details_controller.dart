@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/info_widget.dart';
+import 'package:healthxp/components/sleep_barchart_widget.dart';
 import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/enums/health_item_type.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/health_widget.model.dart';
-import 'package:healthxp/pages/home_details/health_details_barchart.dart';
+import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
@@ -113,7 +115,11 @@ class HealthDetailsController extends ChangeNotifier {
       "height": WidgetSizes.mediumHeight,
       "widget": WidgetFrame(child: _barchartData.isEmpty 
         ? const Center(child: Text('No data available')) 
-        : HealthDetailsBarChart(
+        : _widget.healthItem.itemType == HealthItemType.sleep && _selectedTimeFrame == TimeFrame.day
+        ? SleepBarChartWidget( // Only display sleep bar chart for day
+          barDataList: _barchartData
+        )
+        : BarChartWidget(
           groupedData: _barchartData,
           barColor: _widget.healthItem.color,
           getXAxisLabel: getXAxisLabel,

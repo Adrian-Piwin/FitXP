@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 
-class HealthDetailsBarChart extends StatelessWidget {
+class BarChartWidget extends StatelessWidget {
   final List<BarData> groupedData;
   final Color barColor;
   final Function(double) getXAxisLabel;
   final Function(double) getBarchartValue;
 
-  const HealthDetailsBarChart({
+  const BarChartWidget({
     super.key,
     required this.groupedData,
     required this.barColor,

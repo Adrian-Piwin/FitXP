@@ -5,8 +5,8 @@ import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/pages/home/basic_large_widget_item.dart';
 import 'package:healthxp/pages/home/basic_widget_item.dart';
 import 'package:healthxp/utility/chart.utility.dart';
-import 'package:healthxp/utility/timeframe.utility.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/utility/general.utility.dart';
 import '../constants/health_item_definitions.constants.dart';
 import '../utility/health.utility.dart';
 
@@ -79,7 +79,6 @@ class HealthWidget{
   // #region Bar Chart
 
   List<BarData> get getBarchartData {
-    print(_getCombinedData);
     if (_getCombinedData.isEmpty) return [];
     return ChartUtility.groupDataByTimeFrame(_getCombinedData, _timeFrame, _offset);
   }
@@ -195,12 +194,6 @@ class SleepHealthWidget extends HealthWidget {
     super.timeFrame,
   );
 
-  String _formatMinutes(int totalMinutes) {
-    int hours = totalMinutes ~/ 60;
-    int minutes = totalMinutes % 60;
-    return hours > 0 ? "$hours:${minutes.toString().padLeft(2, '0')} hrs" : "${minutes}min";
-  }
-
   @override
   String get getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
@@ -209,11 +202,11 @@ class SleepHealthWidget extends HealthWidget {
       int differenceMinutes = (sleepGoalMinutes - actualSleepMinutes).abs();
 
       return _goal - getTotal >= 0 ? 
-          "${_formatMinutes(differenceMinutes)} left" : 
-          "${_formatMinutes(differenceMinutes)} over";
+          "${formatMinutes(differenceMinutes)} left" : 
+          "${formatMinutes(differenceMinutes)} over";
     }
 
-    return "${_formatMinutes(getAverage.toInt())} avg";
+    return "${formatMinutes(getAverage.toInt())} avg";
   }
 
   @override
@@ -226,7 +219,17 @@ class SleepHealthWidget extends HealthWidget {
 
   @override
   String getBarchartValue(double value) {
-    return _formatMinutes(value.toInt());
+    return formatMinutes(value.toInt());
+  }
+
+  @override
+  List<BarData> get getBarchartData {
+    if (_getCombinedData.isEmpty) return [];
+
+    if (_timeFrame == TimeFrame.day) {
+      return ChartUtility.getSleepBarData(data);
+    }
+    return super.getBarchartData;
   }
 
   @override
