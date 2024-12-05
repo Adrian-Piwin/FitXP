@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/info_widget.dart';
-import 'package:healthxp/components/sleep_barchart_widget.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/enums/health_item_type.enum.dart';
-import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/health_widget.model.dart';
-import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
-import '../../utility/chart.utility.dart';
 
 class HealthDetailsController extends ChangeNotifier {
   final HealthWidget _widget;
@@ -19,7 +11,6 @@ class HealthDetailsController extends ChangeNotifier {
   bool _isLoading = false;
   TimeFrame _selectedTimeFrame;
   int _offset;
-  List<BarData> _barchartData = [];
 
   HealthDetailsController({
     required HealthWidget widget,
@@ -55,9 +46,7 @@ class HealthDetailsController extends ChangeNotifier {
         _selectedTimeFrame,
         _offset
       ));
-      _barchartData = _widget.getBarchartData;
     } catch (e) {
-      _barchartData = [];
       await ErrorLogger.logError('Error fetching health data: $e');
     }
 
@@ -65,72 +54,5 @@ class HealthDetailsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Map<String, dynamic>> buildWidgets() {
-    List<Map<String, dynamic>> widgets = [buildBarChartWidget()];
-    
-    for (Widget widget in _basicWidgets) {
-      widgets.add(buildBasicWidget(widget));
-    }
-    
-    return widgets;
-  }
-
-  // #region Basic widgets
-
-  List<Widget> get _basicWidgets {
-    return [
-      InfoWidget(
-        title: "Total",
-        displayValue: _widget.getTotal.toStringAsFixed(0),
-      ),
-      InfoWidget(
-        title: "Average",
-        displayValue: _widget.getAverage.toStringAsFixed(0),
-      ),
-      InfoWidget(
-        title: "Goal",
-        displayValue: _widget.getGoal.toStringAsFixed(0),
-      ),
-      InfoWidget(
-        title: "Goal Progress",
-        displayValue: "${(_widget.getGoalAveragePercent * 100).toStringAsFixed(0)}%",
-      ),
-    ];
-  }
-
-  Map<String, dynamic> buildBasicWidget(Widget widget) {
-    return {
-      "size": 1,
-      "height": WidgetSizes.smallHeight,
-      "widget": widget
-    };
-  }
-
-  // #endregion
-
-  // #region Bar chart widget
-  Map<String, dynamic> buildBarChartWidget() {
-    return {
-      "size": 2,
-      "height": WidgetSizes.mediumHeight,
-      "widget": WidgetFrame(child: _barchartData.isEmpty 
-        ? const Center(child: Text('No data available')) 
-        : _widget.healthItem.itemType == HealthItemType.sleep && _selectedTimeFrame == TimeFrame.day
-        ? SleepBarChartWidget( // Only display sleep bar chart for day
-          barDataList: _barchartData
-        )
-        : BarChartWidget(
-          groupedData: _barchartData,
-          barColor: _widget.healthItem.color,
-          getXAxisLabel: getXAxisLabel,
-          getBarchartValue: _widget.getBarchartValue,
-        )
-      )
-    };
-  }
-
-  String getXAxisLabel(double value) {
-    return ChartUtility.getXAxisLabel(_barchartData, _selectedTimeFrame, value);
-  }
+  List<Widget> get getDetailWidgets => _widget.getDetailWidgets;
 }
-// #endregion

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 
-class BarChartWidget extends StatelessWidget {
+class BarChartWidget extends WidgetFrame {
   final List<BarData> groupedData;
   final Color barColor;
   final Function(double) getXAxisLabel;
@@ -14,10 +16,17 @@ class BarChartWidget extends StatelessWidget {
     required this.barColor,
     required this.getXAxisLabel,
     required this.getBarchartValue,
-  });
+  }) : super(
+          size: 2,
+          height: WidgetSizes.mediumHeight,
+        );
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildContent(BuildContext context) {
+    if (groupedData.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
+
     final maxY = groupedData.map((d) => d.y).reduce((a, b) => a > b ? a : b);
     final minY = groupedData.map((d) => d.y).reduce((a, b) => a < b ? a : b);
     
@@ -28,8 +37,8 @@ class BarChartWidget extends StatelessWidget {
     final adjustedBarWidth = barWidth.clamp(4.0, 16.0);
     
     return Stack(
-      children: [
-        BarChart(
+        children: [
+          BarChart(
           BarChartData(
             alignment: BarChartAlignment.spaceAround,
             maxY: maxY * 1.2,

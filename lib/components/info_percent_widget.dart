@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthxp/components/circular_percent_widget.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 
-class InfoWidget extends WidgetFrame {
+class InfoPercentWidget extends WidgetFrame {
   final String title;
+  final double percent;
   final String displayValue;
+  final IconData icon;
+  final Color color;
 
-  const InfoWidget({
+  const InfoPercentWidget({
     super.key,
     required this.title,
+    required this.percent,
     required this.displayValue,
+    required this.icon,
+    required this.color,
   }) : super(
           size: 1,
           height: WidgetSizes.smallHeight,
@@ -18,8 +25,8 @@ class InfoWidget extends WidgetFrame {
   @override
   Widget buildContent(BuildContext context) {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
           Text(
             title,
             style: const TextStyle(
@@ -28,16 +35,15 @@ class InfoWidget extends WidgetFrame {
             textAlign: TextAlign.center,
           ),
           const Spacer(),
-          Text(
-            displayValue,
-            style: const TextStyle(
-              fontSize: FontSizes.xxlarge,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
+          CircularPercentWidget(
+            percent: percent,
+            displayValue: displayValue,
+            icon: icon,
+            color: color,
+            config: CircularPercentWidgetSizes.medium,
           ),
           const Spacer(),
-        ],
+      ],
     );
   }
 }

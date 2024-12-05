@@ -76,14 +76,12 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 1. First fetch goals
       await fetchGoalsData();
       
       if (_goals == null) {
         throw Exception('Failed to load goals');
       }
 
-      // 2. Create widgets only after goals are loaded
       headerWidgets = headerHealthItems.map((healthItem) {
         return healthItem.widgetFactory(
           healthItem,
@@ -100,7 +98,6 @@ class HomeController extends ChangeNotifier {
         );
       }).toList();
 
-      // 3. Fetch health data only after widgets are created
       await fetchHealthData();
     } catch (e, stackTrace) {
       await ErrorLogger.logError(

@@ -1,23 +1,45 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/utility/general.utility.dart';
 
-class SleepBarChartWidget extends StatefulWidget {
+class SleepBarChartWidget extends WidgetFrame {
   final List<BarData> barDataList;
 
-  const SleepBarChartWidget({super.key, required this.barDataList});
+  const SleepBarChartWidget({
+    super.key,
+    required this.barDataList,
+  }) : super(size: 2, height: WidgetSizes.mediumHeight);
 
   @override
-  _SleepBarChartWidgetState createState() => _SleepBarChartWidgetState();
+  Widget buildContent(BuildContext context) {
+    return _SleepBarChartState(
+      barDataList: barDataList,
+    );
+  }
 }
 
-class _SleepBarChartWidgetState extends State<SleepBarChartWidget> {
-  BarTouchResponse? _barTouchResponse; // Store the touch response
+class _SleepBarChartState extends StatefulWidget {
+  final List<BarData> barDataList;
+
+  const _SleepBarChartState({
+    required this.barDataList,
+  });
+
+  @override
+  _SleepBarChartStateState createState() => _SleepBarChartStateState();
+}
+
+class _SleepBarChartStateState extends State<_SleepBarChartState> {
+  BarTouchResponse? _barTouchResponse;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.barDataList.isEmpty) return const SizedBox();
+    if (widget.barDataList.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
 
     final totalDuration = widget.barDataList.first.totalDuration ?? 0;
     final Map<String, List<BarData>> stageGroups = {};
@@ -143,7 +165,7 @@ class _SleepBarChartWidgetState extends State<SleepBarChartWidget> {
               ),
               touchCallback: (event, response) {
                 setState(() {
-                  _barTouchResponse = response; // Update the stored response
+                  _barTouchResponse = response;
                 });
               },
             ),

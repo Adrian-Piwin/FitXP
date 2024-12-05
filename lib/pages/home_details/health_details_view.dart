@@ -55,7 +55,7 @@ class HealthDataDetailPage extends StatelessWidget {
               child: Consumer<HealthDetailsController>(
                 builder: (context, controller, _) {
                   return SingleChildScrollView(
-                    child: GridLayout(widgets: controller.buildWidgets()),
+                    child: GridLayout(widgets: controller.getDetailWidgets),
                   );
                 },
               ),

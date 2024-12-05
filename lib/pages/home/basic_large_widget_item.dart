@@ -6,26 +6,30 @@ import 'package:healthxp/models/health_widget.model.dart';
 import '../../constants/colors.constants.dart';
 import '../home_details/health_details_view.dart';
 
-class BasicLargeWidgetItem extends StatelessWidget {
+class BasicLargeWidgetItem extends WidgetFrame {
   final HealthWidget widget;
 
   const BasicLargeWidgetItem({
     super.key,
     required this.widget,
-  });
+  }) : super(
+          size: 2,
+          height: WidgetSizes.smallHeight,
+        );
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildContent(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HealthDataDetailPage(widget: widget),
-          ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HealthDataDetailPage(widget: widget),
+            ),
         );
       },
-      child: WidgetFrame(
+      child: Container(
+        color: Colors.transparent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

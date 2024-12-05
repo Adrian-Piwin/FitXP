@@ -1,9 +1,10 @@
+import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class GridLayout extends StatelessWidget {
-  final List<Map<String, dynamic>> widgets;
+  final List<Widget> widgets;
 
   const GridLayout({
     super.key,
@@ -18,14 +19,12 @@ class GridLayout extends StatelessWidget {
         crossAxisCount: 2, // 2 columns
         mainAxisSpacing: GapSizes.medium,
         crossAxisSpacing: GapSizes.medium,
-        children: widgets.map((widgetInfo) {
-          final size = widgetInfo['size'] as int;
-          final height = widgetInfo['height'] as double?;
-          final widget = widgetInfo['widget'] as Widget;
-      
+        children: widgets.map((widget) {
+          final size = (widget as WidgetFrame).size;
+          final height = (widget).height;
           return StaggeredGridTile.extent(
-            crossAxisCellCount: size == 2 ? 2 : 1, // Spans 2 columns if size == 2
-            mainAxisExtent: height ?? WidgetSizes.smallHeight, 
+            crossAxisCellCount: size,
+            mainAxisExtent: height, 
             child: widget
           );
         }).toList(),

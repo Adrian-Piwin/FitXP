@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:health/health.dart';
+import 'package:healthxp/constants/colors.constants.dart';
 
 import '../models/bar_data.model.dart';
 import '../models/data_point.model.dart';
@@ -151,22 +152,22 @@ class ChartUtility {
     const Map<HealthDataType, Map<String, dynamic>> stageInfo = {
       HealthDataType.SLEEP_AWAKE: {
         'label': 'Awake',
-        'color': Color(0xFFFF9800),  // Orange
+        'color': RepresentationColors.sleepAwakeColor,
         'order': 0
       },
       HealthDataType.SLEEP_DEEP: {
         'label': 'Deep',
-        'color': Color(0xFF2196F3),
+        'color': RepresentationColors.sleepDeepColor,
         'order': 1
       },
       HealthDataType.SLEEP_REM: {
         'label': 'REM',
-        'color': Color(0xFF9C27B0),
+        'color': RepresentationColors.sleepRemColor,
         'order': 2
       },
       HealthDataType.SLEEP_LIGHT: {
         'label': 'Core',
-        'color': Color(0xFF4CAF50),
+        'color': RepresentationColors.sleepLightColor,
         'order': 3
       },
     };

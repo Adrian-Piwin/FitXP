@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:healthxp/components/barchart_widget.dart';
+import 'package:healthxp/components/info_widget.dart';
+import 'package:healthxp/components/sleep_barchart_widget.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/pages/home/basic_large_widget_item.dart';
-import 'package:healthxp/pages/home/basic_widget_item.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/utility/general.utility.dart';
@@ -26,8 +29,13 @@ class HealthWidget{
     _goal = healthItem.getGoal != null && healthItem.getGoal!(goals) != -1 ? healthItem.getGoal!(goals) : -1;
   }
 
+  // #region Getters
+
   TimeFrame get getTimeFrame => _timeFrame;
   int get getOffset => _offset;
+
+  double get getTotal => _total;
+  double get getAverage => _average;
 
   List<DataPoint> get getMergedData {
     return mergeDataPoints(data);
@@ -36,9 +44,6 @@ class HealthWidget{
   List<DataPoint> get _getCombinedData {
     return data.values.expand((list) => list).toList();
   }
-
-  double get getTotal => _total;
-  double get getAverage => _average;
 
   double get getGoal {
     return _goal;
@@ -76,6 +81,18 @@ class HealthWidget{
     return (_total).toStringAsFixed(0);
   }
 
+  // #endregion
+
+  // #region Widget 
+
+  Widget generateWidget() {
+    return BasicLargeWidgetItem(
+      widget: this,
+    );
+  }
+
+  // #endregion
+
   // #region Bar Chart
 
   List<BarData> get getBarchartData {
@@ -87,7 +104,44 @@ class HealthWidget{
     return value.toStringAsFixed(0);
   }
 
+  String getXAxisLabel(double value) {
+    return ChartUtility.getXAxisLabel(getBarchartData, _timeFrame, value);
+  }
+
   // #endregion
+
+  // #region Info widgets
+
+  List<Widget> get getDetailWidgets {
+    return [
+      BarChartWidget(
+        groupedData: getBarchartData,
+        barColor: healthItem.color,
+        getXAxisLabel: getXAxisLabel,
+        getBarchartValue: getBarchartValue,
+      ),
+      InfoWidget(
+        title: "Total",
+        displayValue: getTotal.toStringAsFixed(0),
+      ),
+      InfoWidget(
+        title: "Average",
+        displayValue: getAverage.toStringAsFixed(0),
+      ),
+      InfoWidget(
+        title: "Goal",
+        displayValue: getGoal.toStringAsFixed(0),
+      ),
+      InfoWidget(
+        title: "Goal Progress",
+        displayValue: "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%",
+      ),
+    ];
+  }
+
+  // #endregion
+
+  // #region Update
 
   void updateQueryOptions(TimeFrame newTimeFrame, int newOffset) {
     _timeFrame = newTimeFrame;
@@ -104,18 +158,9 @@ class HealthWidget{
     _average = getHealthAverage(_getCombinedData);
   }
 
-  Map<String, dynamic> generateWidget() {
-    return {
-      "size": widgetSize,
-      "widget": widgetSize == 1
-          ? BasicWidgetItem(
-              widget: this,
-            )
-          : BasicLargeWidgetItem(
-              widget: this,
-            )
-    };
-  }
+  // #endregion
+
+  // #region Clone
 
   HealthWidget clone() {
     return HealthWidget(healthItem, goals, widgetSize)..data = data;
@@ -124,6 +169,8 @@ class HealthWidget{
   static HealthWidget from(HealthWidget widget) {
     return widget.clone();
   }
+
+  // #endregion
 }
 
 class NetCaloriesHealthWidget extends HealthWidget {
@@ -230,6 +277,37 @@ class SleepHealthWidget extends HealthWidget {
       return ChartUtility.getSleepBarData(data);
     }
     return super.getBarchartData;
+  }
+
+  @override
+  List<Widget> get getDetailWidgets {
+    return [
+      _timeFrame == TimeFrame.day ?
+      SleepBarChartWidget(
+        barDataList: getBarchartData,
+      ) : BarChartWidget(
+        groupedData: getBarchartData,
+        barColor: healthItem.color,
+        getXAxisLabel: getXAxisLabel,
+          getBarchartValue: getBarchartValue,
+        ),
+      InfoWidget(
+        title: "Total",
+        displayValue: getTotal.toStringAsFixed(0),
+      ),
+      InfoWidget(
+        title: "Average",
+        displayValue: getAverage.toStringAsFixed(0),
+      ),
+      InfoWidget(
+        title: "Goal",
+        displayValue: getGoal.toStringAsFixed(0),
+      ),
+      InfoWidget(
+        title: "Goal Progress",
+        displayValue: "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%",
+      ),
+    ];
   }
 
   @override

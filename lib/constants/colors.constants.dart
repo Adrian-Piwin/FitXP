@@ -20,5 +20,9 @@ class RepresentationColors{
   static const Color healthItemColor = Color.fromARGB(255, 198, 161, 204);
   static const Color exerciseColor = Color.fromARGB(255, 161, 204, 187);
   static const Color sleepColor = Color.fromARGB(255, 204, 161, 203);
+  static const Color sleepAwakeColor = Color.fromARGB(255, 255, 152, 0);
+  static const Color sleepDeepColor = Color.fromARGB(255, 33, 150, 243);
+  static const Color sleepRemColor = Color.fromARGB(255, 156, 39, 176);
+  static const Color sleepLightColor = Color.fromARGB(255, 76, 175, 80);
   static const Color weightColor = Color.fromARGB(255, 161, 204, 201);
 }
