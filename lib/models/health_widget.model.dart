@@ -182,36 +182,16 @@ class NetCaloriesHealthWidget extends HealthWidget {
 
   @override
   void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
-    var energyBurnedActive = batchData[HealthDataType.ACTIVE_ENERGY_BURNED] ?? [];
-    var energyBurnedBasal = batchData[HealthDataType.BASAL_ENERGY_BURNED] ?? [];
-    var energyConsumed = batchData[HealthDataType.DIETARY_ENERGY_CONSUMED] ?? [];
-
-    var totalEnergyBurned = getHealthTotal(energyBurnedActive) + 
-                           getHealthTotal(energyBurnedBasal);
-    var totalEnergyConsumed = getHealthTotal(energyConsumed);
-    var avgEnergyBurned = getHealthAverage(energyBurnedActive) + 
-                         getHealthAverage(energyBurnedBasal);
-    var avgEnergyConsumed = getHealthAverage(energyConsumed);
-
-    data = batchData;
-    _total = totalEnergyConsumed - totalEnergyBurned;
-    _average = avgEnergyConsumed - avgEnergyBurned;
-  }
-
-  @override
-  List<DataPoint> get getMergedData {
-    var allPoints = <HealthDataType, List<DataPoint>>{
-      HealthDataType.ACTIVE_ENERGY_BURNED: data[HealthDataType.ACTIVE_ENERGY_BURNED] ?? [],
-      HealthDataType.BASAL_ENERGY_BURNED: data[HealthDataType.BASAL_ENERGY_BURNED] ?? [],
-      HealthDataType.DIETARY_ENERGY_CONSUMED: (data[HealthDataType.DIETARY_ENERGY_CONSUMED] ?? [])
+    Map<HealthDataType, List<DataPoint>> newData = Map.from(batchData);
+    if (batchData.containsKey(HealthDataType.DIETARY_ENERGY_CONSUMED)) {
+      newData[HealthDataType.DIETARY_ENERGY_CONSUMED] = batchData[HealthDataType.DIETARY_ENERGY_CONSUMED]!
           .map((point) => DataPoint(
                 value: -point.value,
                 dateFrom: point.dateFrom,
                 dateTo: point.dateTo))
-          .toList()
-    };
-
-    return mergeDataPoints(allPoints);
+          .toList();
+    }
+    super.updateData(newData);
   }
 
   @override
