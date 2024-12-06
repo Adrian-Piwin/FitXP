@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/models/health_widget.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HealthDetailsController extends ChangeNotifier {
-  final HealthWidget _widget;
+  final HealthEntity _widget;
   final HealthFetcherService _healthFetcherService = HealthFetcherService();
 
   bool _isLoading = false;
@@ -13,10 +13,10 @@ class HealthDetailsController extends ChangeNotifier {
   int _offset;
 
   HealthDetailsController({
-    required HealthWidget widget,
-  }) : _widget = HealthWidget.from(widget),
-       _selectedTimeFrame = widget.getTimeFrame,
-       _offset = widget.getOffset{
+    required HealthEntity widget,
+  }) : _widget = HealthEntity.from(widget),
+       _selectedTimeFrame = widget.timeframe,
+       _offset = widget.offset{
         _fetchData();
        }
 

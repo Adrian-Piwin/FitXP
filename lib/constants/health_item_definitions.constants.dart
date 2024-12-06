@@ -1,13 +1,15 @@
 import 'package:healthxp/models/goal.model.dart';
-import 'package:healthxp/models/health_widget.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
+import 'package:healthxp/models/health_entities/netcalories_health_entity.model.dart';
 import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
 import 'icons.constants.dart';
 
 typedef GoalGetter = double Function(Goal goal);
-typedef WidgetFactory = HealthWidget Function(
+typedef WidgetFactory = HealthEntity Function(
     HealthItem item, Goal goals, int widgetSize);
 
 class HealthItem {
@@ -20,7 +22,7 @@ class HealthItem {
   GoalGetter? getGoal;
   WidgetFactory widgetFactory =
       ((item, goals, widgetSize) =>
-          HealthWidget(item, goals, widgetSize));
+          HealthEntity(item, goals, widgetSize));
 }
 
 class HealthItemDefinitions {
@@ -63,7 +65,7 @@ class HealthItemDefinitions {
     ..icon = IconTypes.sleepDurationIcon
     ..getGoal = ((Goal goal) => goal.sleepGoal.inMinutes.toDouble())
     ..widgetFactory = ((item, goals, widgetSize) =>
-        SleepHealthWidget(item, goals, widgetSize));
+        SleepHealthEntity(item, goals, widgetSize));
 
   static HealthItem activeCalories = HealthItem()
     ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED]
@@ -100,7 +102,7 @@ class HealthItemDefinitions {
     ..icon = IconTypes.netCaloriesIcon
     ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
     ..widgetFactory = ((item, goals, widgetSize) =>
-        NetCaloriesHealthWidget(item, goals, widgetSize));
+        NetCaloriesHealthEntity(item, goals, widgetSize));
 
   static HealthItem steps = HealthItem()
     ..dataType = [HealthDataType.STEPS]

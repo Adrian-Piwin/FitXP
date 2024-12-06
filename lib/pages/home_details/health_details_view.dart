@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/grid_layout.dart';
-import 'package:healthxp/models/health_widget.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:provider/provider.dart';
 import '../../components/timeframe_tabbar.dart';
 import '../../components/date_selector.dart';
 import 'health_details_controller.dart';
 
 class HealthDataDetailPage extends StatelessWidget {
-  final HealthWidget widget;
+  final HealthEntity widget;
 
   const HealthDataDetailPage({
     super.key,

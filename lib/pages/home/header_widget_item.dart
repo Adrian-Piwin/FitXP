@@ -1,16 +1,16 @@
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/health_widget.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../constants/animations.constants.dart';
 
 class HeaderWidgetItem extends StatelessWidget {
-  final HealthWidget barWidget;
-  final HealthWidget subWidgetFirst;
-  final HealthWidget subWidgetSecond;
-  final HealthWidget subWidgetThird;
+  final HealthEntity barWidget;
+  final HealthEntity subWidgetFirst;
+  final HealthEntity subWidgetSecond;
+  final HealthEntity subWidgetThird;
 
   const HeaderWidgetItem({
     super.key,

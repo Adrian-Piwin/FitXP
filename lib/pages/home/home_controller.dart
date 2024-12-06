@@ -3,7 +3,7 @@ import 'package:health/health.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/goal.model.dart';
-import '../../models/health_widget.model.dart';
+import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../services/db_goals_service.dart';
 import '../../enums/timeframe.enum.dart';
@@ -45,8 +45,8 @@ class HomeController extends ChangeNotifier {
         HealthItemDefinitions.netCalories,
       ];
 
-  List<HealthWidget> headerWidgets = [];
-  List<HealthWidget> displayWidgets = [];
+  List<HealthEntity> headerWidgets = [];
+  List<HealthEntity> displayWidgets = [];
 
   Set<HealthDataType> get _allRequiredHealthTypes {
     Set<HealthDataType> types = {};
