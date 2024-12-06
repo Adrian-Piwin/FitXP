@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/info_widget.dart';
+import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/components/sleep_barchart_widget.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
@@ -19,6 +21,8 @@ class HealthWidget{
   final int widgetSize;
 
   Map<HealthDataType, List<DataPoint>> data = {};
+  bool isLoading = false;
+
   TimeFrame _timeFrame = TimeFrame.day;
   int _offset = 0;
   double _total = 0;
@@ -45,17 +49,13 @@ class HealthWidget{
     return data.values.expand((list) => list).toList();
   }
 
-  double get getGoal {
-    return _goal;
-  }
-
   double get getGoalPercent {
+    if (isLoading) return 0;
+
     if (_goal == 0) return 0.0;
     if (_goal == -1) return -1;
-    return (_total / _goal).clamp(0, double.infinity);
+    return (_total / _goal).clamp(0.0, 1.0);
   }
-
-  double get getGoalPercentClamped => getGoalPercent.clamp(0.0, 1.0);
 
   double get getGoalAveragePercent {
     if (_goal == 0) return 0.0;
@@ -63,11 +63,9 @@ class HealthWidget{
     return (_average / _goal).clamp(0, double.infinity);
   }
 
-  String get getUnit {
-    return healthItem.unit;
-  }
+  String get getDisplaySubtitle {
+    if (isLoading) return "--";
 
-  String get getSubtitle {
     if (_timeFrame == TimeFrame.day && _goal != -1) {
       return _goal - _total >= 0 ? 
           "${(_goal - _total).toStringAsFixed(0)}${healthItem.unit} left" : 
@@ -78,7 +76,23 @@ class HealthWidget{
   }
 
   String get getDisplayValue {
+    if (isLoading) return "--";
     return (_total).toStringAsFixed(0);
+  }
+
+  String get getDisplayAverage {
+    if (isLoading) return "--";
+    return (_average).toStringAsFixed(0);
+  }
+
+  String get getDisplayGoal {
+    if (isLoading) return "--";
+    return (_goal).toStringAsFixed(0);
+  }
+
+  String get getDisplayGoalAveragePercent {
+    if (isLoading) return "--";
+    return "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%";
   }
 
   // #endregion
@@ -112,29 +126,35 @@ class HealthWidget{
 
   // #region Info widgets
 
+  Widget get getGraphWidget {
+    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
+
+    return BarChartWidget(
+      groupedData: getBarchartData,
+      barColor: healthItem.color,
+      getXAxisLabel: getXAxisLabel,
+      getBarchartValue: getBarchartValue,
+    );
+  }
+
   List<Widget> get getDetailWidgets {
     return [
-      BarChartWidget(
-        groupedData: getBarchartData,
-        barColor: healthItem.color,
-        getXAxisLabel: getXAxisLabel,
-        getBarchartValue: getBarchartValue,
-      ),
+      getGraphWidget,
       InfoWidget(
         title: "Total",
-        displayValue: getTotal.toStringAsFixed(0),
+        displayValue: getDisplayValue,
       ),
       InfoWidget(
         title: "Average",
-        displayValue: getAverage.toStringAsFixed(0),
+        displayValue: getDisplayAverage,
       ),
       InfoWidget(
         title: "Goal",
-        displayValue: getGoal.toStringAsFixed(0),
+        displayValue: getDisplayGoal,
       ),
       InfoWidget(
         title: "Goal Progress",
-        displayValue: "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%",
+        displayValue: getDisplayGoalAveragePercent,
       ),
     ];
   }
@@ -205,7 +225,7 @@ class NetCaloriesHealthWidget extends HealthWidget {
       }
       total = _total.abs();
     }
-    return (total / _goal.abs()).clamp(0, double.infinity);
+    return (total / _goal.abs()).clamp(0, 1.0);
   }
 
   @override
@@ -222,7 +242,8 @@ class SleepHealthWidget extends HealthWidget {
   );
 
   @override
-  String get getSubtitle {
+  String get getDisplaySubtitle {
+    if (isLoading) return "--";
     if (_timeFrame == TimeFrame.day && _goal != -1) {
       int sleepGoalMinutes = _goal.toInt();
       int actualSleepMinutes = getTotal.toInt();
@@ -238,6 +259,8 @@ class SleepHealthWidget extends HealthWidget {
 
   @override
   String get getDisplayValue {
+    if (isLoading) return "--";
+
     int totalMinutes = _total.toInt();
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
@@ -260,34 +283,18 @@ class SleepHealthWidget extends HealthWidget {
   }
 
   @override
-  List<Widget> get getDetailWidgets {
-    return [
-      _timeFrame == TimeFrame.day ?
+  Widget get getGraphWidget {
+    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
+
+    return _timeFrame == TimeFrame.day ?
       SleepBarChartWidget(
         barDataList: getBarchartData,
       ) : BarChartWidget(
         groupedData: getBarchartData,
         barColor: healthItem.color,
         getXAxisLabel: getXAxisLabel,
-          getBarchartValue: getBarchartValue,
-        ),
-      InfoWidget(
-        title: "Total",
-        displayValue: getTotal.toStringAsFixed(0),
-      ),
-      InfoWidget(
-        title: "Average",
-        displayValue: getAverage.toStringAsFixed(0),
-      ),
-      InfoWidget(
-        title: "Goal",
-        displayValue: getGoal.toStringAsFixed(0),
-      ),
-      InfoWidget(
-        title: "Goal Progress",
-        displayValue: "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%",
-      ),
-    ];
+        getBarchartValue: getBarchartValue,
+      );
   }
 
   @override

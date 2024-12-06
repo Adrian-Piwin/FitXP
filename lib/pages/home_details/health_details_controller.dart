@@ -37,6 +37,7 @@ class HealthDetailsController extends ChangeNotifier {
 
   Future<void> _fetchData() async {
     _isLoading = true;
+    _widget.isLoading = true;
     notifyListeners();
 
     try {
@@ -51,6 +52,7 @@ class HealthDetailsController extends ChangeNotifier {
     }
 
     _isLoading = false;
+    _widget.isLoading = false;
     notifyListeners();
   }
 

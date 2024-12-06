@@ -53,7 +53,7 @@ class HeaderWidgetItem extends StatelessWidget {
               LinearPercentIndicator(
                 lineHeight: PercentIndicatorSizes.lineHeightLarge,
                 padding: EdgeInsets.zero,
-                percent: barWidget.getGoalPercentClamped,
+                percent: barWidget.getGoalPercent,
                 backgroundColor: PercentIndicatorColors.backgroundColor,
                 progressColor: barWidget.healthItem.color,
                 barRadius:
@@ -68,7 +68,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetFirst.getGoalPercentClamped,
+                    percent: subWidgetFirst.getGoalPercent,
                     center: FaIcon(subWidgetFirst.healthItem.icon,
                         size: IconSizes.small,
                         color: subWidgetFirst.healthItem.color),
@@ -89,7 +89,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetSecond.getGoalPercentClamped,
+                    percent: subWidgetSecond.getGoalPercent,
                     center: FaIcon(subWidgetSecond.healthItem.icon,
                         size: IconSizes.small,
                         color: subWidgetSecond.healthItem.color),
@@ -110,7 +110,7 @@ class HeaderWidgetItem extends StatelessWidget {
                   CircularPercentIndicator(
                     radius: PercentIndicatorSizes.circularRadiusMedium,
                     lineWidth: PercentIndicatorSizes.lineHeightSmall,
-                    percent: subWidgetThird.getGoalPercentClamped,
+                    percent: subWidgetThird.getGoalPercent,
                     center: FaIcon(subWidgetThird.healthItem.icon,
                         size: IconSizes.small,
                         color: subWidgetThird.healthItem.color),

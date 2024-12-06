@@ -54,7 +54,7 @@ class BasicLargeWidgetItem extends WidgetFrame {
                 ),
                 const SizedBox(height: GapSizes.small),
                 Text(
-                  widget.getSubtitle,
+                  widget.getDisplaySubtitle,
                   style: const TextStyle(
                     fontSize: FontSizes.medium,
                     color: Colors.grey,
@@ -69,7 +69,7 @@ class BasicLargeWidgetItem extends WidgetFrame {
                     child: AnimatedRadialGauge(
                       duration: const Duration(seconds: 1),
                       curve: Curves.elasticOut,
-                      value: widget.getGoalPercentClamped,
+                      value: widget.getGoalPercent,
                       axis: GaugeAxis(
                         min: 0,
                         max: 1,

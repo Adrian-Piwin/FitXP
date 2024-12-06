@@ -121,6 +121,9 @@ class HomeController extends ChangeNotifier {
 
   Future<void> fetchHealthData() async {
     _isLoading = true;
+    for (var widget in [...headerWidgets, ...displayWidgets]) {
+      widget.isLoading = true;
+    }
     notifyListeners();
 
     try {
@@ -140,6 +143,9 @@ class HomeController extends ChangeNotifier {
       await ErrorLogger.logError('Error fetching data: $e');
     } finally {
       _isLoading = false;
+      for (var widget in [...headerWidgets, ...displayWidgets]) {
+        widget.isLoading = false;
+      }
       notifyListeners();
     }
   }
