@@ -3,7 +3,6 @@ import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/enums/health_item_type.enum.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';

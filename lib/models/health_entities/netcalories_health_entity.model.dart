@@ -13,8 +13,18 @@ class NetCaloriesHealthEntity extends HealthEntity {
   @override
   void updateData(Map<HealthDataType, List<DataPoint>> batchData, TimeFrame newTimeFrame, int newOffset) {
     Map<HealthDataType, List<DataPoint>> newData = Map.from(batchData);
-    if (batchData.containsKey(HealthDataType.DIETARY_ENERGY_CONSUMED)) {
-      newData[HealthDataType.DIETARY_ENERGY_CONSUMED] = batchData[HealthDataType.DIETARY_ENERGY_CONSUMED]!
+    if (batchData.containsKey(HealthDataType.ACTIVE_ENERGY_BURNED)) {
+      newData[HealthDataType.ACTIVE_ENERGY_BURNED] = batchData[HealthDataType.ACTIVE_ENERGY_BURNED]!
+          .map((point) => DataPoint(
+                value: -point.value,
+                dateFrom: point.dateFrom,
+                dateTo: point.dateTo,
+                dayOccurred: point.dayOccurred,
+              ))
+          .toList();
+    }
+    if (batchData.containsKey(HealthDataType.BASAL_ENERGY_BURNED)) {
+      newData[HealthDataType.BASAL_ENERGY_BURNED] = batchData[HealthDataType.BASAL_ENERGY_BURNED]!
           .map((point) => DataPoint(
                 value: -point.value,
                 dateFrom: point.dateFrom,
