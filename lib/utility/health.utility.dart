@@ -17,7 +17,7 @@ double getHealthAverage(List<DataPoint> data) {
 
   for (var point in data) {
     // Extract the date part from dateFrom
-    DateTime date = DateTime(point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
+    DateTime date = DateTime(point.dayOccurred.year, point.dayOccurred.month, point.dayOccurred.day);
 
     // Add the value to the corresponding day in the map
     if (dailySums.containsKey(date)) {
@@ -239,6 +239,7 @@ List<DataPoint> mergeDataPoints(Map<HealthDataType, List<DataPoint>> points) {
           value: combinedValue,
           dateFrom: current.dateFrom,
           dateTo: next.dateTo,
+          dayOccurred: current.dayOccurred,
         );
       }
     } else {
@@ -247,6 +248,7 @@ List<DataPoint> mergeDataPoints(Map<HealthDataType, List<DataPoint>> points) {
         value: combinedValue,
         dateFrom: current.dateFrom,
         dateTo: current.dateTo,
+        dayOccurred: current.dayOccurred,
       ));
       current = next;
       combinedValue = next.value;
@@ -258,6 +260,7 @@ List<DataPoint> mergeDataPoints(Map<HealthDataType, List<DataPoint>> points) {
     value: combinedValue,
     dateFrom: current.dateFrom,
     dateTo: current.dateTo,
+    dayOccurred: current.dayOccurred,
   ));
 
   return result;

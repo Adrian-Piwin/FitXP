@@ -1,7 +1,7 @@
 import 'dart:ui';
-
-import 'package:health/health.dart';
 import 'package:healthxp/constants/colors.constants.dart';
+import 'package:healthxp/enums/sleep_stages.enum.dart';
+import 'package:healthxp/models/sleep_data_point.model.dart';
 
 import '../models/bar_data.model.dart';
 import '../models/data_point.model.dart';
@@ -58,7 +58,7 @@ class ChartUtility {
 
     for (var point in data) {
       final dayKey =
-          '${point.dateFrom.year}-${point.dateFrom.month}-${point.dateFrom.day}';
+          '${point.dayOccurred.year}-${point.dayOccurred.month}-${point.dayOccurred.day}';
       dailyTotals[dayKey] = (dailyTotals[dayKey] ?? 0) + point.value;
     }
 
@@ -92,7 +92,7 @@ class ChartUtility {
     Map<DateTime, double> monthlyData = {};
 
     for (var point in data) {
-      final date = DateTime(point.dateFrom.year, point.dateFrom.month);
+      final date = DateTime(point.dayOccurred.year, point.dayOccurred.month);
       monthlyData[date] = (monthlyData[date] ?? 0) + point.value;
     }
 
@@ -145,27 +145,27 @@ class ChartUtility {
     }
   }
 
-  static List<BarData> getSleepBarData(Map<HealthDataType, List<DataPoint>> sleepData) {
+  static List<BarData> getSleepBarData(List<SleepDataPoint> sleepData) {
     List<BarData> barDataList = [];
     
     // Define stage labels and colors
-    const Map<HealthDataType, Map<String, dynamic>> stageInfo = {
-      HealthDataType.SLEEP_AWAKE: {
+    const Map<SleepStage, Map<String, dynamic>> stageInfo = {
+      SleepStage.awake: {
         'label': 'Awake',
         'color': RepresentationColors.sleepAwakeColor,
         'order': 0
       },
-      HealthDataType.SLEEP_DEEP: {
-        'label': 'Deep',
+      SleepStage.deep: {
+        'label': 'Deep', 
         'color': RepresentationColors.sleepDeepColor,
         'order': 1
       },
-      HealthDataType.SLEEP_REM: {
+      SleepStage.rem: {
         'label': 'REM',
         'color': RepresentationColors.sleepRemColor,
         'order': 2
       },
-      HealthDataType.SLEEP_LIGHT: {
+      SleepStage.light: {
         'label': 'Core',
         'color': RepresentationColors.sleepLightColor,
         'order': 3
@@ -176,40 +176,35 @@ class ChartUtility {
     DateTime? earliestStart;
     DateTime? latestEnd;
     
-    for (var dataPoints in sleepData.values) {
-      for (var dp in dataPoints) {
-        earliestStart = earliestStart == null || dp.dateFrom.isBefore(earliestStart) 
-            ? dp.dateFrom 
-            : earliestStart;
-        latestEnd = latestEnd == null || dp.dateTo.isAfter(latestEnd) 
-            ? dp.dateTo 
-            : latestEnd;
-      }
+    for (var dp in sleepData) {
+      earliestStart = earliestStart == null || dp.dateFrom.isBefore(earliestStart)
+          ? dp.dateFrom
+          : earliestStart;
+      latestEnd = latestEnd == null || dp.dateTo.isAfter(latestEnd)
+          ? dp.dateTo
+          : latestEnd;
     }
 
     if (earliestStart == null || latestEnd == null) return [];
     
     final totalDuration = latestEnd.difference(earliestStart).inMinutes.toDouble();
 
-    // Process each sleep stage
-    for (var entry in sleepData.entries) {
-      final type = entry.key;
-      if (!stageInfo.containsKey(type)) continue;
+    // Process each sleep data point
+    for (var dp in sleepData) {
+      if (!stageInfo.containsKey(dp.sleepStage)) continue;
 
-      for (var dp in entry.value) {
-        final startOffset = dp.dateFrom.difference(earliestStart).inMinutes.toDouble();
-        final duration = dp.dateTo.difference(dp.dateFrom).inMinutes.toDouble();
-        
-        barDataList.add(BarData(
-          x: startOffset,  // Start position relative to sleep start
-          y: duration,     // Duration of this sleep stage segment
-          label: stageInfo[type]!['label'] as String,
-          color: stageInfo[type]!['color'] as Color,
-          order: stageInfo[type]!['order'] as int,
-          totalDuration: totalDuration,  // Add total duration for scaling
-          timeLabel: '${dp.dateFrom.hour}:${dp.dateFrom.minute.toString().padLeft(2, '0')}',
-        ));
-      }
+      final startOffset = dp.dateFrom.difference(earliestStart).inMinutes.toDouble();
+      final duration = dp.dateTo.difference(dp.dateFrom).inMinutes.toDouble();
+      
+      barDataList.add(BarData(
+        x: startOffset,  // Start position relative to sleep start
+        y: duration,     // Duration of this sleep stage segment
+        label: stageInfo[dp.sleepStage]!['label'] as String,
+        color: stageInfo[dp.sleepStage]!['color'] as Color,
+        order: stageInfo[dp.sleepStage]!['order'] as int,
+        totalDuration: totalDuration,  // Add total duration for scaling
+        timeLabel: '${dp.dateFrom.hour}:${dp.dateFrom.minute.toString().padLeft(2, '0')}',
+      ));
     }
 
     // Sort by timestamp and stage order

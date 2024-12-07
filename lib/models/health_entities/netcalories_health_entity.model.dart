@@ -1,4 +1,5 @@
 import 'package:health/health.dart';
+import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 
@@ -10,17 +11,19 @@ class NetCaloriesHealthEntity extends HealthEntity {
   );
 
   @override
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
+  void updateData(Map<HealthDataType, List<DataPoint>> batchData, TimeFrame newTimeFrame, int newOffset) {
     Map<HealthDataType, List<DataPoint>> newData = Map.from(batchData);
     if (batchData.containsKey(HealthDataType.DIETARY_ENERGY_CONSUMED)) {
       newData[HealthDataType.DIETARY_ENERGY_CONSUMED] = batchData[HealthDataType.DIETARY_ENERGY_CONSUMED]!
           .map((point) => DataPoint(
                 value: -point.value,
                 dateFrom: point.dateFrom,
-                dateTo: point.dateTo))
+                dateTo: point.dateTo,
+                dayOccurred: point.dayOccurred,
+              ))
           .toList();
     }
-    super.updateData(newData);
+    super.updateData(newData, newTimeFrame, newOffset);
   }
 
   @override

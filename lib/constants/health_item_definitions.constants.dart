@@ -57,7 +57,7 @@ class HealthItemDefinitions {
     ..getGoal = (Goal goal) => goal.exerciseMinutesGoal;
 
   static HealthItem sleepDuration = HealthItem()
-    ..dataType = [HealthDataType.SLEEP_ASLEEP, HealthDataType.SLEEP_REM, HealthDataType.SLEEP_LIGHT, HealthDataType.SLEEP_DEEP, HealthDataType.SLEEP_AWAKE]
+    ..dataType = [HealthDataType.SLEEP_ASLEEP]
     ..itemType = HealthItemType.sleep
     ..title = "Sleep"
     ..unit = "hrs"

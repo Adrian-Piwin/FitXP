@@ -7,9 +7,16 @@ final List<HealthDataType> healthDataTypes = [
     HealthDataType.STEPS,
     HealthDataType.WEIGHT,
     HealthDataType.BODY_FAT_PERCENTAGE,
-    HealthDataType.SLEEP_ASLEEP,
     HealthDataType.EXERCISE_TIME,
     HealthDataType.NUTRITION,
     HealthDataType.DIETARY_PROTEIN_CONSUMED,
     HealthDataType.WORKOUT
   ];
+
+final List<HealthDataType> sleepTypes = [
+  HealthDataType.SLEEP_ASLEEP,
+  HealthDataType.SLEEP_AWAKE,
+  HealthDataType.SLEEP_DEEP,
+  HealthDataType.SLEEP_LIGHT,
+  HealthDataType.SLEEP_REM,
+];

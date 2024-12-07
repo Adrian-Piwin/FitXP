@@ -136,8 +136,7 @@ class HomeController extends ChangeNotifier {
 
       // Update each widget with the relevant data
       for (var widget in [...headerWidgets, ...displayWidgets]) {
-        widget.updateQueryOptions(_selectedTimeFrame, _offset);
-        widget.updateData(batchData);
+        widget.updateData(batchData, _selectedTimeFrame, _offset);
       }
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');

@@ -2,7 +2,9 @@ import 'package:fitbitter/fitbitter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/enums/sleep_stages.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 
 class FitbitService {
@@ -11,6 +13,7 @@ class FitbitService {
 
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   FitbitActivityTimeseriesDataManager? _fitbitDataManager;
+  FitbitSleepDataManager? _fitbitSleepDataManager;
   FitbitCredentials? _fitbitCredentials;
 
   bool get isConnected => _fitbitCredentials != null;
@@ -28,11 +31,18 @@ class FitbitService {
     final accessToken = await _secureStorage.read(key: 'accessToken');
     final userId = await _secureStorage.read(key: 'userID');
     final refreshToken = await _secureStorage.read(key: 'refreshToken');
+    final clientID = dotenv.env['FITBIT_CLIENTID'] ?? '';
+    final clientSecret = dotenv.env['FITBIT_SECRET'] ?? '';
 
     if (accessToken != null && userId != null && refreshToken != null) {
       _fitbitDataManager = FitbitActivityTimeseriesDataManager(
-        clientID: dotenv.env['FITBIT_CLIENTID'] ?? '',
-        clientSecret: dotenv.env['FITBIT_SECRET'] ?? '',
+        clientID: clientID,
+        clientSecret: clientSecret,
+      );
+
+      _fitbitSleepDataManager = FitbitSleepDataManager(
+        clientID: clientID,
+        clientSecret: clientSecret,
       );
 
       _fitbitCredentials = FitbitCredentials(
@@ -93,6 +103,11 @@ class FitbitService {
     return supportedTypes;
   }
 
+  bool isSleepSupported() {
+    if (!isConnected) return false;
+    return true;
+  }
+
   Future<Map<HealthDataType, List<DataPoint>>> fetchBatchData(
     Set<HealthDataType> items,
     DateTime startDate,
@@ -116,7 +131,6 @@ class FitbitService {
         // Fetch data for each resource
         for (var resource in resources) {
           try {
-            await ErrorLogger.logError('fetching fitbit data for $resource');
             final fitbitData = await _getFitbitDataInternal(startDate, endDate, resource);
             
             // Convert and add to combined data
@@ -125,6 +139,7 @@ class FitbitService {
                 value: f.value?.toDouble() ?? 0,
                 dateFrom: f.dateOfMonitoring ?? DateTime.now(),
                 dateTo: f.dateOfMonitoring ?? DateTime.now(),
+                dayOccurred: f.dateOfMonitoring ?? DateTime.now(),
               );
             }));
           } catch (e) {
@@ -163,6 +178,115 @@ class FitbitService {
     }
     
     return data as List<FitbitActivityTimeseriesData>;
+  }
+
+  Future<List<SleepDataPoint>> getFitbitSleepData(
+      DateTime startDate, DateTime endDate) async {
+    var url = endDate.difference(startDate).inDays == 1
+        ? FitbitSleepAPIURL.day(
+            fitbitCredentials: _fitbitCredentials!,
+            date: startDate,
+          )
+        : FitbitSleepAPIURL.dateRange(
+            fitbitCredentials: _fitbitCredentials!,
+            startDate: startDate,
+            endDate: endDate,
+          );
+
+    List<FitbitSleepData> data;
+    try {
+      data = await _fitbitSleepDataManager!.fetch(url) as List<FitbitSleepData>;
+    } catch (e) {
+      if (_isTokenExpiredError(e)) {
+        await _refreshToken();
+        data = await _fitbitSleepDataManager!.fetch(url) as List<FitbitSleepData>;
+      } else {
+        rethrow;
+      }
+    }
+
+    // Sort data by entryDateTime
+    data.sort((a, b) => (a.entryDateTime ?? DateTime.now())
+        .compareTo(b.entryDateTime ?? DateTime.now()));
+
+    // Process data into sleep points
+    List<SleepDataPoint> sleepPoints = [];
+    Map<String, Map<String, dynamic>> currentSession = {};  // Track each sleep session
+
+    for (int i = 0; i < data.length; i++) {
+      final point = data[i];
+      final stage = _mapSleepStage(point.level);
+      if (stage == SleepStage.unknown) continue;
+      
+      final entryTime = point.entryDateTime ?? DateTime.now();
+      final sleepDate = point.dateOfSleep ?? entryTime;
+      final sessionKey = '${sleepDate.year}-${sleepDate.month}-${sleepDate.day}';
+
+      // Initialize or get current session data
+      if (!currentSession.containsKey(sessionKey)) {
+        currentSession[sessionKey] = {
+          'currentStage': null,
+          'stageStart': null,
+        };
+      }
+
+      var session = currentSession[sessionKey]!;
+      var currentStage = session['currentStage'] as SleepStage?;
+      var stageStart = session['stageStart'] as DateTime?;
+
+      // Handle first point of session
+      if (currentStage == null) {
+        currentStage = stage;
+        stageStart = entryTime;
+      }
+
+      // If stage changes or last point of session
+      bool isLastPointOfSession = i == data.length - 1 || 
+          (i < data.length - 1 && (data[i + 1].dateOfSleep ?? data[i + 1].entryDateTime) != sleepDate);
+
+      if (stage != currentStage || isLastPointOfSession) {
+        final endTime = (isLastPointOfSession && stage == currentStage)
+            ? entryTime.add(const Duration(seconds: 30))
+            : entryTime;
+
+        if (stageStart != null) {
+          final duration = endTime.difference(stageStart).inSeconds / 60.0;
+          
+          sleepPoints.add(SleepDataPoint(
+            value: duration,
+            dateFrom: stageStart,
+            dateTo: endTime,
+            dayOccurred: sleepDate,
+            sleepStage: currentStage,
+          ));
+        }
+
+        // Start new stage
+        currentStage = stage;
+        stageStart = entryTime;
+      }
+
+      // Update session data
+      session['currentStage'] = currentStage;
+      session['stageStart'] = stageStart;
+    }
+
+    return sleepPoints;
+  }
+
+  SleepStage _mapSleepStage(String? level) {
+    switch (level?.toLowerCase()) {
+      case 'wake':
+        return SleepStage.awake;
+      case 'light':
+        return SleepStage.light;
+      case 'deep':
+        return SleepStage.deep;
+      case 'rem':
+        return SleepStage.rem;
+      default:
+        return SleepStage.unknown;
+    }
   }
 
   bool _isTokenExpiredError(dynamic error) {

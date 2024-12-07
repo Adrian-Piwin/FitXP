@@ -41,12 +41,11 @@ class HealthDetailsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _widget.updateQueryOptions(_selectedTimeFrame, _offset);
       _widget.updateData(await _healthFetcherService.fetchBatchData(
         _widget.healthItem.dataType,
         _selectedTimeFrame,
         _offset
-      ));
+      ), _selectedTimeFrame, _offset);
     } catch (e) {
       await ErrorLogger.logError('Error fetching health data: $e');
     }

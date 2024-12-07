@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:health/health.dart';
 import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/components/sleep_barchart_widget.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/enums/sleep_stages.enum.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
+import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:healthxp/utility/general.utility.dart';
 
@@ -15,6 +19,8 @@ class SleepHealthEntity extends HealthEntity {
     super.goals,
     super.timeFrame,
   );
+
+  List<SleepDataPoint> get sleepDataPoints => data[HealthDataType.SLEEP_ASLEEP] as List<SleepDataPoint>;
 
   @override
   String get getDisplaySubtitle {
@@ -35,11 +41,19 @@ class SleepHealthEntity extends HealthEntity {
   @override
   String get getDisplayValue {
     if (isLoading) return "--";
+    return formatMinutes(total.toInt());
+  }
 
-    int totalMinutes = total.toInt();
-    int hours = totalMinutes ~/ 60;
-    int minutes = totalMinutes % 60;
-    return "$hours:${minutes.toString().padLeft(2, '0')} hrs";
+  @override
+  String get getDisplayAverage {
+    if (isLoading) return "--";
+    return formatMinutes(average.toInt());
+  }
+
+  @override
+  String get getDisplayGoal {
+    if (isLoading) return "--";
+    return formatMinutes(goal.toInt());
   }
 
   @override
@@ -52,7 +66,7 @@ class SleepHealthEntity extends HealthEntity {
     if (getCombinedData.isEmpty) return [];
 
     if (timeframe == TimeFrame.day) {
-      return ChartUtility.getSleepBarData(data);
+      return ChartUtility.getSleepBarData(sleepDataPoints);
     }
     return super.getBarchartData;
   }
@@ -70,6 +84,11 @@ class SleepHealthEntity extends HealthEntity {
         getXAxisLabel: getXAxisLabel,
         getBarchartValue: getBarchartValue,
       );
+  }
+
+  @override
+  List<DataPoint> get getCombinedData {
+    return sleepDataPoints.where((point) => point.sleepStage != SleepStage.awake).toList() as List<DataPoint>;
   }
 
   @override

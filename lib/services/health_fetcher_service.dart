@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/enums/sleep_stages.enum.dart';
+import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/services/fitbit_service.dart';
 import '../models/data_point.model.dart';
@@ -57,8 +59,25 @@ class HealthFetcherService {
 
     Map<HealthDataType, List<DataPoint>> newData = {};
 
-    // Fetch Fitbit data for supported types
     final dateRange = calculateDateRange(timeframe, offset);
+
+    // Fetch sleep data first
+    if (healthTypes.contains(HealthDataType.SLEEP_ASLEEP)) {
+      try {
+        if (_fitbitService.isSleepSupported()) {
+          final sleepData = await _fitbitService.getFitbitSleepData(dateRange.start, dateRange.end);
+          newData[HealthDataType.SLEEP_ASLEEP] = sleepData;
+        }
+        else {
+          final sleepData = await _fetchSleepHealthData(dateRange.start, dateRange.end);
+          newData[HealthDataType.SLEEP_ASLEEP] = sleepData;
+        }
+        healthTypes.remove(HealthDataType.SLEEP_ASLEEP);
+      } catch (e) {
+        await ErrorLogger.logError('Error fetching sleep data: $e');
+      }
+    }
+    // Fetch Fitbit data for supported types
     if (fitbitTypes.isNotEmpty) {
       try {
         final fitbitData = await _fitbitService.fetchBatchData(
@@ -117,10 +136,56 @@ class HealthFetcherService {
           value: (p.value as NumericHealthValue).numericValue.toDouble(),
           dateFrom: p.dateFrom,
           dateTo: p.dateTo,
+          dayOccurred: p.dateFrom,
         );
       }).toList();
     }
     
     return data;
+  }
+
+  Future<List<SleepDataPoint>> _fetchSleepHealthData(DateTime startDate, DateTime endDate) async {
+    List<SleepDataPoint> data = [];
+
+    List<HealthDataPoint> points = [];
+    try {
+      points = await _health.getHealthDataFromTypes(
+        startTime: startDate,
+        endTime: endDate,
+        types: sleepTypes,
+      );
+      points = removeOverlappingData(points);
+    } catch (e) {
+      await ErrorLogger.logError('Error fetching health data: $e');
+    }
+
+    for (var item in sleepTypes) {
+      data.addAll(points.where((p) => p.type == item).map((p) {
+        return SleepDataPoint(
+          value: (p.value as NumericHealthValue).numericValue.toDouble(),
+          dateFrom: p.dateFrom,
+          dateTo: p.dateTo,
+          dayOccurred: p.dateFrom.hour >= 18 ? p.dateFrom.add(const Duration(days: 1)) : p.dateFrom,
+          sleepStage: _mapSleepStage(item),
+        );
+      }).toList());
+    }
+    
+    return data;
+  }
+
+  SleepStage _mapSleepStage(HealthDataType type) {
+    switch (type) {
+      case HealthDataType.SLEEP_AWAKE:
+        return SleepStage.awake;
+      case HealthDataType.SLEEP_DEEP:
+        return SleepStage.deep;
+      case HealthDataType.SLEEP_LIGHT:
+        return SleepStage.light;
+      case HealthDataType.SLEEP_REM:
+        return SleepStage.rem;
+      default:
+        return SleepStage.unknown;
+    }
   }
 }

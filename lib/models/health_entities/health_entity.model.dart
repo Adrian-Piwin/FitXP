@@ -3,6 +3,7 @@ import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/enums/health_item_type.enum.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
@@ -23,8 +24,9 @@ class HealthEntity{
 
   TimeFrame timeframe = TimeFrame.day;
   int offset = 0;
-  double total = 0;
-  double average = 0;
+  double? _cachedTotal;
+  double? _cachedAverage;
+  List<DataPoint>? _cachedMergedData;
   double goal = 0;
 
   HealthEntity(this.healthItem, this.goals, this.widgetSize){
@@ -33,8 +35,19 @@ class HealthEntity{
 
   // #region Getters
 
+  double get total {
+    _cachedTotal ??= getHealthTotal(getCombinedData);
+    return _cachedTotal!;
+  }
+
+  double get average {
+    _cachedAverage ??= getHealthAverage(getCombinedData);
+    return _cachedAverage!;
+  }
+
   List<DataPoint> get getMergedData {
-    return mergeDataPoints(data);
+    _cachedMergedData ??= mergeDataPoints(data);
+    return _cachedMergedData!;
   }
 
   List<DataPoint> get getCombinedData {
@@ -155,22 +168,24 @@ class HealthEntity{
 
   // #region Update
 
-  void updateQueryOptions(TimeFrame newTimeFrame, int newOffset) {
-    timeframe = newTimeFrame;
-    offset = newOffset;
-  }
-
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
+  void updateData(Map<HealthDataType, List<DataPoint>> batchData, TimeFrame newTimeFrame, int newOffset) {
     data = Map.fromEntries(
       healthItem.dataType.map((type) => 
         MapEntry(type, batchData[type] ?? [])
       )
     );
-    total = getHealthTotal(getCombinedData);
-    average = getHealthAverage(getCombinedData);
+    clearCache();
+    timeframe = newTimeFrame;
+    offset = newOffset;
   }
 
   // #endregion
+
+  void clearCache() {
+    _cachedTotal = null;
+    _cachedAverage = null;
+    _cachedMergedData = null;
+  }
 
   // #region Clone
 

@@ -1,4 +1,6 @@
 import 'package:health/health.dart';
+import 'package:healthxp/enums/sleep_stages.enum.dart';
+import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/data_point.model.dart';
 import '../enums/timeframe.enum.dart';
@@ -33,10 +35,19 @@ class HealthDataCache {
 
   Future<void> cacheDataPoint(TimeFrame timeframe, int offset, HealthDataType type, List<DataPoint> data) async {
     final key = _generateKey(timeframe, offset, type);
-    final serializedData = data.map((point) => {
-      'value': point.value,
-      'dateFrom': point.dateFrom.toIso8601String(),
-      'dateTo': point.dateTo.toIso8601String(),
+    final serializedData = data.map((point) {
+      var baseData = {
+        'value': point.value,
+        'dateFrom': point.dateFrom.toIso8601String(),
+        'dateTo': point.dateTo.toIso8601String(),
+        'dayOccurred': point.dayOccurred.toIso8601String(),
+      };
+
+      if (type == HealthDataType.SLEEP_ASLEEP && point is SleepDataPoint) {
+        baseData['sleepStage'] = point.sleepStage?.index as Object;
+      }
+
+      return baseData;
     }).toList();
     
     await _getBox.put(key, serializedData);
@@ -54,10 +65,23 @@ class HealthDataCache {
     
     if (data == null) return null;
 
+    if (type == HealthDataType.SLEEP_ASLEEP) {
+      return data.map<SleepDataPoint>((point) => SleepDataPoint(
+        value: point['value'],
+        dateFrom: DateTime.parse(point['dateFrom']),
+        dateTo: DateTime.parse(point['dateTo']),
+        dayOccurred: DateTime.parse(point['dayOccurred']),
+        sleepStage: point['sleepStage'] != null 
+            ? SleepStage.values[point['sleepStage']]
+            : SleepStage.unknown,
+      )).toList();
+    }
+
     return data.map<DataPoint>((point) => DataPoint(
       value: point['value'],
       dateFrom: DateTime.parse(point['dateFrom']),
       dateTo: DateTime.parse(point['dateTo']),
+      dayOccurred: DateTime.parse(point['dayOccurred']),
     )).toList();
   }
 
