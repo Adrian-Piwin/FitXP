@@ -78,6 +78,8 @@ class SleepHealthEntity extends HealthEntity {
     return timeframe == TimeFrame.day ?
       SleepBarChartWidget(
         barDataList: getBarchartData,
+        earliestDate: getCombinedData.isEmpty ? null : sleepDataPoints.reduce((a, b) => a.dateFrom.isBefore(b.dateFrom) ? a : b).dateFrom,
+        latestDate: getCombinedData.isEmpty ? null : sleepDataPoints.reduce((a, b) => a.dateTo.isAfter(b.dateTo) ? a : b).dateTo,
       ) : BarChartWidget(
         groupedData: getBarchartData,
         barColor: healthItem.color,

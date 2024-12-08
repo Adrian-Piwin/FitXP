@@ -146,17 +146,17 @@ class HealthFetcherService {
 
   Future<List<SleepDataPoint>> _fetchSleepHealthData(DateTime startDate, DateTime endDate) async {
     List<SleepDataPoint> data = [];
-
     List<HealthDataPoint> points = [];
     try {
       points = await _health.getHealthDataFromTypes(
-        startTime: startDate,
+        startTime: startDate.add(const Duration(hours: -6)), // Fetch 6 hours before start date to catch sleep from previous night
         endTime: endDate,
         types: sleepTypes,
       );
       points = removeOverlappingData(points);
     } catch (e) {
       await ErrorLogger.logError('Error fetching health data: $e');
+      return [];
     }
 
     for (var item in sleepTypes) {
@@ -170,6 +170,11 @@ class HealthFetcherService {
         );
       }).toList());
     }
+
+    // Filter out any points that are not in the date range
+    data = data.where((p) => 
+      !p.dayOccurred.isAfter(endDate)
+    ).toList();
     
     return data;
   }
