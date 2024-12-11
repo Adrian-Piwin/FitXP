@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/components/barchart_widget.dart';
+import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/components/sleep_barchart_widget.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
@@ -57,6 +58,35 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   @override
+  List<Widget> get getDetailWidgets {
+    List<Widget> widgets = super.getDetailWidgets;
+    widgets.addAll(
+      [
+        InfoWidget(
+          title: "Sleep Score",
+          displayValue: getSleepScore().toString(),
+        ),
+        InfoWidget(
+          title: "REM ${_getSleepStagePercent(SleepStage.rem)}",
+          displayValue: _getSleepStageDuration(SleepStage.rem),
+        ),
+        InfoWidget(
+          title: "Deep ${_getSleepStagePercent(SleepStage.deep)}",
+          displayValue: _getSleepStageDuration(SleepStage.deep),
+        ),
+        InfoWidget(
+          title: "Light ${_getSleepStagePercent(SleepStage.light)}",
+          displayValue: _getSleepStageDuration(SleepStage.light),
+        ),
+        InfoWidget(
+          title: "Awake ${_getSleepStagePercent(SleepStage.awake)}",
+          displayValue: _getSleepStageDuration(SleepStage.awake),
+        ),
+      ],
+    );
+    return widgets;
+  }
+  @override
   String getBarchartValue(double value) {
     return formatMinutes(value.toInt());
   }
@@ -96,5 +126,19 @@ class SleepHealthEntity extends HealthEntity {
   @override
   HealthEntity clone() {
     return SleepHealthEntity(healthItem, goals, widgetSize)..data = data;
+  }
+
+  String _getSleepStagePercent(SleepStage stage){
+    List<SleepDataPoint> stageDataPoints = sleepDataPoints.where((point) => point.sleepStage == stage).toList();
+    return "${(stageDataPoints.length / sleepDataPoints.length * 100).round()}%";
+  }
+
+  String _getSleepStageDuration(SleepStage stage) {
+    List<SleepDataPoint> stageDataPoints = sleepDataPoints.where((point) => point.sleepStage == stage).toList();
+    if (stageDataPoints.isEmpty) return "0min";
+    
+    int totalMinutes = stageDataPoints.fold(0, (sum, point) => 
+      sum + point.dateTo.difference(point.dateFrom).inMinutes);
+    return formatMinutes(totalMinutes);
   }
 }
