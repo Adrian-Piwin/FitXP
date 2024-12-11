@@ -91,7 +91,6 @@ class HealthDataCache {
     List<HealthDataType> types
   ) {
     Map<HealthDataType, List<DataPoint>> result = {};
-    return result;
     
     for (var type in types) {
       final data = getDataForType(timeframe, offset, type);

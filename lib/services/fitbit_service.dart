@@ -31,6 +31,7 @@ class FitbitService {
     final accessToken = await _secureStorage.read(key: 'accessToken');
     final userId = await _secureStorage.read(key: 'userID');
     final refreshToken = await _secureStorage.read(key: 'refreshToken');
+    final lastTokenRefresh = await _secureStorage.read(key: 'lastTokenRefresh');
     final clientID = dotenv.env['FITBIT_CLIENTID'] ?? '';
     final clientSecret = dotenv.env['FITBIT_SECRET'] ?? '';
 
@@ -50,6 +51,11 @@ class FitbitService {
         fitbitRefreshToken: refreshToken,
         userID: userId,
       );
+
+      if (lastTokenRefresh == null || 
+        DateTime.now().difference(DateTime.parse(lastTokenRefresh)).inHours >= 24) {
+        await _refreshToken();
+      }
     }
   }
 
@@ -73,6 +79,8 @@ class FitbitService {
         await _secureStorage.write(
             key: 'refreshToken', value: credentials.fitbitRefreshToken);
         await _secureStorage.write(key: 'userID', value: credentials.userID);
+        await _secureStorage.write(
+          key: 'lastTokenRefresh', value: DateTime.now().toIso8601String());
         await _loadCredentials();
         return true;
       }

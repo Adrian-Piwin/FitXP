@@ -10,6 +10,7 @@ import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/sleep_data_point.model.dart';
+import 'package:healthxp/services/sleep_service.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:healthxp/utility/general.utility.dart';
 
@@ -19,20 +20,19 @@ class SleepHealthEntity extends HealthEntity {
     super.goals,
     super.timeFrame,
   );
-
+  
   List<SleepDataPoint> get sleepDataPoints => data[HealthDataType.SLEEP_ASLEEP] as List<SleepDataPoint>;
+
+  int getSleepScore() {
+    SleepService sleepService = SleepService(data);
+    return sleepService.calculateSleepScore();
+  }
 
   @override
   String get getDisplaySubtitle {
     if (isLoading) return "--";
     if (timeframe == TimeFrame.day && goal != -1) {
-      int sleepGoalMinutes = goal.toInt();
-      int actualSleepMinutes = total.toInt();
-      int differenceMinutes = (sleepGoalMinutes - actualSleepMinutes).abs();
-
-      return goal - total >= 0 ? 
-          "${formatMinutes(differenceMinutes)} left" : 
-          "${formatMinutes(differenceMinutes)} over";
+      return "${getSleepScore()} Sleep Score";
     }
 
     return "${formatMinutes(average.toInt())} avg";
