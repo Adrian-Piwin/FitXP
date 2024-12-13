@@ -43,6 +43,8 @@ class HomeController extends ChangeNotifier {
         HealthItemDefinitions.expendedEnergy,
         HealthItemDefinitions.dietaryCalories,
         HealthItemDefinitions.netCalories,
+        HealthItemDefinitions.weight,
+        HealthItemDefinitions.bodyFat,
       ];
 
   List<HealthEntity> headerWidgets = [];

@@ -25,4 +25,5 @@ class RepresentationColors{
   static const Color sleepRemColor = Color.fromARGB(255, 156, 39, 176);
   static const Color sleepLightColor = Color.fromARGB(255, 76, 175, 80);
   static const Color weightColor = Color.fromARGB(255, 161, 204, 201);
+  static const Color bodyFatColor = Color.fromARGB(255, 161, 204, 201);
 }

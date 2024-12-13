@@ -1,9 +1,11 @@
 import 'package:healthxp/models/goal.model.dart';
+import 'package:healthxp/models/health_entities/bodyfat_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/netcalories_health_entity.model.dart';
+import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
 import 'icons.constants.dart';
@@ -112,4 +114,26 @@ class HealthItemDefinitions {
     ..color = RepresentationColors.stepsColor
     ..icon = IconTypes.stepsIcon
     ..getGoal = ((Goal goal) => goal.stepsGoal);
+
+  static HealthItem weight = HealthItem()
+    ..dataType = [HealthDataType.WEIGHT]
+    ..itemType = HealthItemType.weight
+    ..title = "Weight"
+    ..unit = "kg"
+    ..color = RepresentationColors.weightColor
+    ..icon = IconTypes.weightIcon
+    ..getGoal = ((Goal goal) => goal.weightGoal)
+    ..widgetFactory = ((item, goals, widgetSize) =>
+        TrendHealthEntity(item, goals, widgetSize));
+
+  static HealthItem bodyFat = HealthItem()
+    ..dataType = [HealthDataType.BODY_FAT_PERCENTAGE]
+    ..itemType = HealthItemType.bodyFatPercentage
+    ..title = "Body Fat"
+    ..unit = "%"
+    ..color = RepresentationColors.bodyFatColor
+    ..icon = IconTypes.bodyFatIcon
+    ..getGoal = ((Goal goal) => goal.bodyFatGoal)
+    ..widgetFactory = ((item, goals, widgetSize) =>
+        BodyfatHealthEntity(item, goals, widgetSize));
 }

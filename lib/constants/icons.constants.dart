@@ -14,4 +14,5 @@ class IconTypes{
   static const IconData exerciseIcon = FontAwesomeIcons.personRunning;
   static const IconData sleepDurationIcon = FontAwesomeIcons.bed;
   static const IconData weightIcon = FontAwesomeIcons.weightScale;
+  static const IconData bodyFatIcon = FontAwesomeIcons.weightScale;
 }
