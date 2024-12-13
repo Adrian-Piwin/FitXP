@@ -22,7 +22,10 @@ class SleepHealthEntity extends HealthEntity {
     super.timeFrame,
   );
   
-  List<SleepDataPoint> get sleepDataPoints => data[HealthDataType.SLEEP_ASLEEP] as List<SleepDataPoint>;
+  List<SleepDataPoint> get sleepDataPoints {
+    if (data.isEmpty) return [];
+    return data[HealthDataType.SLEEP_ASLEEP] as List<SleepDataPoint>;
+  }
 
   int getSleepScore() {
     SleepService sleepService = SleepService(data);
@@ -129,6 +132,7 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   String _getSleepStagePercent(SleepStage stage){
+    if (sleepDataPoints.isEmpty) return "0%";
     List<SleepDataPoint> stageDataPoints = sleepDataPoints.where((point) => point.sleepStage == stage).toList();
     return "${(stageDataPoints.length / sleepDataPoints.length * 100).round()}%";
   }

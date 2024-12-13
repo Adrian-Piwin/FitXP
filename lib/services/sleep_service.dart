@@ -14,6 +14,8 @@ class SleepService {
   }
 
   int calculateSleepScore() {
+    if (sleepData.isEmpty) return 0;
+    
     // Extract sleep stage durations in minutes
     final totalSleep = _calculateTotal(HealthDataType.SLEEP_ASLEEP);
     final remSleep = _calculateTotal(HealthDataType.SLEEP_REM);
@@ -22,30 +24,23 @@ class SleepService {
 
     if (totalSleep == 0) return 0;
 
-    // Calculate percentages of each sleep stage
-    final remPercentage = (remSleep / totalSleep) * 100;
-    final deepPercentage = (deepSleep / totalSleep) * 100;
-    final lightPercentage = (lightSleep / totalSleep) * 100;
-
-    // Ideal ranges based on sleep science:
-    // - Total sleep: 7-9 hours (420-540 minutes)
-    // - REM: 20-25% of total sleep
-    // - Deep: 15-25% of total sleep
-    // - Light: 50-60% of total sleep
-
     // Calculate subscores
-    final durationScore = _scoreTotalSleep(totalSleep);          // 40% weight
-    final remScore = _scorePercentage(remPercentage, 22.5, 2);   // 30% weight
-    final deepScore = _scorePercentage(deepPercentage, 20, 2);   // 30% weight
+    final durationScore = _scoreTotalSleep(totalSleep);          // 60% weight
+    final remScore = _scoreStageDuration(remSleep, 108);         // 20% weight
+    final deepScore = _scoreStageDuration(deepSleep, 96);        // 20% weight
     
-    // Only apply light sleep penalty if it's significantly above ideal range
-    final lightPenalty = _lightSleepPenalty(lightPercentage);
-
     // Calculate weighted score
-    double sleepScore = (0.4 * durationScore) + 
-                       (0.3 * remScore) + 
-                       (0.3 * deepScore) - 
-                       lightPenalty;
+    double sleepScore = (0.6 * durationScore) + 
+                       (0.2 * remScore) + 
+                       (0.2 * deepScore);
+
+    // Only apply light sleep penalty if it's excessive relative to total sleep
+    if (totalSleep > 0) {
+      double lightSleepRatio = lightSleep / totalSleep;
+      if (lightSleepRatio > 0.65) {  // Only penalize if light sleep is >65% of total
+        sleepScore -= (lightSleepRatio - 0.65) * 20;  // Reduced penalty
+      }
+    }
 
     return sleepScore.clamp(0, 100).round();
   }
@@ -59,34 +54,35 @@ class SleepService {
   }
 
   int _scoreTotalSleep(double totalMinutes) {
-    if (totalMinutes < 300) return 40;  // Less than 5 hours: base score
-    if (totalMinutes > 600) return 70;  // More than 10 hours: reduced score
+    if (totalMinutes < 240) return 50;  // Minimum 50 score if at least 4 hours
+    if (totalMinutes > 600) return 75;  // More than 10 hours: reduced score but not severe
     
     // Perfect range: 420-540 minutes (7-9 hours)
     if (totalMinutes >= 420 && totalMinutes <= 540) return 100;
     
-    // Between 5-7 hours or 9-10 hours: proportional score
+    // Between 4-7 hours or 9-10 hours: proportional score
     if (totalMinutes < 420) {
-      return (40 + ((totalMinutes - 300) / 120) * 60).round();  // 5-7 hours
+      return (50 + ((totalMinutes - 240) / 180) * 50).round();  // 4-7 hours
     } else {
-      return (100 - ((totalMinutes - 540) / 60) * 30).round();  // 9-10 hours
+      return (100 - ((totalMinutes - 540) / 60) * 25).round();  // 9-10 hours
     }
   }
 
-  int _scorePercentage(double percentage, double target, double weight) {
-    // Perfect score if within 2.5% of target
-    if ((percentage - target).abs() <= 2.5) return 100;
+  int _scoreStageDuration(double minutes, double targetMinutes) {
+    if (minutes == 0) return 0;
     
-    // Calculate score based on deviation from target
-    // Less aggressive penalty for being off-target
-    return (100 - (percentage - target).abs() * weight).clamp(0, 100).round();
-  }
-
-  int _lightSleepPenalty(double lightPercentage) {
-    // Only penalize if light sleep is significantly above ideal range (>65%)
-    if (lightPercentage > 65) {
-      return ((lightPercentage - 65) * 1.5).round();
+    // Calculate the ratio of actual to target duration
+    double ratio = minutes / targetMinutes;
+    
+    // More lenient scoring:
+    // Perfect score if within 25% of target duration (increased from 15%)
+    if (ratio >= 0.75 && ratio <= 1.25) return 100;
+    
+    // Less harsh penalties
+    if (ratio < 0.75) {
+      return (70 + (ratio / 0.75) * 30).round();  // Minimum 70 if any sleep in this stage
+    } else {
+      return (100 - (ratio - 1.25) * 30).clamp(0, 100).round();  // Gentler decline
     }
-    return 0;
   }
 }
