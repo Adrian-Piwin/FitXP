@@ -6,6 +6,7 @@ import 'package:health/health.dart';
 import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/netcalories_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
+import 'package:healthxp/models/health_entities/weight_health_entity.model.dart';
 import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
 import 'icons.constants.dart';
@@ -124,7 +125,7 @@ class HealthItemDefinitions {
     ..icon = IconTypes.weightIcon
     ..getGoal = ((Goal goal) => goal.weightGoal)
     ..widgetFactory = ((item, goals, widgetSize) =>
-        TrendHealthEntity(item, goals, widgetSize));
+        WeightHealthEntity(item, goals, widgetSize));
 
   static HealthItem bodyFat = HealthItem()
     ..dataType = [HealthDataType.BODY_FAT_PERCENTAGE]

@@ -23,12 +23,27 @@ class SleepHealthEntity extends HealthEntity {
   );
   
   List<SleepDataPoint> get sleepDataPoints {
-    if (data.isEmpty) return [];
-    return data[HealthDataType.SLEEP_ASLEEP] as List<SleepDataPoint>;
+    if (data[HealthDataType.SLEEP_ASLEEP] == null || data[HealthDataType.SLEEP_ASLEEP]!.isEmpty) {
+      return [];
+    }
+    
+    return data[HealthDataType.SLEEP_ASLEEP]!.map((point) {
+      if (point is SleepDataPoint) {
+        return point;
+      }
+      // If it's a regular DataPoint, convert it to SleepDataPoint
+      return SleepDataPoint(
+        value: point.value,
+        dateFrom: point.dateFrom,
+        dateTo: point.dateTo,
+        dayOccurred: point.dayOccurred,
+        sleepStage: SleepStage.unknown, // Default value if not available
+      );
+    }).toList();
   }
 
   int getSleepScore() {
-    SleepService sleepService = SleepService(data);
+    SleepService sleepService = SleepService(sleepDataPoints);
     return sleepService.calculateSleepScore();
   }
 

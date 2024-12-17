@@ -10,6 +10,7 @@ import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/pages/home/basic_large_widget_item.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/utility/timeframe.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../utility/health.utility.dart';
 
@@ -23,6 +24,7 @@ class HealthEntity{
 
   TimeFrame timeframe = TimeFrame.day;
   int offset = 0;
+  DateTimeRange? queryDateRange;
   double? _cachedTotal;
   double? _cachedAverage;
   List<DataPoint>? _cachedMergedData;
@@ -167,15 +169,19 @@ class HealthEntity{
 
   // #region Update
 
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData, TimeFrame newTimeFrame, int newOffset) {
+  void updateQuery(TimeFrame newTimeFrame, int newOffset) {
+    queryDateRange = calculateDateRange(newTimeFrame, newOffset);
+    timeframe = newTimeFrame;
+    offset = newOffset;
+  }
+
+  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
     data = Map.fromEntries(
       healthItem.dataType.map((type) => 
         MapEntry(type, batchData[type] ?? [])
       )
     );
     clearCache();
-    timeframe = newTimeFrame;
-    offset = newOffset;
   }
 
   // #endregion

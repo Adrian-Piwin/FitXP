@@ -4,8 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthxp/utility/timeframe.utility.dart';
 
 class FitbitService {
   static final FitbitService _instance = FitbitService._internal();
@@ -117,9 +119,7 @@ class FitbitService {
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> fetchBatchData(
-    Set<HealthDataType> items,
-    DateTime startDate,
-    DateTime endDate,
+    List<HealthEntity> entities,
   ) async {
     if (_fitbitDataManager == null || _fitbitCredentials == null) {
       await _loadCredentials();
@@ -130,33 +130,41 @@ class FitbitService {
 
     Map<HealthDataType, List<DataPoint>> batchData = {};
 
-    // Process each health type
-    for (var healthType in items) {
-      final resources = mapHealthItemTypeToFitbitEndpoint(healthType);
-      if (resources != null) {
-        List<DataPoint> combinedData = [];
-        
-        // Fetch data for each resource
-        for (var resource in resources) {
-          try {
-            final fitbitData = await _getFitbitDataInternal(startDate, endDate, resource);
-            
-            // Convert and add to combined data
-            combinedData.addAll(fitbitData.map((f) {
-              return DataPoint(
+    // Group by health type
+    for (var entity in entities) {
+      for (var healthType in entity.healthItem.dataType) {
+        final resources = mapHealthItemTypeToFitbitEndpoint(healthType);
+        if (resources != null) {
+          final dateRange = calculateDateRange(entity.timeframe, entity.offset);
+          List<DataPoint> combinedData = [];
+          
+          for (var resource in resources) {
+            try {
+              final fitbitData = await _getFitbitDataInternal(
+                dateRange.start,
+                dateRange.end,
+                resource
+              );
+              
+              combinedData.addAll(fitbitData.map((f) => DataPoint(
                 value: f.value?.toDouble() ?? 0,
                 dateFrom: f.dateOfMonitoring ?? DateTime.now(),
                 dateTo: f.dateOfMonitoring ?? DateTime.now(),
                 dayOccurred: f.dateOfMonitoring ?? DateTime.now(),
+              )));
+            } catch (e) {
+              await ErrorLogger.logError(
+                'Error fetching Fitbit data for $resource: $e'
               );
-            }));
-          } catch (e) {
-            await ErrorLogger.logError('Error fetching Fitbit data for $resource: $e');
-            rethrow;
+              rethrow;
+            }
           }
+          
+          if (!batchData.containsKey(healthType)) {
+            batchData[healthType] = [];
+          }
+          batchData[healthType]!.addAll(combinedData);
         }
-        
-        batchData[healthType] = combinedData;
       }
     }
 

@@ -1,8 +1,8 @@
-import 'package:health/health.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/enums/sleep_stages.enum.dart';
+import 'package:healthxp/models/sleep_data_point.model.dart';
 
 class SleepService {
-  final Map<HealthDataType, List<DataPoint>> sleepData;
+  final List<SleepDataPoint> sleepData;
 
   SleepService(this.sleepData);
 
@@ -17,10 +17,10 @@ class SleepService {
     if (sleepData.isEmpty) return 0;
     
     // Extract sleep stage durations in minutes
-    final totalSleep = _calculateTotal(HealthDataType.SLEEP_ASLEEP);
-    final remSleep = _calculateTotal(HealthDataType.SLEEP_REM);
-    final deepSleep = _calculateTotal(HealthDataType.SLEEP_DEEP);
-    final lightSleep = _calculateTotal(HealthDataType.SLEEP_LIGHT);
+    final totalSleep = _calculateTotal([SleepStage.rem, SleepStage.deep, SleepStage.light]);
+    final remSleep = _calculateTotal([SleepStage.rem]);
+    final deepSleep = _calculateTotal([SleepStage.deep]);
+    final lightSleep = _calculateTotal([SleepStage.light]);
 
     if (totalSleep == 0) return 0;
 
@@ -37,35 +37,32 @@ class SleepService {
     // Only apply light sleep penalty if it's excessive relative to total sleep
     if (totalSleep > 0) {
       double lightSleepRatio = lightSleep / totalSleep;
-      if (lightSleepRatio > 0.65) {  // Only penalize if light sleep is >65% of total
-        sleepScore -= (lightSleepRatio - 0.65) * 20;  // Reduced penalty
+      if (lightSleepRatio > 0.70) {  // Only penalize if light sleep is >70% of total
+        sleepScore -= (lightSleepRatio - 0.70) * 10;  // Further reduced penalty
       }
     }
 
     return sleepScore.clamp(0, 100).round();
   }
 
-  double _calculateTotal(HealthDataType type) {
-    final dataPoints = sleepData[type];
-    if (dataPoints == null || dataPoints.isEmpty) {
+  double _calculateTotal(List<SleepStage> types) {
+    var dataPoints = sleepData.where((point) => types.contains(point.sleepStage)).toList();
+    if (dataPoints.isEmpty) {
       return 0;
     }
     return dataPoints.fold(0, (sum, dp) => sum + dp.value);
   }
 
   int _scoreTotalSleep(double totalMinutes) {
-    if (totalMinutes < 240) return 50;  // Minimum 50 score if at least 4 hours
-    if (totalMinutes > 600) return 75;  // More than 10 hours: reduced score but not severe
+    if (totalMinutes < 240) return 30;  // Less than 4 hours
+    if (totalMinutes > 540 && totalMinutes < 600) return 80;  // 9-10 hours
+    if (totalMinutes > 600) return 70;  // More than 10 hours
     
     // Perfect range: 420-540 minutes (7-9 hours)
     if (totalMinutes >= 420 && totalMinutes <= 540) return 100;
     
-    // Between 4-7 hours or 9-10 hours: proportional score
-    if (totalMinutes < 420) {
-      return (50 + ((totalMinutes - 240) / 180) * 50).round();  // 4-7 hours
-    } else {
-      return (100 - ((totalMinutes - 540) / 60) * 25).round();  // 9-10 hours
-    }
+    // Between 4-7 hours
+    return 50;
   }
 
   int _scoreStageDuration(double minutes, double targetMinutes) {
@@ -75,14 +72,13 @@ class SleepService {
     double ratio = minutes / targetMinutes;
     
     // More lenient scoring:
-    // Perfect score if within 25% of target duration (increased from 15%)
-    if (ratio >= 0.75 && ratio <= 1.25) return 100;
+    // Perfect score if within 15% of target duration
+    if (ratio >= 0.85 && ratio <= 1.15) return 100;
     
-    // Less harsh penalties
-    if (ratio < 0.75) {
-      return (70 + (ratio / 0.75) * 30).round();  // Minimum 70 if any sleep in this stage
+    if (ratio < 0.85) {
+      return ((ratio / 0.85) * 100).round();  // Minimum 40 if any sleep in this stage
     } else {
-      return (100 - (ratio - 1.25) * 30).clamp(0, 100).round();  // Gentler decline
+      return (100 - (ratio - 1.15) * 60).clamp(0, 100).round();  // Steeper decline
     }
   }
 }

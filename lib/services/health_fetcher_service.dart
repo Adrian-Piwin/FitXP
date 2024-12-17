@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/services/fitbit_service.dart';
@@ -37,69 +39,123 @@ class HealthFetcherService {
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> fetchBatchData(
-      List<HealthDataType> items, TimeFrame timeframe, int offset) async {
-    // Check cache first for all requested types
-    final cachedData = _cache.getData(timeframe, offset, items);
-    
-    // Determine which types need to be fetched
-    final uncachedTypes = items
-        .where((type) => !cachedData.containsKey(type))
-        .toList();
-
-    if (uncachedTypes.isEmpty) {
-      return cachedData; // All data was in cache
+      List<HealthEntity> entities) async {
+    // Group entities by their data types
+    Map<HealthDataType, List<HealthEntity>> typeGroups = {};
+    for (var entity in entities) {
+      for (var type in entity.healthItem.dataType) {
+        if (!typeGroups.containsKey(type)) {
+          typeGroups[type] = [];
+        }
+        typeGroups[type]!.add(entity);
+      }
     }
 
-    // Get list of Fitbit-supported types from uncached types only
-    final supportedTypes = await _fitbitService.getSupportedHealthTypes(uncachedTypes);
-    
-    // Split uncached items into Fitbit and Health types
-    final fitbitTypes = uncachedTypes.where((type) => supportedTypes.contains(type)).toSet();
-    final healthTypes = uncachedTypes.where((type) => !supportedTypes.contains(type)).toSet();
+    // Check cache for each type and entity combination
+    Map<HealthDataType, List<DataPoint>> cachedData = {};
+    Map<HealthDataType, List<HealthEntity>> uncachedTypes = {};
+
+    for (var entry in typeGroups.entries) {
+      var type = entry.key;
+      var entityList = entry.value;
+      
+      for (var entity in entityList) {
+        var cached = _cache.getDataForType(entity.timeframe, entity.offset, type);
+        if (cached != null) {
+          if (!cachedData.containsKey(type)) {
+            cachedData[type] = [];
+          }
+          cachedData[type]!.addAll(cached);
+        } else {
+          if (!uncachedTypes.containsKey(type)) {
+            uncachedTypes[type] = [];
+          }
+          uncachedTypes[type]!.add(entity);
+        }
+      }
+    }
+
+    if (uncachedTypes.isEmpty) {
+      return cachedData;
+    }
+
+    // Get Fitbit-supported types
+    final supportedTypes = await _fitbitService.getSupportedHealthTypes(
+      uncachedTypes.keys.toList()
+    );
 
     Map<HealthDataType, List<DataPoint>> newData = {};
 
-    final dateRange = calculateDateRange(timeframe, offset);
-
-    // Fetch sleep data first
-    if (healthTypes.contains(HealthDataType.SLEEP_ASLEEP)) {
+    // Handle sleep data separately
+    if (uncachedTypes.containsKey(HealthDataType.SLEEP_ASLEEP)) {
       try {
         if (_fitbitService.isSleepSupported()) {
-          final sleepData = await _fitbitService.getFitbitSleepData(dateRange.start, dateRange.end);
-          newData[HealthDataType.SLEEP_ASLEEP] = sleepData;
+          for (var entity in uncachedTypes[HealthDataType.SLEEP_ASLEEP]!) {
+            final dateRange = entity.queryDateRange!;
+            final sleepData = await _fitbitService.getFitbitSleepData(
+              dateRange.start, 
+              dateRange.end
+            );
+            if (!newData.containsKey(HealthDataType.SLEEP_ASLEEP)) {
+              newData[HealthDataType.SLEEP_ASLEEP] = [];
+            }
+            newData[HealthDataType.SLEEP_ASLEEP]!.addAll(sleepData);
+          }
+        } else {
+          for (var entity in uncachedTypes[HealthDataType.SLEEP_ASLEEP]!) {
+            final dateRange = entity.queryDateRange!;
+            final sleepData = await _fetchSleepHealthData(
+              dateRange.start, 
+              dateRange.end
+            );
+            if (!newData.containsKey(HealthDataType.SLEEP_ASLEEP)) {
+              newData[HealthDataType.SLEEP_ASLEEP] = [];
+            }
+            newData[HealthDataType.SLEEP_ASLEEP]!.addAll(sleepData);
+          }
         }
-        else {
-          final sleepData = await _fetchSleepHealthData(dateRange.start, dateRange.end);
-          newData[HealthDataType.SLEEP_ASLEEP] = sleepData;
-        }
-        healthTypes.remove(HealthDataType.SLEEP_ASLEEP);
       } catch (e) {
         await ErrorLogger.logError('Error fetching sleep data: $e');
       }
+      uncachedTypes.remove(HealthDataType.SLEEP_ASLEEP);
     }
-    // Fetch Fitbit data for supported types
-    if (fitbitTypes.isNotEmpty) {
-      try {
-        final fitbitData = await _fitbitService.fetchBatchData(
-            fitbitTypes, dateRange.start, dateRange.end);
-        newData.addAll(fitbitData);
-      } catch (e) {
-        await ErrorLogger.logError('Fitbit fetch failed, falling back to Health for those types: $e');
-        final fallbackData = await _fetchHealthBatchData(fitbitTypes, dateRange.start, dateRange.end);
-        newData.addAll(fallbackData);
+
+    // Handle Fitbit data
+    for (var type in supportedTypes) {
+      if (uncachedTypes.containsKey(type)) {
+        try {
+          final fitbitData = await _fitbitService.fetchBatchData(
+            uncachedTypes[type]!
+          );
+          newData.addAll(fitbitData);
+        } catch (e) {
+          await ErrorLogger.logError('Fitbit fetch failed: $e');
+          // Fall back to Health data
+          final healthData = await _fetchHealthBatchData(uncachedTypes[type]!);
+          newData.addAll(healthData);
+        }
+        uncachedTypes.remove(type);
       }
     }
 
-    // Fetch remaining data from Health
-    if (healthTypes.isNotEmpty) {
-      final healthData = await _fetchHealthBatchData(healthTypes, dateRange.start, dateRange.end);
+    // Handle remaining Health data
+    for (var entry in uncachedTypes.entries) {
+      final healthData = await _fetchHealthBatchData(entry.value);
       newData.addAll(healthData);
     }
 
-    // Cache the new data
-    await _cache.cacheData(timeframe, offset, newData);
+    // Cache new data
+    for (var entry in newData.entries) {
+      for (var entity in typeGroups[entry.key]!) {
+        await _cache.cacheDataPoint(
+          entity.timeframe,
+          entity.offset,
+          entry.key,
+          entry.value
+        );
+      }
+    }
 
-    // Combine cached and new data
     return {
       ...cachedData,
       ...newData,
@@ -115,32 +171,60 @@ class HealthFetcherService {
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> _fetchHealthBatchData(
-      Set<HealthDataType> items, DateTime startDate, DateTime endDate) async {
+      List<HealthEntity> entities) async {
     Map<HealthDataType, List<DataPoint>> data = {};
-
-    List<HealthDataPoint> points = [];
-    try {
-      points = await _health.getHealthDataFromTypes(
-        startTime: startDate,
-        endTime: endDate,
-        types: items.toList(),
-      );
-      points = removeOverlappingData(points);
-    } catch (e) {
-      await ErrorLogger.logError('Error fetching health data: $e');
-    }
-
-    for (var item in items) {
-      data[item] = points.where((p) => p.type == item).map((p) {
-        return DataPoint(
-          value: (p.value as NumericHealthValue).numericValue.toDouble(),
-          dateFrom: p.dateFrom,
-          dateTo: p.dateTo,
-          dayOccurred: p.dateFrom,
-        );
-      }).toList();
-    }
     
+    // Group entities by timeframe and offset
+    Map<String, List<HealthEntity>> batchGroups = {};
+    for (var entity in entities) {
+      final key = '${entity.timeframe}_${entity.offset}';
+      if (!batchGroups.containsKey(key)) {
+        batchGroups[key] = [];
+      }
+      batchGroups[key]!.add(entity);
+    }
+
+    // Process each batch group
+    for (var group in batchGroups.entries) {
+      final entities = group.value;
+
+      final DateTimeRange dateRange = entities.first.queryDateRange!;
+      final DateTime batchStartDate = dateRange.start;
+      final DateTime batchEndDate = dateRange.end;
+
+      // Collect all unique HealthDataTypes for this batch
+      final Set<HealthDataType> batchTypes = entities
+          .expand((entity) => entity.healthItem.dataType)
+          .toSet();
+
+      List<HealthDataPoint> points = [];
+      try {
+        points = await _health.getHealthDataFromTypes(
+          startTime: batchStartDate,
+          endTime: batchEndDate,
+          types: batchTypes.toList(),
+        );
+        points = removeOverlappingData(points);
+      } catch (e) {
+        await ErrorLogger.logError('Error fetching health data batch: $e');
+        continue;
+      }
+
+      // Process and distribute the data points
+      for (var type in batchTypes) {
+        final typePoints = points.where((p) => p.type == type).map((p) {
+          return DataPoint(
+            value: (p.value as NumericHealthValue).numericValue.toDouble(),
+            dateFrom: p.dateFrom,
+            dateTo: p.dateTo,
+            dayOccurred: p.dateFrom,
+          );
+        }).toList();
+
+        data[type] = typePoints;
+      }
+    }
+
     return data;
   }
 

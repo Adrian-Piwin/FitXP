@@ -1,5 +1,6 @@
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
+import 'package:healthxp/enums/unit_system.enum.dart';
 import '../../components/bottom_nav_bar.dart';
 import 'settings_controller.dart';
 import '../../services/error_logger.service.dart';
@@ -50,6 +51,11 @@ class SettingsView extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
+                onPressed: controller.clearCache,
+                child: const Text('Clear Cache'),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
                 onPressed: controller.isFitbitConnected 
                   ? controller.disconnectFitbit 
                   : controller.connectFitbit,
@@ -60,16 +66,27 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16.0),
-              if (controller.isFitbitConnected) ...[
-                const Text('Choose what to sync from fitbit'),
-                SwitchListTile(
-                  title: const Text('Food Intake'),
-                  value: controller.syncFoodIntake,
-                  onChanged: (bool value) {
-                    controller.setSyncFoodIntake(value);
-                  },
-                ),
-              ],
+              const Text(
+                'Unit System',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              SegmentedButton<UnitSystem>(
+                segments: const [
+                  ButtonSegment(
+                    value: UnitSystem.metric,
+                    label: Text('Metric'),
+                  ),
+                  ButtonSegment(
+                    value: UnitSystem.imperial,
+                    label: Text('Imperial'),
+                  ),
+                ],
+                selected: {controller.unitSystem},
+                onSelectionChanged: (Set<UnitSystem> selected) {
+                  controller.updateUnitSystem(selected.first);
+                },
+              ),
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {

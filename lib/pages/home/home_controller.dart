@@ -50,12 +50,8 @@ class HomeController extends ChangeNotifier {
   List<HealthEntity> headerWidgets = [];
   List<HealthEntity> displayWidgets = [];
 
-  Set<HealthDataType> get _allRequiredHealthTypes {
-    Set<HealthDataType> types = {};
-    for (var item in [...headerHealthItems, ...healthItems]) {
-      types.addAll(item.dataType);
-    }
-    return types;
+  List<HealthEntity> get _allRequiredHealthEntities {
+    return [...headerWidgets, ...displayWidgets];
   }
 
   HomeController(BuildContext context) {
@@ -129,16 +125,14 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Fetch all required data in one batch
-      final batchData = await _healthFetcherService.fetchBatchData(
-        _allRequiredHealthTypes.toList(),
-        _selectedTimeFrame,
-        _offset
-      );
-
-      // Update each widget with the relevant data
       for (var widget in [...headerWidgets, ...displayWidgets]) {
-        widget.updateData(batchData, _selectedTimeFrame, _offset);
+        widget.updateQuery(_selectedTimeFrame, _offset);
+      }
+
+      final batchData = await _healthFetcherService.fetchBatchData(_allRequiredHealthEntities);
+
+      for (var widget in [...headerWidgets, ...displayWidgets]) {
+        widget.updateData(batchData);
       }
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');

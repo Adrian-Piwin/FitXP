@@ -61,7 +61,7 @@ class _SleepBarChartStateState extends State<_SleepBarChartState> {
         .reduce((max, value) => value > max ? value : max);
 
     // Calculate 3-hour intervals (180 minutes)
-    final intervalMinutes = 180;
+    const intervalMinutes = 180;
     final startInterval = (earliestStartMinutes / intervalMinutes).floor() * intervalMinutes;
     final endInterval = ((latestEndMinutes / intervalMinutes).ceil() * intervalMinutes);
     
@@ -114,8 +114,7 @@ class _SleepBarChartStateState extends State<_SleepBarChartState> {
                   interval: intervalMinutes.toDouble(),
                   getTitlesWidget: (value, meta) {
                     // Skip the last label
-                    if (value >= endInterval - (intervalMinutes / 2)) return const SizedBox();
-                    if (widget.earliestDate == null) return const SizedBox();
+                    if (value % intervalMinutes != 0) return const SizedBox();
                     
                     final dateTime = widget.earliestDate!.add(Duration(minutes: value.toInt()));
                     final hour = dateTime.hour;
