@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:health/health.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/goal.model.dart';
@@ -96,6 +95,9 @@ class HomeController extends ChangeNotifier {
         );
       }).toList();
 
+      // Deplay so our widgets are loaded before we fetch data
+      await Future.delayed(const Duration(milliseconds: 50));
+
       await fetchHealthData();
     } catch (e, stackTrace) {
       await ErrorLogger.logError(
@@ -128,7 +130,6 @@ class HomeController extends ChangeNotifier {
       for (var widget in [...headerWidgets, ...displayWidgets]) {
         widget.updateQuery(_selectedTimeFrame, _offset);
       }
-
       final batchData = await _healthFetcherService.fetchBatchData(_allRequiredHealthEntities);
 
       for (var widget in [...headerWidgets, ...displayWidgets]) {
@@ -151,7 +152,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> refreshToday() async {
-    _healthFetcherService.clearCacheForKey(TimeFrame.day, 0);
+    await _healthFetcherService.clearCacheForKey(TimeFrame.day, 0);
     await fetchHealthData();
   }
 }

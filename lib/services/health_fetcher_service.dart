@@ -10,7 +10,6 @@ import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/services/fitbit_service.dart';
 import '../models/data_point.model.dart';
 import '../enums/timeframe.enum.dart';
-import '../utility/timeframe.utility.dart';
 import '../services/health_data_cache_service.dart';
 import '../utility/health.utility.dart';
 
@@ -54,11 +53,9 @@ class HealthFetcherService {
     // Check cache for each type and entity combination
     Map<HealthDataType, List<DataPoint>> cachedData = {};
     Map<HealthDataType, List<HealthEntity>> uncachedTypes = {};
-
     for (var entry in typeGroups.entries) {
       var type = entry.key;
       var entityList = entry.value;
-      
       for (var entity in entityList) {
         var cached = _cache.getDataForType(entity.timeframe, entity.offset, type);
         if (cached != null) {
@@ -128,6 +125,8 @@ class HealthFetcherService {
             uncachedTypes[type]!
           );
           newData.addAll(fitbitData);
+          print("Fitbit data fetched for type: $type");
+          print(uncachedTypes[type]);
         } catch (e) {
           await ErrorLogger.logError('Fitbit fetch failed: $e');
           // Fall back to Health data

@@ -19,6 +19,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   late HomeController _controller;
+  bool _showLoading = false;
 
   @override
   void initState() {
@@ -62,6 +63,16 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           ),
           body: Consumer<HomeController>(
             builder: (context, controller, _) {
+              if (controller.isLoading && !_showLoading) {
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  if (mounted && controller.isLoading) {
+                    setState(() => _showLoading = true);
+                  }
+                });
+              } else if (!controller.isLoading && _showLoading) {
+                _showLoading = false;
+              }
+
               if (controller.headerWidgets.isEmpty ||
                   controller.displayWidgets.isEmpty) {
                 return Center(
@@ -76,6 +87,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
+                );
+              }
+
+              if (_showLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               }
 

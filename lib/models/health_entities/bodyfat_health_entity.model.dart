@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:health/health.dart';
-import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 
 class BodyfatHealthEntity extends TrendHealthEntity {
@@ -14,11 +13,7 @@ class BodyfatHealthEntity extends TrendHealthEntity {
   }
 
   @override
-  void updateQuery(TimeFrame newTimeFrame, int newOffset) {
-    super.updateQuery(newTimeFrame, newOffset);
-    queryDateRange = DateTimeRange(
-      start: queryDateRange!.start.subtract(const Duration(days: 30)),
-      end: queryDateRange!.end
-    );
+  HealthEntity clone() {
+    return BodyfatHealthEntity(healthItem, goals, widgetSize)..data = data;
   }
 }

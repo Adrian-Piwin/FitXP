@@ -1,24 +1,38 @@
-import 'package:healthxp/components/loading_widget.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/components/info_widget.dart';
+import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/components/line_chart_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:healthxp/utility/timeframe.utility.dart';
 
 class TrendHealthEntity extends HealthEntity {
   TrendHealthEntity(super.healthItem, super.goals, super.widgetSize);
 
   DataPoint? get mostRecentDataPoint {
+    if (getCombinedData.isEmpty) return null;
     return getCombinedData.reduce(
       (a, b) => a.dateFrom.isAfter(b.dateFrom) ? a : b
+    );
+  }
+
+  String get getDisplayGoalProgress {
+    if (mostRecentDataPoint == null) return "--";
+    return "${(mostRecentDataPoint!.value - goal).abs().toStringAsFixed(0)}${healthItem.unit} away";
+  }
+
+  // Include the past 30 days so we can get the most recent data point
+  @override
+  void updateQuery(TimeFrame newTimeFrame, int newOffset) {
+    super.updateQuery(newTimeFrame, newOffset);
+    queryDateRange = DateTimeRange(
+      start: queryDateRange!.start.subtract(const Duration(days: 30)),
+      end: queryDateRange!.end
     );
   }
 
   @override
   String get getDisplayValue {
     if (isLoading) return "--";
-    if (getCombinedData.isEmpty) return "--";
+    if (mostRecentDataPoint == null) return "--";
     
     return mostRecentDataPoint!.value.toStringAsFixed(1);
   }
@@ -32,20 +46,26 @@ class TrendHealthEntity extends HealthEntity {
   }
 
   @override
-  Widget get getGraphWidget {
-    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
-
-    return LineChartWidget(
-      dataPoints: getCombinedData,
-      lineColor: healthItem.color,
-      getXAxisLabel: (value) => getXAxisLabel(value),
-      getYAxisValue: (value) => "${value.toStringAsFixed(1)}${healthItem.unit}",
-    );
+  List<Widget> get getDetailWidgets {
+    return [
+      getGraphWidget,
+      InfoWidget(
+        title: "Average",
+        displayValue: getDisplayAverage,
+      ),
+      InfoWidget(
+        title: "Goal",
+        displayValue: getDisplayGoal,
+      ),
+      InfoWidget(
+        title: "Goal Progress",
+        displayValue: getDisplayGoalProgress,
+      ),
+    ];
   }
 
   @override
-  List<DataPoint> get getCombinedData {
-    DateTimeRange dateRange = calculateDateRange(timeframe, offset);
-    return super.getCombinedData.where((point) => point.dateFrom.isAfter(dateRange.start) && point.dateFrom.isBefore(dateRange.end)).toList();
+  HealthEntity clone() {
+    return TrendHealthEntity(healthItem, goals, widgetSize)..data = data;
   }
 }
