@@ -34,6 +34,16 @@ double getHealthAverage(List<DataPoint> data) {
   return totalSum / dailySums.length;
 }
 
+// Use this for when we may measure the same thing multiple times in a day
+double getTrendHealthAverage(List<DataPoint> data) {
+  if (data.isEmpty) return 0.0;
+
+  // Get latest point per day and calculate average
+  final latestPoints = getLatestPointPerDay(data);
+  final totalSum = latestPoints.fold(0.0, (sum, point) => sum + point.value);
+  return totalSum / latestPoints.length;
+}
+
 double getHealthTotal(List<DataPoint> data) {
   return data.fold(
     0.0,
@@ -264,4 +274,27 @@ List<DataPoint> mergeDataPoints(Map<HealthDataType, List<DataPoint>> points) {
   ));
 
   return result;
+}
+
+List<DataPoint> getLatestPointPerDay(List<DataPoint> data) {
+  // Create a map using dayOccurred as the key
+  Map<DateTime, DataPoint> latestPointPerDay = {};
+  
+  for (var point in data) {
+    // Normalize the date to remove time component
+    DateTime normalizedDate = DateTime(
+      point.dayOccurred.year,
+      point.dayOccurred.month,
+      point.dayOccurred.day,
+    );
+    
+    // Only update if this point is more recent than the existing one
+    if (!latestPointPerDay.containsKey(normalizedDate) ||
+        point.dateFrom.isAfter(latestPointPerDay[normalizedDate]!.dateFrom)) {
+      latestPointPerDay[normalizedDate] = point;
+    }
+  }
+  
+  // Convert map values back to list
+  return latestPointPerDay.values.toList();
 }

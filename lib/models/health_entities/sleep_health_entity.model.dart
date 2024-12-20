@@ -111,7 +111,7 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   List<BarData> get getBarchartData {
-    if (getCombinedData.isEmpty) return [];
+    if (getCurrentData.isEmpty) return [];
 
     if (timeframe == TimeFrame.day) {
       return ChartUtility.getSleepBarData(sleepDataPoints);
@@ -126,8 +126,8 @@ class SleepHealthEntity extends HealthEntity {
     return timeframe == TimeFrame.day ?
       SleepBarChartWidget(
         barDataList: getBarchartData,
-        earliestDate: getCombinedData.isEmpty ? null : sleepDataPoints.reduce((a, b) => a.dateFrom.isBefore(b.dateFrom) ? a : b).dateFrom,
-        latestDate: getCombinedData.isEmpty ? null : sleepDataPoints.reduce((a, b) => a.dateTo.isAfter(b.dateTo) ? a : b).dateTo,
+        earliestDate: getCurrentData.isEmpty ? null : sleepDataPoints.reduce((a, b) => a.dateFrom.isBefore(b.dateFrom) ? a : b).dateFrom,
+        latestDate: getCurrentData.isEmpty ? null : sleepDataPoints.reduce((a, b) => a.dateTo.isAfter(b.dateTo) ? a : b).dateTo,
       ) : BarChartWidget(
         groupedData: getBarchartData,
         barColor: healthItem.color,
@@ -137,7 +137,7 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   @override
-  List<DataPoint> get getCombinedData {
+  List<DataPoint> get getCurrentData {
     return sleepDataPoints.where((point) => point.sleepStage != SleepStage.awake).toList() as List<DataPoint>;
   }
 

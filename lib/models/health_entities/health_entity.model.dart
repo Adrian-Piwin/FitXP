@@ -25,9 +25,9 @@ class HealthEntity{
   TimeFrame timeframe = TimeFrame.day;
   int offset = 0;
   DateTimeRange? queryDateRange;
-  double? _cachedTotal;
-  double? _cachedAverage;
-  List<DataPoint>? _cachedMergedData;
+  double? cachedTotal;
+  double? cachedAverage;
+  List<DataPoint>? cachedMergedData;
   double goal = 0;
 
   HealthEntity(this.healthItem, this.goals, this.widgetSize){
@@ -37,22 +37,27 @@ class HealthEntity{
   // #region Getters
 
   double get total {
-    _cachedTotal ??= getHealthTotal(getCombinedData);
-    return _cachedTotal!;
+    cachedTotal ??= getHealthTotal(getCurrentData);
+    return cachedTotal!;
   }
 
   double get average {
-    _cachedAverage ??= getHealthAverage(getCombinedData);
-    return _cachedAverage!;
+    cachedAverage ??= getHealthAverage(getCurrentData);
+    return cachedAverage!;
   }
 
   List<DataPoint> get getMergedData {
-    _cachedMergedData ??= mergeDataPoints(data);
-    return _cachedMergedData!;
+    cachedMergedData ??= mergeDataPoints(data);
+    return cachedMergedData!;
   }
 
   List<DataPoint> get getCombinedData {
     return data.values.expand((list) => list).toList();
+  }
+
+  // Use this for the context of our datapoints for the selected timeframe and offset
+  List<DataPoint> get getCurrentData {
+    return getCombinedData;
   }
 
   double get getGoalPercent {
@@ -83,17 +88,17 @@ class HealthEntity{
 
   String get getDisplayValue {
     if (isLoading) return "--";
-    return (total).toStringAsFixed(0);
+    return (total).toStringAsFixed(0) + healthItem.unit;
   }
 
   String get getDisplayAverage {
     if (isLoading) return "--";
-    return (average).toStringAsFixed(0);
+    return (average).toStringAsFixed(0) + healthItem.unit;
   }
 
   String get getDisplayGoal {
     if (isLoading) return "--";
-    return (goal).toStringAsFixed(0);
+    return (goal).toStringAsFixed(0) + healthItem.unit;
   }
 
   String get getDisplayGoalAveragePercent {
@@ -116,8 +121,16 @@ class HealthEntity{
   // #region Bar Chart
 
   List<BarData> get getBarchartData {
-    if (getCombinedData.isEmpty) return [];
-    return ChartUtility.groupDataByTimeFrame(getCombinedData, timeframe, offset);
+    if (getCurrentData.isEmpty) return [];
+    print("CALLING ONCE");
+    for (var data in getCurrentData){
+      print('--------------------------------');
+      print(data.value);
+      print(data.dayOccurred);
+      print(data.dateFrom);
+      print(data.dateTo);
+    }
+    return ChartUtility.groupDataByTimeFrame(getCurrentData, timeframe, offset);
   }
 
   String getBarchartValue(double value) {
@@ -187,9 +200,9 @@ class HealthEntity{
   // #endregion
 
   void clearCache() {
-    _cachedTotal = null;
-    _cachedAverage = null;
-    _cachedMergedData = null;
+    cachedTotal = null;
+    cachedAverage = null;
+    cachedMergedData = null;
   }
 
   // #region Clone

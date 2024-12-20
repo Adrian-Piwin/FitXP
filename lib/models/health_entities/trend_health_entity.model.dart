@@ -3,6 +3,8 @@ import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
+import 'package:healthxp/utility/health.utility.dart';
+import 'package:healthxp/utility/timeframe.utility.dart';
 
 class TrendHealthEntity extends HealthEntity {
   TrendHealthEntity(super.healthItem, super.goals, super.widgetSize);
@@ -17,6 +19,26 @@ class TrendHealthEntity extends HealthEntity {
   String get getDisplayGoalProgress {
     if (mostRecentDataPoint == null) return "--";
     return "${(mostRecentDataPoint!.value - goal).abs().toStringAsFixed(0)}${healthItem.unit} away";
+  }
+
+  @override
+  double get average {
+    cachedAverage ??= getTrendHealthAverage(getCurrentData);
+    return cachedAverage!;
+  }
+
+  // Filter out the data points that are not in the current timeframe
+  @override
+  List<DataPoint> get getCurrentData {
+    var contextDataRange = calculateDateRange(timeframe, offset);
+    return getCombinedData.where((point) => point.dateFrom.isAfter(contextDataRange.start) && point.dateTo.isBefore(contextDataRange.end)).toList();
+  }
+
+  // We only want the most recent data point for each day
+  @override
+  List<DataPoint> get getCombinedData {
+    List<DataPoint> data = super.getCombinedData;
+    return getLatestPointPerDay(data);
   }
 
   // Include the past 30 days so we can get the most recent data point
@@ -34,7 +56,7 @@ class TrendHealthEntity extends HealthEntity {
     if (isLoading) return "--";
     if (mostRecentDataPoint == null) return "--";
     
-    return mostRecentDataPoint!.value.toStringAsFixed(1);
+    return mostRecentDataPoint!.value.toStringAsFixed(1) + healthItem.unit;
   }
 
   @override
@@ -42,7 +64,7 @@ class TrendHealthEntity extends HealthEntity {
     if (isLoading) return "--";
     if (getCombinedData.isEmpty) return "No data";
 
-    return "Avg: ${average.toStringAsFixed(1)}${healthItem.unit}";
+    return "${average.toStringAsFixed(1)}${healthItem.unit} avg";
   }
 
   @override

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/netcalories_health_entity.model.dart';
-import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/weight_health_entity.model.dart';
 import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
@@ -36,7 +35,7 @@ class HealthItemDefinitions {
     ]
     ..itemType = HealthItemType.expendedEnergy
     ..title = "Expended Energy"
-    ..unit = "cal"
+    ..unit = ""
     ..color = RepresentationColors.activeCaloriesColor
     ..icon = IconTypes.caloriesIcon
     ..getGoal = (Goal goal) => goal.caloriesOutGoal;
@@ -91,7 +90,7 @@ class HealthItemDefinitions {
     ..dataType = [HealthDataType.DIETARY_ENERGY_CONSUMED]
     ..itemType = HealthItemType.dietaryCalories
     ..title = "Dietary Calories"
-    ..unit = "cal"
+    ..unit = ""
     ..color = RepresentationColors.dietaryCaloriesColor
     ..icon = IconTypes.dietaryIcon
     ..getGoal = (Goal goal) => goal.caloriesInGoal;
@@ -100,7 +99,7 @@ class HealthItemDefinitions {
     ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED, HealthDataType.DIETARY_ENERGY_CONSUMED]
     ..itemType = HealthItemType.netCalories
     ..title = "Net Calories"
-    ..unit = "cal"
+    ..unit = ""
     ..color = RepresentationColors.netCaloriesColor
     ..icon = IconTypes.netCaloriesIcon
     ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
@@ -111,7 +110,7 @@ class HealthItemDefinitions {
     ..dataType = [HealthDataType.STEPS]
     ..itemType = HealthItemType.steps
     ..title = "Steps"
-    ..unit = " steps"
+    ..unit = ""
     ..color = RepresentationColors.stepsColor
     ..icon = IconTypes.stepsIcon
     ..getGoal = ((Goal goal) => goal.stepsGoal);
