@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
+import 'package:healthxp/constants/magic_numbers.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
@@ -20,7 +23,24 @@ class HealthEntity{
   final int widgetSize;
 
   Map<HealthDataType, List<DataPoint>> data = {};
-  bool isLoading = false;
+  bool _isLoading = false;
+  bool _showLoading = false;
+  Timer? _loadingTimer;
+
+  // Getter and setter for isLoading to handle the delayed showLoading
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) {
+    _isLoading = value;
+    if (value) {
+      _loadingTimer?.cancel();
+      _loadingTimer = Timer(loadingDelay, () {
+        _showLoading = true;
+      });
+    } else {
+      _loadingTimer?.cancel();
+      _showLoading = false;
+    }
+  }
 
   TimeFrame timeframe = TimeFrame.day;
   int offset = 0;
@@ -65,7 +85,7 @@ class HealthEntity{
 
   // The percentage of the goal for this health entity against our total
   double get getGoalPercent {
-    if (isLoading) return 0;
+    if (_showLoading) return 0;
 
     if (goal == 0) return 0.0;
     if (goal == -1) return -1;
@@ -81,7 +101,7 @@ class HealthEntity{
 
   // The subtitle for the home page widget
   String get getDisplaySubtitle {
-    if (isLoading) return "--";
+    if (_showLoading) return "--";
 
     if (timeframe == TimeFrame.day && goal != -1) {
       return goal - total >= 0 ? 
@@ -94,25 +114,25 @@ class HealthEntity{
 
   // The main value displayed on the home page widget
   String get getDisplayValue {
-    if (isLoading) return "--";
+    if (_showLoading) return "--";
     return (total).toStringAsFixed(0) + healthItem.unit;
   }
 
   // The daily average displayed on the details page widget
   String get getDisplayAverage {
-    if (isLoading) return "--";
+    if (_showLoading) return "--";
     return (average).toStringAsFixed(0) + healthItem.unit;
   }
 
   // The goal value displayed on the details page widget
   String get getDisplayGoal {
-    if (isLoading) return "--";
+    if (_showLoading) return "--";
     return (goal).toStringAsFixed(0) + healthItem.unit;
   }
 
   // The percentage of the goal for this health entity against our daily average
   String get getDisplayGoalAveragePercent {
-    if (isLoading) return "--";
+    if (_showLoading) return "--";
     return "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%";
   }
 
@@ -152,7 +172,7 @@ class HealthEntity{
 
   // The graph widget displayed on the details page
   Widget get getGraphWidget {
-    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
+    if (_showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
 
     return BarChartWidget(
       groupedData: getBarchartData,
@@ -227,5 +247,8 @@ class HealthEntity{
     cachedMergedData = null;
   }
 
+  void dispose() {
+    _loadingTimer?.cancel();
+  }
   // #endregion
 }

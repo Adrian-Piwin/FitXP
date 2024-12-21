@@ -1,9 +1,7 @@
 import 'package:health/health.dart';
-import 'package:flutter/material.dart';
 import '../models/data_point.model.dart';
 import '../models/health_entities/health_entity.model.dart';
 import '../models/sleep_data_point.model.dart';
-import '../enums/timeframe.enum.dart';
 import '../enums/sleep_stages.enum.dart';
 
 class HealthDataProcessing {

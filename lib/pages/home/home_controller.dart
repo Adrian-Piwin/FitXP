@@ -17,7 +17,7 @@ class HomeController extends ChangeNotifier {
   Goal? _goals;
   HealthFetcherService _healthFetcherService = HealthFetcherService();
 
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
@@ -96,9 +96,10 @@ class HomeController extends ChangeNotifier {
       }).toList();
 
       // Deplay so our widgets are loaded before we fetch data
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       await fetchHealthData();
+      _isLoading = false;
     } catch (e, stackTrace) {
       await ErrorLogger.logError(
         'Error during initialization: $e', 
@@ -120,7 +121,6 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> fetchHealthData() async {
-    _isLoading = true;
     for (var widget in [...headerWidgets, ...displayWidgets]) {
       widget.isLoading = true;
     }
@@ -138,7 +138,6 @@ class HomeController extends ChangeNotifier {
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
     } finally {
-      _isLoading = false;
       for (var widget in [...headerWidgets, ...displayWidgets]) {
         widget.isLoading = false;
       }
