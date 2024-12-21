@@ -22,8 +22,13 @@ class TrendHealthEntity extends HealthEntity {
   }
 
   @override
+  double get getGoalPercent{
+    return -1;
+  }
+
+  @override
   double get average {
-    cachedAverage ??= getTrendHealthAverage(getCurrentData);
+    cachedAverage ??= getTrendHealthAverage(getCombinedData);
     return cachedAverage!;
   }
 

@@ -41,33 +41,64 @@ class HealthFetcherService {
       List<HealthEntity> entities) async {
     // Group entities by their data types
     Map<HealthDataType, List<HealthEntity>> typeGroups = {};
+    Map<String, Set<HealthDataType>> processedEntityTypes = {}; // Track which types an entity has been mapped to
+    
     for (var entity in entities) {
+      String entityKey = entity.healthItem.itemType.toString();
+      
+      // Initialize set for this entity if needed
+      if (!processedEntityTypes.containsKey(entityKey)) {
+        processedEntityTypes[entityKey] = {};
+      }
+      
       for (var type in entity.healthItem.dataType) {
+        // Skip if we've already mapped this entity to this type
+        if (processedEntityTypes[entityKey]!.contains(type)) {
+          continue;
+        }
+        
         if (!typeGroups.containsKey(type)) {
           typeGroups[type] = [];
         }
         typeGroups[type]!.add(entity);
+        
+        // Mark this type as processed for this entity
+        processedEntityTypes[entityKey]!.add(type);
       }
     }
 
     // Check cache for each type and entity combination
     Map<HealthDataType, List<DataPoint>> cachedData = {};
     Map<HealthDataType, List<HealthEntity>> uncachedTypes = {};
+    
+    // Track which timeframe+offset combinations we've already fetched for each type
+    Map<HealthDataType, Set<String>> fetchedCombos = {};
+    
     for (var entry in typeGroups.entries) {
       var type = entry.key;
       var entityList = entry.value;
+      
+      fetchedCombos[type] = {};
+      
       for (var entity in entityList) {
-        var cached = _cache.getDataForType(entity.timeframe, entity.offset, type);
-        if (cached != null) {
-          if (!cachedData.containsKey(type)) {
-            cachedData[type] = [];
+        // Create unique key for this timeframe+offset combination
+        String cacheKey = '${entity.timeframe}_${entity.offset}';
+        
+        // Only fetch if we haven't already fetched this combination
+        if (!fetchedCombos[type]!.contains(cacheKey)) {
+          var cached = _cache.getDataForType(entity.timeframe, entity.offset, type);
+          if (cached != null) {
+            if (!cachedData.containsKey(type)) {
+              cachedData[type] = [];
+            }
+            cachedData[type]!.addAll(cached);
+            fetchedCombos[type]!.add(cacheKey);
+          } else {
+            if (!uncachedTypes.containsKey(type)) {
+              uncachedTypes[type] = [];
+            }
+            uncachedTypes[type]!.add(entity);
           }
-          cachedData[type]!.addAll(cached);
-        } else {
-          if (!uncachedTypes.containsKey(type)) {
-            uncachedTypes[type] = [];
-          }
-          uncachedTypes[type]!.add(entity);
         }
       }
     }
@@ -144,14 +175,24 @@ class HealthFetcherService {
     }
 
     // Cache new data
+    // Track which data has already been cached to avoid duplicates
+    Set<String> cachedKeys = {};
+    
     for (var entry in newData.entries) {
       for (var entity in typeGroups[entry.key]!) {
-        await _cache.cacheDataPoint(
-          entity.timeframe,
-          entity.offset,
-          entry.key,
-          entry.value
-        );
+        // Generate unique key for this data
+        String cacheKey = '${entity.timeframe}_${entity.offset}_${entry.key}';
+        
+        // Only cache if we haven't cached this exact data yet
+        if (!cachedKeys.contains(cacheKey)) {
+          await _cache.cacheDataPoint(
+            entity.timeframe,
+            entity.offset,
+            entry.key,
+            entry.value
+          );
+          cachedKeys.add(cacheKey);
+        }
       }
     }
 

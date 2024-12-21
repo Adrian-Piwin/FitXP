@@ -97,7 +97,7 @@ class BasicLargeWidgetItem extends WidgetFrame {
                     height: 95,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: PercentIndicatorColors.backgroundColor,
+                      color: PercentIndicatorColors.backgroundColor2,
                     ),
                     child: Center(
                       child: Icon(

@@ -18,9 +18,14 @@ class HealthDataCache {
   Future<void> initialize() async {
     if (_initialized) return;
     
-    await Hive.initFlutter();
-    _box = await Hive.openBox<List<dynamic>>(_boxName);
-    _initialized = true;
+    try {
+      await Hive.initFlutter();
+      _box = await Hive.openBox<List<dynamic>>(_boxName);
+      _initialized = true;
+    } catch (e) {
+      print('Failed to initialize cache: $e');
+      _initialized = false;
+    }
   }
 
   Box<List<dynamic>> get _getBox {
@@ -33,56 +38,76 @@ class HealthDataCache {
   String _generateKey(TimeFrame timeframe, int offset, HealthDataType type) => 
     '${timeframe.name}_${offset}_${type.name}';
 
-  Future<void> cacheDataPoint(TimeFrame timeframe, int offset, HealthDataType type, List<DataPoint> data) async {
+  Future<void> cacheDataPoint(
+    TimeFrame timeframe, 
+    int offset, 
+    HealthDataType type, 
+    List<DataPoint> data
+  ) async {
     final key = _generateKey(timeframe, offset, type);
-    final serializedData = data.map((point) {
-      var baseData = {
-        'value': point.value,
-        'dateFrom': point.dateFrom.toIso8601String(),
-        'dateTo': point.dateTo.toIso8601String(),
-        'dayOccurred': point.dayOccurred.toIso8601String(),
-      };
-
-      if (type == HealthDataType.SLEEP_ASLEEP && point is SleepDataPoint) {
-        baseData['sleepStage'] = point.sleepStage?.index as Object;
-      }
-
-      return baseData;
-    }).toList();
-    
+    final serializedData = _serializeDataPoints(data, type);
     await _getBox.put(key, serializedData);
   }
 
-  Future<void> cacheData(TimeFrame timeframe, int offset, Map<HealthDataType, List<DataPoint>> data) async {
-    for (var entry in data.entries) {
-      await cacheDataPoint(timeframe, offset, entry.key, entry.value);
-    }
+  List<dynamic> _serializeDataPoints(List<DataPoint> data, HealthDataType type) {
+    return data.map((point) => _serializeDataPoint(point, type)).toList();
   }
 
-  List<DataPoint>? getDataForType(TimeFrame timeframe, int offset, HealthDataType type) {
+  Map<String, Object> _serializeDataPoint(DataPoint point, HealthDataType type) {
+    var baseData = {
+      'value': point.value,
+      'dateFrom': point.dateFrom.toIso8601String(),
+      'dateTo': point.dateTo.toIso8601String(),
+      'dayOccurred': point.dayOccurred.toIso8601String(),
+    };
+
+    if (type == HealthDataType.SLEEP_ASLEEP && point is SleepDataPoint) {
+      baseData['sleepStage'] = point.sleepStage?.index as Object;
+    }
+
+    return baseData;
+  }
+
+  List<DataPoint>? getDataForType(
+    TimeFrame timeframe, 
+    int offset, 
+    HealthDataType type
+  ) {
     final key = _generateKey(timeframe, offset, type);
     final data = _getBox.get(key);
     
     if (data == null) return null;
 
-    if (type == HealthDataType.SLEEP_ASLEEP) {
-      return data.map<SleepDataPoint>((point) => SleepDataPoint(
-        value: point['value'],
-        dateFrom: DateTime.parse(point['dateFrom']),
-        dateTo: DateTime.parse(point['dateTo']),
-        dayOccurred: DateTime.parse(point['dayOccurred']),
-        sleepStage: point['sleepStage'] != null 
-            ? SleepStage.values[point['sleepStage']]
-            : SleepStage.unknown,
-      )).toList();
-    }
+    return type == HealthDataType.SLEEP_ASLEEP
+        ? _deserializeSleepData(data)
+        : _deserializeDataPoints(data);
+  }
 
+  List<DataPoint> _deserializeDataPoints(List<dynamic> data) {
     return data.map<DataPoint>((point) => DataPoint(
       value: point['value'],
       dateFrom: DateTime.parse(point['dateFrom']),
       dateTo: DateTime.parse(point['dateTo']),
       dayOccurred: DateTime.parse(point['dayOccurred']),
     )).toList();
+  }
+
+  List<SleepDataPoint> _deserializeSleepData(List<dynamic> data) {
+    return data.map<SleepDataPoint>((point) => SleepDataPoint(
+      value: point['value'],
+      dateFrom: DateTime.parse(point['dateFrom']),
+      dateTo: DateTime.parse(point['dateTo']),
+      dayOccurred: DateTime.parse(point['dayOccurred']),
+      sleepStage: point['sleepStage'] != null 
+          ? SleepStage.values[point['sleepStage']]
+          : SleepStage.unknown,
+    )).toList();
+  }
+
+  Future<void> cacheData(TimeFrame timeframe, int offset, Map<HealthDataType, List<DataPoint>> data) async {
+    for (var entry in data.entries) {
+      await cacheDataPoint(timeframe, offset, entry.key, entry.value);
+    }
   }
 
   Map<HealthDataType, List<DataPoint>> getData(

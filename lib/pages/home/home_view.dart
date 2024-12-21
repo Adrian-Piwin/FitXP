@@ -64,7 +64,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           body: Consumer<HomeController>(
             builder: (context, controller, _) {
               if (controller.isLoading && !_showLoading) {
-                Future.delayed(const Duration(milliseconds: 100), () {
+                Future.delayed(const Duration(milliseconds: 500), () {
                   if (mounted && controller.isLoading) {
                     setState(() => _showLoading = true);
                   }

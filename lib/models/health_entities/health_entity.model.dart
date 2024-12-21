@@ -36,11 +36,13 @@ class HealthEntity{
 
   // #region Getters
 
+  // The total sum of all combined data points
   double get total {
     cachedTotal ??= getHealthTotal(getCurrentData);
     return cachedTotal!;
   }
 
+  // The daily average of all combined data points
   double get average {
     cachedAverage ??= getHealthAverage(getCurrentData);
     return cachedAverage!;
@@ -51,6 +53,7 @@ class HealthEntity{
     return cachedMergedData!;
   }
 
+  // The combined data points for all types
   List<DataPoint> get getCombinedData {
     return data.values.expand((list) => list).toList();
   }
@@ -60,6 +63,7 @@ class HealthEntity{
     return getCombinedData;
   }
 
+  // The percentage of the goal for this health entity against our total
   double get getGoalPercent {
     if (isLoading) return 0;
 
@@ -68,12 +72,14 @@ class HealthEntity{
     return (total / goal).clamp(0.0, 1.0);
   }
 
+  // The percentage of the goal for this health entity against our daily average
   double get getGoalAveragePercent {
     if (goal == 0) return 0.0;
     if (goal == -1) return -1;
     return (average / goal).clamp(0, double.infinity);
   }
 
+  // The subtitle for the home page widget
   String get getDisplaySubtitle {
     if (isLoading) return "--";
 
@@ -86,21 +92,25 @@ class HealthEntity{
     }
   }
 
+  // The main value displayed on the home page widget
   String get getDisplayValue {
     if (isLoading) return "--";
     return (total).toStringAsFixed(0) + healthItem.unit;
   }
 
+  // The daily average displayed on the details page widget
   String get getDisplayAverage {
     if (isLoading) return "--";
     return (average).toStringAsFixed(0) + healthItem.unit;
   }
 
+  // The goal value displayed on the details page widget
   String get getDisplayGoal {
     if (isLoading) return "--";
     return (goal).toStringAsFixed(0) + healthItem.unit;
   }
 
+  // The percentage of the goal for this health entity against our daily average
   String get getDisplayGoalAveragePercent {
     if (isLoading) return "--";
     return "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%";
@@ -120,23 +130,18 @@ class HealthEntity{
 
   // #region Bar Chart
 
+  // The data points for the bar chart
   List<BarData> get getBarchartData {
     if (getCurrentData.isEmpty) return [];
-    print("CALLING ONCE");
-    for (var data in getCurrentData){
-      print('--------------------------------');
-      print(data.value);
-      print(data.dayOccurred);
-      print(data.dateFrom);
-      print(data.dateTo);
-    }
     return ChartUtility.groupDataByTimeFrame(getCurrentData, timeframe, offset);
   }
 
+  // The value displayed on the bar chart
   String getBarchartValue(double value) {
     return value.toStringAsFixed(0);
   }
 
+  // The label for the x-axis of the bar chart
   String getXAxisLabel(double value) {
     return ChartUtility.getXAxisLabel(getBarchartData, timeframe, value);
   }
@@ -145,6 +150,7 @@ class HealthEntity{
 
   // #region Info widgets
 
+  // The graph widget displayed on the details page
   Widget get getGraphWidget {
     if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
 
@@ -156,6 +162,7 @@ class HealthEntity{
     );
   }
 
+  // The widgets displayed on the details page
   List<Widget> get getDetailWidgets {
     return [
       getGraphWidget,
@@ -188,22 +195,17 @@ class HealthEntity{
     offset = newOffset;
   }
 
+  // Update the data we will use for this health entity
   void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
     data = Map.fromEntries(
       healthItem.dataType.map((type) => 
         MapEntry(type, batchData[type] ?? [])
       )
     );
-    clearCache();
+    _clearCache();
   }
 
   // #endregion
-
-  void clearCache() {
-    cachedTotal = null;
-    cachedAverage = null;
-    cachedMergedData = null;
-  }
 
   // #region Clone
 
@@ -213,6 +215,16 @@ class HealthEntity{
 
   static HealthEntity from(HealthEntity widget) {
     return widget.clone();
+  }
+
+  // #endregion
+
+  // #region Internal functions
+
+  void _clearCache() {
+    cachedTotal = null;
+    cachedAverage = null;
+    cachedMergedData = null;
   }
 
   // #endregion

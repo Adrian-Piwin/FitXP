@@ -6,6 +6,7 @@ class WidgetColors{
 
 class PercentIndicatorColors{
   static const Color backgroundColor = Color(0xFF7B7788);
+  static const Color backgroundColor2 = Color.fromARGB(255, 66, 64, 73);
   static const Color progressColor = Color(0xFF3F51B5);
 }
 
