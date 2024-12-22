@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthxp/utility/health.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
-import '../../models/goal.model.dart';
 import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../services/db_goals_service.dart';
@@ -14,7 +14,6 @@ class HomeController extends ChangeNotifier {
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
 
-  Goal? _goals;
   HealthFetcherService _healthFetcherService = HealthFetcherService();
 
   bool _isLoading = false;
@@ -23,7 +22,6 @@ class HomeController extends ChangeNotifier {
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
 
-  Goal? get goals => _goals;
   bool get isLoading => _isLoading;
 
   // Widgets
@@ -73,27 +71,8 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await fetchGoalsData();
-      
-      if (_goals == null) {
-        throw Exception('Failed to load goals');
-      }
-
-      headerWidgets = headerHealthItems.map((healthItem) {
-        return healthItem.widgetFactory(
-          healthItem,
-          _goals!,
-          2,
-        );
-      }).toList();
-
-      displayWidgets = healthItems.map((healthItem) {
-        return healthItem.widgetFactory(
-          healthItem,
-          _goals!,
-          2,
-        );
-      }).toList();
+      headerWidgets = await initializeWidgets(_goalsService, headerHealthItems);
+      displayWidgets = await initializeWidgets(_goalsService, healthItems);
 
       // Deplay so our widgets are loaded before we fetch data
       await Future.delayed(const Duration(milliseconds: 100));
@@ -111,34 +90,18 @@ class HomeController extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchGoalsData() async {
-    Goal? goals = await _goalsService.getGoals();
-    if (goals != null) {
-      _goals = goals;
-    } else {
-      throw Exception('Failed to load goals data');
-    }
-  }
-
   Future<void> fetchHealthData() async {
-    for (var widget in [...headerWidgets, ...displayWidgets]) {
+    for (var widget in _allRequiredHealthEntities) {
       widget.isLoading = true;
     }
     notifyListeners();
 
     try {
-      for (var widget in [...headerWidgets, ...displayWidgets]) {
-        widget.updateQuery(_selectedTimeFrame, _offset);
-      }
-      final batchData = await _healthFetcherService.fetchBatchData(_allRequiredHealthEntities);
-
-      for (var widget in [...headerWidgets, ...displayWidgets]) {
-        widget.updateData(batchData);
-      }
+      await setDataPerWidget(_healthFetcherService, _allRequiredHealthEntities, _selectedTimeFrame, _offset);
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
     } finally {
-      for (var widget in [...headerWidgets, ...displayWidgets]) {
+      for (var widget in _allRequiredHealthEntities) {
         widget.isLoading = false;
       }
       notifyListeners();

@@ -1,3 +1,4 @@
+import 'package:healthxp/enums/xp_type.enum.dart';
 import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/models/health_entities/bodyfat_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
@@ -21,6 +22,7 @@ class HealthItem {
   late String unit;
   late Color color;
   late IconData icon;
+  XPType? xpType;
   GoalGetter? getGoal;
   WidgetFactory widgetFactory =
       ((item, goals, widgetSize) =>
@@ -47,6 +49,7 @@ class HealthItemDefinitions {
     ..unit = "g"
     ..color = RepresentationColors.proteinColor
     ..icon = IconTypes.proteinIcon
+    ..xpType = XPType.hitProteinGoal
     ..getGoal = (Goal goal) => goal.proteinGoal;
 
   static HealthItem exerciseTime = HealthItem()
@@ -65,6 +68,7 @@ class HealthItemDefinitions {
     ..unit = "hrs"
     ..color = RepresentationColors.sleepColor
     ..icon = IconTypes.sleepDurationIcon
+    ..xpType = XPType.hitSleepGoal
     ..getGoal = ((Goal goal) => goal.sleepGoal.inMinutes.toDouble())
     ..widgetFactory = ((item, goals, widgetSize) =>
         SleepHealthEntity(item, goals, widgetSize));
@@ -102,6 +106,7 @@ class HealthItemDefinitions {
     ..unit = ""
     ..color = RepresentationColors.netCaloriesColor
     ..icon = IconTypes.netCaloriesIcon
+    ..xpType = XPType.hitNetCaloriesGoal
     ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
     ..widgetFactory = ((item, goals, widgetSize) =>
         NetCaloriesHealthEntity(item, goals, widgetSize));
@@ -113,6 +118,7 @@ class HealthItemDefinitions {
     ..unit = ""
     ..color = RepresentationColors.stepsColor
     ..icon = IconTypes.stepsIcon
+    ..xpType = XPType.steps
     ..getGoal = ((Goal goal) => goal.stepsGoal);
 
   static HealthItem weight = HealthItem()

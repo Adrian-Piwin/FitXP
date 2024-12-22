@@ -1,5 +1,11 @@
+import 'package:healthxp/constants/health_item_definitions.constants.dart';
+import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/models/goal.model.dart';
+import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthxp/services/db_goals_service.dart';
+import 'package:healthxp/services/health_fetcher_service.dart';
 
 List<String> strengthTrainingTypes = [
   "traditionalStrengthTraining",
@@ -297,4 +303,42 @@ List<DataPoint> getLatestPointPerDay(List<DataPoint> data) {
   
   // Convert map values back to list
   return latestPointPerDay.values.toList();
+}
+
+// Get daily data for a list of data points
+Map<DateTime, double> getDailyData(List<DataPoint> data) {
+  // Group data by dayOccurred
+  Map<DateTime, List<DataPoint>> dataByDay = {};
+  for (var point in data) {
+    dataByDay[point.dayOccurred] = [point];
+  }
+  return dataByDay.map((key, value) => MapEntry(key, value.fold(0.0, (sum, point) => sum + point.value)));
+}
+
+Future<List<HealthEntity>> initializeWidgets(DBGoalsService goalsService, List<HealthItem> healthItems) async {
+  Goal? goals = await goalsService.getGoals();
+  if (goals == null) {
+    throw Exception('Failed to load goals data');
+  }
+
+  List<HealthEntity> entities = healthItems.map((healthItem) {
+    return healthItem.widgetFactory(
+      healthItem,
+      goals,
+      2,
+    );
+  }).toList();
+
+  return entities;
+}
+
+Future<void> setDataPerWidget(HealthFetcherService healthFetcherService, List<HealthEntity> entities, TimeFrame timeframe, int offset) async {
+  for (var widget in entities) {
+    widget.updateQuery(timeframe, offset);
+  }
+  final batchData = await healthFetcherService.fetchBatchData(entities);
+
+  for (var widget in entities) {
+    widget.updateData(batchData);
+  }
 }

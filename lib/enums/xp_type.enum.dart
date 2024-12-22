@@ -1,9 +1,8 @@
 enum XPType {
   hitProteinGoal,
-  hundredCalorieDeficit,
-  hundredCalorieSurplus,
+  hitNetCaloriesGoal,
   hitSleepGoal,
   minuteOfCardio,
   minuteOfStrengthTraining,
-  thousandSteps
+  steps
 }
