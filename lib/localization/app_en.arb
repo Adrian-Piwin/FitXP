@@ -38,5 +38,6 @@
   
   "navBarHome": "Home",
   "navBarGoals": "Goals",
-  "navBarSettings": "Settings"
+  "navBarSettings": "Settings",
+  "navBarCharacter": "Character"
 }

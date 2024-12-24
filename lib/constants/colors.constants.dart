@@ -28,3 +28,10 @@ class RepresentationColors{
   static const Color weightColor = Color.fromARGB(255, 161, 204, 201);
   static const Color bodyFatColor = Color.fromARGB(255, 161, 204, 201);
 }
+
+class CharacterColors {
+  static const Color levelXPColor = Color(0xFF3F51B5);  // Blue
+  static const Color levelXPBackgroundColor = Color(0xFFE3F2FD);  // Light Blue
+  static const Color rankXPColor = Color(0xFFFFD700);  // Gold
+  static const Color rankXPBackgroundColor = Color(0xFFFFF8E1);  // Light Gold
+}

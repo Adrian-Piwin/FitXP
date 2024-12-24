@@ -1,4 +1,5 @@
 import 'package:healthxp/pages/auth/auth_gate.dart';
+import 'package:healthxp/pages/character/character_view.dart';
 import 'package:healthxp/pages/home/home_view.dart';
 import 'package:healthxp/pages/permissions/permissions_view.dart';
 import 'package:healthxp/pages/settings/settings_view.dart';
@@ -59,6 +60,8 @@ class MyApp extends StatelessWidget {
                     return const GoalsView();
                   case PermissionsView.routeName:
                     return const PermissionsView();
+                  case CharacterView.routeName:
+                    return const CharacterView();
                   default:
                     return const AuthGate();
                 }

@@ -1,5 +1,6 @@
 import 'package:healthxp/constants/icons.constants.dart';
 import 'package:flutter/material.dart';
+import 'package:healthxp/pages/character/character_view.dart';
 import '../pages/home/home_view.dart';
 import '../pages/goals/goals_view.dart';
 import '../pages/settings/settings_view.dart';
@@ -11,19 +12,18 @@ class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key, required this.currentIndex});
 
   void _onItemTapped(BuildContext context, int index) {
-    // Determine which page to navigate to
     String route = '/';
     switch (index) {
       case 0:
         route = HomeView.routeName;
       case 1:
-        route = GoalsView.routeName;
+        route = CharacterView.routeName;
       case 2:
+        route = GoalsView.routeName;
+      case 3:
         route = SettingsView.routeName;
     }
 
-    // Navigate to the selected page
-    // Avoid pushing the same route again
     if (ModalRoute.of(context)?.settings.name != route) {
       Navigator.pushReplacementNamed(context, route);
     }
@@ -31,16 +31,20 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Localizations
     final localizations = AppLocalizations.of(context)!;
 
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (index) => _onItemTapped(context, index),
+      type: BottomNavigationBarType.fixed,
       items: [
         BottomNavigationBarItem(
           icon: Icon(IconTypes.homeIcon),
           label: localizations.navBarHome,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(IconTypes.characterIcon),
+          label: localizations.navBarCharacter,
         ),
         BottomNavigationBarItem(
           icon: Icon(IconTypes.goalsIcon),

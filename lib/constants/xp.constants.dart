@@ -1,6 +1,7 @@
 import 'package:healthxp/enums/xp_type.enum.dart';
 
 const int levelUpXPAmt = 1000;
+const int rankUpXPAmt = 5000;
 
 final Map<XPType, double> xpMapping = {
   XPType.hitProteinGoal: 200,
