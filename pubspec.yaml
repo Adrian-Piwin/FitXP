@@ -53,3 +53,13 @@ flutter:
     # Add assets from the images directory to the application.
     - assets/images/
     - .env
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter_28pt-Regular.ttf
+        - asset: assets/fonts/inter_28pt-Light.ttf
+          weight: 300
+        - asset: assets/fonts/inter_28pt-SemiBold.ttf
+          weight: 600
+

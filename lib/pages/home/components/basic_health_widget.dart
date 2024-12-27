@@ -4,7 +4,6 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/pages/home_details/health_details_view.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import '../../../constants/colors.constants.dart';
 
 class BasicHealthWidget extends WidgetFrame {
   final HealthEntity widget;

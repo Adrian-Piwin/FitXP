@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+class CoreColors{
+  static const Color backgroundColor = Color(0xFF3e3e3e);
+  static const Color accentColor = Color(0xFF787472);
+  static const Color textColor = Color(0xFFeeebe9);
+  static const Color navBarColor = Color(0xFF282828);
+}
+
 class WidgetColors{
   static const Color primaryColor = Color(0xFF222222);
 }
@@ -12,16 +19,19 @@ class PercentIndicatorColors{
 
 class RepresentationColors{
   static const Color activityColor = Color(0xFFf96e2a);
-  static const Color activityOffColor = Color(0xFF52372a);
+  static const Color activityOffColor = Color(0x33dad3d0);
 
   static const Color sleepColor = Color(0xFFfeaf3f);
-  static const Color sleepOffColor = Color(0xFF52402c);
+  static const Color sleepOffColor = Color(0x33dad3d0);
 
-  static const Color foodColor = Color(0xFF25a7e3);
-  static const Color foodOffColor = Color(0xFF3d545f);
+  static const Color foodColor = Color(0xFF26a7e3);
+  static const Color foodOffColor = Color(0x33dad3d0);
 
   static const Color trendColor = Color(0xFFdad3d0);
-  static const Color trendOffColor = Color(0xFF5d5c5b);
+  static const Color trendOffColor = Color(0x33dad3d0);
+
+  static const Color optionalColor = Color(0xFFcd4c0d);
+  static const Color optionalOffColor = Color(0x33dad3d0);
 
   static const Color caloriesColor = Color(0xFFC1292E);
   static const Color activeCaloriesColor = Color(0xFFC03221);
@@ -45,4 +55,16 @@ class CharacterColors {
   static const Color levelXPBackgroundColor = Color(0xFFE3F2FD);  // Light Blue
   static const Color rankXPColor = Color(0xFFFFD700);  // Gold
   static const Color rankXPBackgroundColor = Color(0xFFFFF8E1);  // Light Gold
+}
+
+class GradientColors {
+  static const LinearGradient widgetBackgroundGradient = LinearGradient(
+    colors: [
+      Color(0xFF222222),  // Dark color at bottom right
+      Color(0xFF282828),  // Second color stops at 50%
+    ],
+    stops: [0.5, 1.0],    // Second color stops at 50%
+    begin: Alignment.bottomRight,
+    end: Alignment.topLeft,
+  );
 }

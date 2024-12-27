@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 
 class InfoWidget extends WidgetFrame {
   final String title;
   final String displayValue;
+  final IconData? icon;
 
   const InfoWidget({
     super.key,
     required this.title,
     required this.displayValue,
+    this.icon,
   }) : super(
           size: 2,
           height: WidgetSizes.smallHeight,
@@ -28,10 +31,16 @@ class InfoWidget extends WidgetFrame {
             textAlign: TextAlign.center,
           ),
           const Spacer(),
+          if (icon != null)
+            FaIcon(
+              icon,
+              size: FontSizes.xlarge,
+            ),
+          const Spacer(),
           Text(
             displayValue,
             style: const TextStyle(
-              fontSize: FontSizes.large,
+              fontSize: FontSizes.medium,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,

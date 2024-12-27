@@ -23,6 +23,7 @@ class HealthDetailsController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
+  HealthEntity get widget => _widget;
 
   Future<void> updateTimeFrame(TimeFrame newTimeFrame) async {
     _selectedTimeFrame = newTimeFrame;

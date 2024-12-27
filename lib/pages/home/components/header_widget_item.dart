@@ -1,8 +1,8 @@
+import 'package:healthxp/components/info_bar.dart';
 import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
-import 'package:healthxp/pages/home/components/bar_health_widget.dart';
 import 'package:healthxp/pages/home/components/circular_health_widget.dart';
 
 class HeaderWidgetItem extends WidgetFrame {
@@ -28,7 +28,14 @@ class HeaderWidgetItem extends WidgetFrame {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BarHealthWidget(widget: barWidget),
+              InfoBar(
+                title: barWidget.healthItem.title,
+                value: barWidget.getDisplayValue,
+                goal: barWidget.getDisplayGoal,
+                percent: barWidget.getGoalPercent,
+                color: barWidget.healthItem.color,
+                offColor: barWidget.healthItem.offColor,
+              ),
               const SizedBox(height: GapSizes.xxlarge),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

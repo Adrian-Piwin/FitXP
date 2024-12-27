@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/grid_layout.dart';
+import 'package:healthxp/components/info_bar.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:provider/provider.dart';
 import '../../components/timeframe_tabbar.dart';
@@ -55,7 +58,22 @@ class HealthDataDetailPage extends StatelessWidget {
               child: Consumer<HealthDetailsController>(
                 builder: (context, controller, _) {
                   return SingleChildScrollView(
-                    child: GridLayout(widgets: controller.getDetailWidgets),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(GapSizes.large),
+                          child: InfoBar(
+                            title: controller.widget.healthItem.title,
+                            value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValue : controller.widget.getDisplayAverage,
+                            goal: controller.widget.getDisplayGoal,
+                            percent: controller.widget.getGoalPercent,
+                            color: controller.widget.healthItem.color,
+                            offColor: controller.widget.healthItem.offColor,
+                          ),
+                        ),
+                        GridLayout(widgets: controller.getDetailWidgets),
+                      ],
+                    ),
                   );
                 },
               ),

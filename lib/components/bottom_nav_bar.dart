@@ -1,3 +1,4 @@
+import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/icons.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/pages/character/character_view.dart';
@@ -37,6 +38,7 @@ class BottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: (index) => _onItemTapped(context, index),
       type: BottomNavigationBarType.fixed,
+      backgroundColor: CoreColors.navBarColor,
       items: [
         BottomNavigationBarItem(
           icon: Icon(IconTypes.homeIcon),

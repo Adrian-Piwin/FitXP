@@ -5,7 +5,6 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/pages/home_details/health_details_view.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import '../../../constants/colors.constants.dart';
 
 class CircularHealthWidget extends StatelessWidget {
   final HealthEntity widget;
@@ -47,7 +46,7 @@ class CircularHealthWidget extends StatelessWidget {
             child: Text(
               widget.getDisplayValue,
               style: const TextStyle(
-                fontSize: FontSizes.medium,
+                fontSize: FontSizes.large,
               ),
             ),
           ),

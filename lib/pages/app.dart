@@ -1,3 +1,4 @@
+import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/auth/auth_gate.dart';
 import 'package:healthxp/pages/character/character_view.dart';
 import 'package:healthxp/pages/home/home_view.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(),
           darkTheme: ThemeData.dark().copyWith(
             // Main background color
-            scaffoldBackgroundColor: const Color(0xFF383838),  // Darker background
+            scaffoldBackgroundColor: CoreColors.backgroundColor,  // Darker background
             
             // Primary color used across components
             primaryColor: Colors.white,  // Your desired primary color
@@ -51,7 +52,19 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.dark(
               primary: Colors.white,  // Primary color
               secondary: Colors.white,  // Secondary color
-              surface: const Color(0xFF383838),  // Card/Surface color
+              surface: CoreColors.backgroundColor,  // Card/Surface color
+            ),
+            
+            // Update text theme to use Inter
+            textTheme: const TextTheme(
+              bodyLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodyMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              // This affects all default text
+            ).apply(
+              fontFamily: 'Inter',  // This ensures Inter is used everywhere
+              bodyColor: CoreColors.textColor,
+              displayColor: CoreColors.textColor,
             ),
           ),
           themeMode: ThemeMode.dark,

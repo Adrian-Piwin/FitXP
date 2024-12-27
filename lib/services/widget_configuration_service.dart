@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/enums/health_item_type.enum.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/pages/home/components/bar_health_widget.dart';
 import 'package:healthxp/pages/home/components/basic_health_widget.dart';
 import 'package:healthxp/pages/home/components/circular_health_widget.dart';
 import 'package:healthxp/pages/home/components/header_widget_item.dart';
@@ -19,8 +18,6 @@ class WidgetConfigurationService {
 
   Widget getWidget(HealthEntity healthEntity) {
     switch (healthEntity.healthItem.itemType) {
-      case HealthItemType.expendedEnergy:
-        return BarHealthWidget(widget: healthEntity);
       case HealthItemType.dietaryCalories || HealthItemType.netCalories || HealthItemType.activeCalories:
         return CircularHealthWidget(widget: healthEntity);
       default:

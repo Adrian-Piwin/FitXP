@@ -85,6 +85,9 @@ class HealthEntity{
   // The percentage of the goal for this health entity against our total
   double get getGoalPercent {
     if (_showLoading) return 0;
+    if (timeframe != TimeFrame.day) {
+      return getGoalAveragePercent.clamp(0, 1);
+    }
 
     if (goal == 0) return 0.0;
     if (goal == -1) return -1;

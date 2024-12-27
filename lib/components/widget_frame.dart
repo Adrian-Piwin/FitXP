@@ -23,8 +23,16 @@ abstract class WidgetFrame extends StatelessWidget {
       behavior: HitTestBehavior.translucent, // Ensure gestures pass through
       child: Container(
         decoration: BoxDecoration(
-          color: color ?? WidgetColors.primaryColor,
+          gradient: GradientColors.widgetBackgroundGradient,
           borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+          boxShadow: [
+            BoxShadow(
+              offset: const Offset(2, 2),  // x:2, y:2
+              blurRadius: 4,               // blur: 4
+              spreadRadius: 0,             // spread: 0
+              color: Colors.black.withOpacity(0.1),  // black at 10% opacity
+            ),
+          ],
         ),
         padding: const EdgeInsets.all(PaddingSizes.large),
         child: buildContent(context), // Render content from subclasses
