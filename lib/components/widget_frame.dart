@@ -5,11 +5,13 @@ import '../constants/colors.constants.dart';
 abstract class WidgetFrame extends StatelessWidget {
   final int size;
   final double height;
+  final Color? color;
 
   const WidgetFrame({
     super.key,
     required this.size,
     required this.height,
+    this.color,
   });
 
   // Abstract child widget to be implemented by subclasses
@@ -21,7 +23,7 @@ abstract class WidgetFrame extends StatelessWidget {
       behavior: HitTestBehavior.translucent, // Ensure gestures pass through
       child: Container(
         decoration: BoxDecoration(
-          color: WidgetColors.primaryColor,
+          color: color ?? WidgetColors.primaryColor,
           borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
         ),
         padding: const EdgeInsets.all(PaddingSizes.large),

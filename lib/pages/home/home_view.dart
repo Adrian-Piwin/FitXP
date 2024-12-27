@@ -1,9 +1,7 @@
 import 'package:healthxp/components/timeframe_tabbar.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/bottom_nav_bar.dart';
-import 'header_widget_item.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
@@ -68,8 +66,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                 );
               }
 
-              if (controller.headerWidgets.isEmpty ||
-                  controller.displayWidgets.isEmpty) {
+              if (controller.displayWidgets.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -96,26 +93,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                     child: RefreshIndicator(
                       onRefresh: controller.refresh,
                       child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                  GapSizes.medium,
-                                  GapSizes.medium,
-                                  GapSizes.medium,
-                                  0),
-                              child: HeaderWidgetItem(
-                                barWidget: controller.headerWidgets[0],
-                                subWidgetFirst: controller.headerWidgets[1],
-                                subWidgetSecond: controller.headerWidgets[2],
-                                subWidgetThird: controller.headerWidgets[3],
-                              ),
-                            ),
-                            GridLayout(
-                                widgets: controller.displayWidgets
-                                    .map((obj) => obj.generateWidget())
-                                    .toList()),
-                          ],
+                        child: GridLayout(
+                          widgets: controller.displayWidgets,
                         ),
                       ),
                     ),

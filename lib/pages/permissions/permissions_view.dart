@@ -54,7 +54,7 @@ class _PermissionsViewState extends State<PermissionsView> {
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: FontSizes.medium),
                 ),
-                const SizedBox(height: GapSizes.large),
+                const SizedBox(height: GapSizes.xlarge),
                 ElevatedButton(
                   onPressed: _retry,
                   child: const Text('Retry'),

@@ -112,7 +112,7 @@ class DateSelectorState extends State<DateSelector> with WidgetsBindingObserver 
         leftArrow,
         Text(
           displayedDateString,
-          style: const TextStyle(fontSize: FontSizes.medium),
+          style: const TextStyle(fontSize: FontSizes.large),
         ),
         rightArrow,
       ],

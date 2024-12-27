@@ -40,8 +40,21 @@ class MyApp extends StatelessWidget {
               AppLocalizations.of(context)!.appTitle,
 
           theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          darkTheme: ThemeData.dark().copyWith(
+            // Main background color
+            scaffoldBackgroundColor: const Color(0xFF383838),  // Darker background
+            
+            // Primary color used across components
+            primaryColor: Colors.white,  // Your desired primary color
+            
+            // Color scheme affects many components
+            colorScheme: ColorScheme.dark(
+              primary: Colors.white,  // Primary color
+              secondary: Colors.white,  // Secondary color
+              surface: const Color(0xFF383838),  // Card/Surface color
+            ),
+          ),
+          themeMode: ThemeMode.dark,
           home: const AuthGate(),
 
           // Define a function to handle named routes in order to support

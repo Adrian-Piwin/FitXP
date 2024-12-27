@@ -15,7 +15,7 @@ class SleepBarChartWidget extends WidgetFrame {
     required this.barDataList,
     this.earliestDate,
     this.latestDate,
-  }) : super(size: 2, height: WidgetSizes.mediumHeight);
+  }) : super(size: 6, height: WidgetSizes.largeHeight);
 
   @override
   Widget buildContent(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class WidgetColors{
-  static const Color primaryColor = Color(0xFF21292E);
+  static const Color primaryColor = Color(0xFF222222);
 }
 
 class PercentIndicatorColors{
@@ -11,6 +11,18 @@ class PercentIndicatorColors{
 }
 
 class RepresentationColors{
+  static const Color activityColor = Color(0xFFf96e2a);
+  static const Color activityOffColor = Color(0xFF52372a);
+
+  static const Color sleepColor = Color(0xFFfeaf3f);
+  static const Color sleepOffColor = Color(0xFF52402c);
+
+  static const Color foodColor = Color(0xFF25a7e3);
+  static const Color foodOffColor = Color(0xFF3d545f);
+
+  static const Color trendColor = Color(0xFFdad3d0);
+  static const Color trendOffColor = Color(0xFF5d5c5b);
+
   static const Color caloriesColor = Color(0xFFC1292E);
   static const Color activeCaloriesColor = Color(0xFFC03221);
   static const Color restingCaloriesColor = Color(0xFFC03221);
@@ -20,7 +32,6 @@ class RepresentationColors{
   static const Color proteinColor = Color.fromARGB(255, 198, 161, 204);
   static const Color healthItemColor = Color.fromARGB(255, 198, 161, 204);
   static const Color exerciseColor = Color.fromARGB(255, 161, 204, 187);
-  static const Color sleepColor = Color.fromARGB(255, 204, 161, 203);
   static const Color sleepAwakeColor = Color.fromARGB(255, 255, 152, 0);
   static const Color sleepDeepColor = Color.fromARGB(255, 33, 150, 243);
   static const Color sleepRemColor = Color.fromARGB(255, 156, 39, 176);

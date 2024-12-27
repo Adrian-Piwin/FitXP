@@ -18,7 +18,7 @@ class InfoPercentWidget extends WidgetFrame {
     required this.icon,
     required this.color,
   }) : super(
-          size: 1,
+          size: 2,
           height: WidgetSizes.smallHeight,
         );
 

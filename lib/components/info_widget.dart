@@ -11,7 +11,7 @@ class InfoWidget extends WidgetFrame {
     required this.title,
     required this.displayValue,
   }) : super(
-          size: 1,
+          size: 2,
           height: WidgetSizes.smallHeight,
         );
 
@@ -31,7 +31,7 @@ class InfoWidget extends WidgetFrame {
           Text(
             displayValue,
             style: const TextStyle(
-              fontSize: FontSizes.xxlarge,
+              fontSize: FontSizes.large,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,

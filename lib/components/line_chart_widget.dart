@@ -17,8 +17,8 @@ class LineChartWidget extends WidgetFrame {
     required this.getXAxisLabel,
     required this.getYAxisValue,
   }) : super(
-          size: 2,
-          height: WidgetSizes.mediumHeight,
+          size: 6,
+          height: WidgetSizes.largeHeight,
         );
 
   @override

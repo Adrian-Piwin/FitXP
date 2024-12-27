@@ -17,8 +17,8 @@ class BarChartWidget extends WidgetFrame {
     required this.getXAxisLabel,
     required this.getBarchartValue,
   }) : super(
-          size: 2,
-          height: WidgetSizes.mediumHeight,
+          size: 6,
+          height: WidgetSizes.largeHeight,
         );
 
   @override

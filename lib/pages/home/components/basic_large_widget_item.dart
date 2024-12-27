@@ -3,8 +3,8 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import '../../constants/colors.constants.dart';
-import '../home_details/health_details_view.dart';
+import '../../../constants/colors.constants.dart';
+import '../../home_details/health_details_view.dart';
 
 class BasicLargeWidgetItem extends WidgetFrame {
   final HealthEntity widget;
@@ -13,8 +13,8 @@ class BasicLargeWidgetItem extends WidgetFrame {
     super.key,
     required this.widget,
   }) : super(
-          size: 2,
-          height: WidgetSizes.smallHeight,
+          size: 6,
+          height: WidgetSizes.mediumHeight,
         );
 
   @override

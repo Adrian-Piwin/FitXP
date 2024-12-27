@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/bottom_nav_bar.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/character/character_controller.dart';
@@ -20,7 +21,7 @@ class CharacterView extends StatelessWidget {
           child: Consumer<CharacterController>(
             builder: (context, controller, _) => Column(
               children: [
-                const SizedBox(height: 45),
+                const SizedBox(height: GapSizes.xxxlarge),
 
                 CharacterProgressBar(
                   leftText: 'Level ${controller.level}',

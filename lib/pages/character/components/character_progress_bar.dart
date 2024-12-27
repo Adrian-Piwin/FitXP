@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class CharacterProgressBar extends StatelessWidget {
@@ -32,11 +33,11 @@ class CharacterProgressBar extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         LinearPercentIndicator(
-          lineHeight: 20.0,
+          lineHeight: PercentIndicatorSizes.lineHeightLarge,
           percent: progress,
           backgroundColor: backgroundColor,
           progressColor: progressColor,
-          barRadius: const Radius.circular(10),
+          barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
           padding: EdgeInsets.zero,
         ),
       ],

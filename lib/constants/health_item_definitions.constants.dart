@@ -21,7 +21,10 @@ class HealthItem {
   late String title;
   late String unit;
   late Color color;
+  late Color offColor;
   late IconData icon;
+  double iconSizeMultiplier = 1.0;
+  double iconRotation = 0;
   XPType? xpType;
   GoalGetter? getGoal;
   WidgetFactory widgetFactory =
@@ -36,9 +39,10 @@ class HealthItemDefinitions {
       HealthDataType.BASAL_ENERGY_BURNED
     ]
     ..itemType = HealthItemType.expendedEnergy
-    ..title = "Expended Energy"
+    ..title = "Calories"
     ..unit = ""
-    ..color = RepresentationColors.activeCaloriesColor
+    ..color = RepresentationColors.activityColor
+    ..offColor = RepresentationColors.activityOffColor
     ..icon = IconTypes.caloriesIcon
     ..getGoal = (Goal goal) => goal.caloriesOutGoal;
 
@@ -47,8 +51,10 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.proteinIntake
     ..title = "Protein"
     ..unit = "g"
-    ..color = RepresentationColors.proteinColor
+    ..color = RepresentationColors.foodColor
+    ..offColor = RepresentationColors.foodOffColor
     ..icon = IconTypes.proteinIcon
+    ..iconSizeMultiplier = 0.90
     ..xpType = XPType.hitProteinGoal
     ..getGoal = (Goal goal) => goal.proteinGoal;
 
@@ -57,7 +63,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.exerciseTime
     ..title = "Excercise time"
     ..unit = "min"
-    ..color = RepresentationColors.exerciseColor
+    ..color = RepresentationColors.activityColor
+    ..offColor = RepresentationColors.activityOffColor
     ..icon = IconTypes.exerciseIcon
     ..getGoal = (Goal goal) => goal.exerciseMinutesGoal;
 
@@ -67,7 +74,9 @@ class HealthItemDefinitions {
     ..title = "Sleep"
     ..unit = "hrs"
     ..color = RepresentationColors.sleepColor
+    ..offColor = RepresentationColors.sleepOffColor
     ..icon = IconTypes.sleepDurationIcon
+    ..iconSizeMultiplier = 0.90
     ..xpType = XPType.hitSleepGoal
     ..getGoal = ((Goal goal) => goal.sleepGoal.inMinutes.toDouble())
     ..widgetFactory = ((item, goals, widgetSize) =>
@@ -78,7 +87,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.activeCalories
     ..title = "Active Calories"
     ..unit = "cal"
-    ..color = RepresentationColors.activeCaloriesColor
+    ..color = RepresentationColors.activityColor
+    ..offColor = RepresentationColors.activityOffColor
     ..icon = IconTypes.activeCaloriesIcon;
 
   static HealthItem restingCalories = HealthItem()
@@ -86,7 +96,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.restingCalories
     ..title = "Resting Calories"
     ..unit = "cal"
-    ..color = RepresentationColors.restingCaloriesColor
+    ..color = RepresentationColors.activityColor
+    ..offColor = RepresentationColors.activityOffColor
     ..icon = IconTypes.caloriesIcon
     ..getGoal = (Goal goal) => goal.caloriesOutGoal;
 
@@ -95,7 +106,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.dietaryCalories
     ..title = "Dietary Calories"
     ..unit = ""
-    ..color = RepresentationColors.dietaryCaloriesColor
+    ..color = RepresentationColors.foodColor
+    ..offColor = RepresentationColors.foodOffColor
     ..icon = IconTypes.dietaryIcon
     ..getGoal = (Goal goal) => goal.caloriesInGoal;
 
@@ -104,7 +116,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.netCalories
     ..title = "Net Calories"
     ..unit = ""
-    ..color = RepresentationColors.netCaloriesColor
+    ..color = RepresentationColors.trendColor
+    ..offColor = RepresentationColors.trendOffColor
     ..icon = IconTypes.netCaloriesIcon
     ..xpType = XPType.hitNetCaloriesGoal
     ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
@@ -116,8 +129,11 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.steps
     ..title = "Steps"
     ..unit = ""
-    ..color = RepresentationColors.stepsColor
+    ..color = RepresentationColors.activityColor
+    ..offColor = RepresentationColors.activityOffColor
     ..icon = IconTypes.stepsIcon
+    ..iconSizeMultiplier = 0.80
+    ..iconRotation = 4.70
     ..xpType = XPType.steps
     ..getGoal = ((Goal goal) => goal.stepsGoal);
 
@@ -126,8 +142,10 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.weight
     ..title = "Weight"
     ..unit = "kg"
-    ..color = RepresentationColors.weightColor
+    ..color = RepresentationColors.trendColor
+    ..offColor = RepresentationColors.trendOffColor
     ..icon = IconTypes.weightIcon
+    ..iconSizeMultiplier = 0.80
     ..getGoal = ((Goal goal) => goal.weightGoal)
     ..widgetFactory = ((item, goals, widgetSize) =>
         WeightHealthEntity(item, goals, widgetSize));
@@ -137,7 +155,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.bodyFatPercentage
     ..title = "Body Fat"
     ..unit = "%"
-    ..color = RepresentationColors.bodyFatColor
+    ..color = RepresentationColors.trendColor
+    ..offColor = RepresentationColors.trendOffColor
     ..icon = IconTypes.bodyFatIcon
     ..getGoal = ((Goal goal) => goal.bodyFatGoal)
     ..widgetFactory = ((item, goals, widgetSize) =>

@@ -10,7 +10,6 @@ import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/goal.model.dart';
-import 'package:healthxp/pages/home/basic_large_widget_item.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
@@ -138,16 +137,6 @@ class HealthEntity{
 
   // #endregion
 
-  // #region Widget 
-
-  Widget generateWidget() {
-    return BasicLargeWidgetItem(
-      widget: this,
-    );
-  }
-
-  // #endregion
-
   // #region Bar Chart
 
   // The data points for the bar chart
@@ -172,7 +161,7 @@ class HealthEntity{
 
   // The graph widget displayed on the details page
   Widget get getGraphWidget {
-    if (_showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
+    if (_showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
 
     return BarChartWidget(
       groupedData: getBarchartData,
@@ -251,4 +240,8 @@ class HealthEntity{
     _loadingTimer?.cancel();
   }
   // #endregion
+
+  double getIconSize(double size) {
+    return size * healthItem.iconSizeMultiplier;
+  }
 }

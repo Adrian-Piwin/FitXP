@@ -16,7 +16,7 @@ class GridLayout extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: StaggeredGrid.count(
-        crossAxisCount: 2, // 2 columns
+        crossAxisCount: 6, // 6 columns
         mainAxisSpacing: GapSizes.medium,
         crossAxisSpacing: GapSizes.medium,
         children: widgets.map((widget) {

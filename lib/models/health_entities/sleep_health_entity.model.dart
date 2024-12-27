@@ -121,7 +121,7 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   Widget get getGraphWidget {
-    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.mediumHeight);
+    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
 
     return timeframe == TimeFrame.day ?
       SleepBarChartWidget(
