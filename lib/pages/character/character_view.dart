@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/bottom_nav_bar.dart';
+import 'package:healthxp/components/info_bar.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/constants/colors.constants.dart';
@@ -23,13 +24,13 @@ class CharacterView extends StatelessWidget {
               children: [
                 const SizedBox(height: GapSizes.xxxlarge),
 
-                CharacterProgressBar(
-                  leftText: 'Level ${controller.level}',
-                  rightText: '${controller.xpLevelProgress}/${controller.xpLevelRequired}',
-                  progressColor: CharacterColors.levelXPColor,
-                  backgroundColor: CharacterColors.levelXPBackgroundColor,
-                  progress: controller.xpLevelProgressPercent,
-                  textSize: 20,
+                InfoBar(
+                  title: 'Level ${controller.level}',
+                  value: controller.xpLevelProgress,
+                  goal: controller.xpLevelRequired,
+                  percent: controller.xpLevelProgressPercent,
+                  color: CoreColors.coreBlue,
+                  textColor: CoreColors.coreOffBlue,
                 ),
                 
                 const SizedBox(height: 20),
@@ -61,12 +62,13 @@ class CharacterView extends StatelessWidget {
                     
                     // Rank progress bar
                     Expanded(
-                      child: CharacterProgressBar(
-                        leftText: '${controller.rank} Rank',
-                        rightText: '${controller.xpRankProgress}/${controller.xpRankRequired}',
-                        progressColor: CharacterColors.rankXPColor,
-                        backgroundColor: CharacterColors.rankXPBackgroundColor,
-                        progress: controller.xpRankProgressPercent,
+                      child: InfoBar(
+                        title: '${controller.rank} Rank',
+                        value: controller.xpRankProgress,
+                        goal: controller.xpRankRequired,
+                        percent: controller.xpRankProgressPercent,
+                        color: CoreColors.coreGold,
+                        textColor: CoreColors.coreGold,
                       ),
                     ),
                   ],

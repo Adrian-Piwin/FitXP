@@ -12,6 +12,7 @@ import 'package:healthxp/models/data_point.model.dart';
 import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/utility/general.utility.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../utility/health.utility.dart';
@@ -117,19 +118,19 @@ class HealthEntity{
   // The main value displayed on the home page widget
   String get getDisplayValue {
     if (_showLoading) return "--";
-    return (total).toStringAsFixed(0) + healthItem.unit;
+    return formatNumber(total) + healthItem.unit;
   }
 
   // The daily average displayed on the details page widget
   String get getDisplayAverage {
     if (_showLoading) return "--";
-    return (average).toStringAsFixed(0) + healthItem.unit;
+    return formatNumber(average) + healthItem.unit;
   }
 
   // The goal value displayed on the details page widget
   String get getDisplayGoal {
     if (_showLoading) return "--";
-    return (goal).toStringAsFixed(0) + healthItem.unit;
+    return formatNumber(goal) + healthItem.unit;
   }
 
   // The percentage of the goal for this health entity against our daily average

@@ -8,7 +8,7 @@ class InfoBar extends StatelessWidget {
   final String goal;
   final double percent;
   final Color color;
-  final Color offColor;
+  final Color textColor;
 
   const InfoBar({
     super.key,
@@ -17,7 +17,7 @@ class InfoBar extends StatelessWidget {
     required this.goal,
     required this.percent,
     required this.color,
-    required this.offColor,
+    required this.textColor,
   });
 
   @override
@@ -50,7 +50,7 @@ class InfoBar extends StatelessWidget {
                         text: '/$goal',
                         style: TextStyle(
                           fontSize: FontSizes.large,
-                          color: color,
+                          color: textColor,
                           fontWeight: FontWeight.w700
                         ),
                       ),
@@ -63,7 +63,7 @@ class InfoBar extends StatelessWidget {
             LinearPercentIndicator(
               percent: percent,
               lineHeight: PercentIndicatorSizes.lineHeightLarge,
-              backgroundColor: offColor,
+              backgroundColor: color.withOpacity(0.2),
               progressColor: color,
               barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
               padding: EdgeInsets.zero,

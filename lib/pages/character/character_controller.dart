@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:healthxp/constants/xp.constants.dart';
 import 'package:healthxp/services/xp_service.dart';
+import 'package:healthxp/utility/general.utility.dart';
 
 class CharacterController extends ChangeNotifier {
   final XpService _xpService = XpService();
@@ -13,14 +14,14 @@ class CharacterController extends ChangeNotifier {
   int _xpRankRequired = 0;
   
   // Getters
-  int get level => _level;
-  int get xpLevelProgress => _xpLevelProgress;
-  int get xpLevelRequired => _xpLevelRequired;
+  String get level => formatNumber(_level);
+  String get xpLevelProgress => formatNumber(_xpLevelProgress);
+  String get xpLevelRequired => formatNumber(_xpLevelRequired);
   double get xpLevelProgressPercent => (_xpLevelProgress / _xpLevelRequired).clamp(0, 1);
 
   String get rank => _rank;
-  int get xpRankProgress => _xpRankProgress;
-  int get xpRankRequired => _xpRankRequired;
+  String get xpRankProgress => formatNumber(_xpRankProgress);
+  String get xpRankRequired => formatNumber(_xpRankRequired);
   double get xpRankProgressPercent => (_xpRankProgress / _xpRankRequired).clamp(0, 1);
   
   CharacterController() {

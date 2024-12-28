@@ -68,7 +68,7 @@ class HealthDataDetailPage extends StatelessWidget {
                             goal: controller.widget.getDisplayGoal,
                             percent: controller.widget.getGoalPercent,
                             color: controller.widget.healthItem.color,
-                            offColor: controller.widget.healthItem.offColor,
+                            textColor: controller.widget.healthItem.offColor,
                           ),
                         ),
                         GridLayout(widgets: controller.getDetailWidgets),
