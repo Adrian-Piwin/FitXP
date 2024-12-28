@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CoreColors{
-  static const Color backgroundColor = Color(0xFF3e3e3e);
+  static const Color backgroundColor = Color(0xFF2F2F2F);
   static const Color accentColor = Color(0xFF787472);
   static const Color textColor = Color(0xFFeeebe9);
   static const Color navBarColor = Color(0xFF282828);
@@ -12,6 +12,7 @@ class CoreColors{
   static const Color coreOffOrange = Color(0xFFfdd2bd);
   static const Color coreGold = Color(0xFFf1cc07);
   static const Color coreLightOrange = Color(0xFFfaea3f);
+  static const Color coreBrown = Color.fromARGB(255, 205, 51, 13);
 }
 
 class RepresentationColors{
