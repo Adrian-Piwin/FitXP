@@ -8,24 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'goals/goals_view.dart';
-import 'settings/settings_controller.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
-    required this.settingsController,
   });
-
-  final SettingsController settingsController;
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: settingsController,
-      builder: (BuildContext context, Widget? child) {
-        return MaterialApp(
-          restorationScopeId: 'app',
+    return MaterialApp(
+      restorationScopeId: 'app',
 
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -79,7 +72,7 @@ class MyApp extends StatelessWidget {
                   Animation<double> secondaryAnimation) {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
+                    return SettingsView();
                   case HomeView.routeName:
                     return const HomeView();
                   case GoalsView.routeName:
@@ -97,7 +90,5 @@ class MyApp extends StatelessWidget {
             );
           },
         );
-      },
-    );
   }
 }

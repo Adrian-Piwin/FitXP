@@ -6,11 +6,10 @@ import 'settings_controller.dart';
 import '../../services/error_logger.service.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({super.key, required this.controller});
+  SettingsView({super.key});
+  final SettingsController controller = SettingsController();
 
   static const routeName = '/settings';
-
-  final SettingsController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -24,27 +23,6 @@ class SettingsView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButton<ThemeMode>(
-                // Read the selected themeMode from the controller
-                value: controller.themeMode,
-                // Call the updateThemeMode method any time the user selects a theme.
-                onChanged: controller.updateThemeMode,
-                items: const [
-                  DropdownMenuItem(
-                    value: ThemeMode.system,
-                    child: Text('System Theme'),
-                  ),
-                  DropdownMenuItem(
-                    value: ThemeMode.light,
-                    child: Text('Light Theme'),
-                  ),
-                  DropdownMenuItem(
-                    value: ThemeMode.dark,
-                    child: Text('Dark Theme'),
-                  )
-                ],
-              ),
-              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: controller.clearPreferences,
                 child: const Text('Clear Preferences'),
