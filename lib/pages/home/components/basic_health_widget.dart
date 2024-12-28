@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthxp/constants/animations.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/pages/home_details/health_details_view.dart';
@@ -76,6 +77,8 @@ class BasicHealthWidget extends WidgetFrame {
                     progressColor: widget.healthItem.color,
                     barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
                     padding: EdgeInsets.zero,
+                    animation: true,
+                    animationDuration: PercentIndicatorAnimations.duration,
                   )
                 : const SizedBox(),
           ],
