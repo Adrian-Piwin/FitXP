@@ -20,3 +20,8 @@ final List<HealthDataType> sleepTypes = [
   HealthDataType.SLEEP_LIGHT,
   HealthDataType.SLEEP_REM,
 ];
+
+final List<HealthDataType> AllHealthDataTypes = [
+  ...healthDataTypes,
+  ...sleepTypes,
+];

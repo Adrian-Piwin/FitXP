@@ -1,146 +1,158 @@
 import 'package:health/health.dart';
+import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
 import 'package:healthxp/models/sleep_data_point.model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/data_point.model.dart';
-import '../enums/timeframe.enum.dart';
 
 class HealthDataCache {
-  static final HealthDataCache _instance = HealthDataCache._internal();
-  static const String _boxName = 'health_data_cache';
-  Box<List<dynamic>>? _box;
-  bool _initialized = false;
-  
-  factory HealthDataCache() => _instance;
-
-  HealthDataCache._internal();
+  static const String _boxPrefix = 'health_data_';
+  static const Duration _recentDataThreshold = Duration(minutes: 10);
+  static const String _lastFullCacheKey = 'last_full_cache';
+  Box<Map>? _metadataBox;
+  Map<HealthDataType, Box<Map>>? _dataBoxes;
 
   Future<void> initialize() async {
-    if (_initialized) return;
+    await Hive.initFlutter();
+    _metadataBox = await Hive.openBox<Map>('health_data_metadata');
+    _dataBoxes = {};
     
-    try {
-      await Hive.initFlutter();
-      _box = await Hive.openBox<List<dynamic>>(_boxName);
-      _initialized = true;
-    } catch (e) {
-      print('Failed to initialize cache: $e');
-      _initialized = false;
+    for (var type in AllHealthDataTypes) {
+      _dataBoxes![type] = await Hive.openBox<Map>('$_boxPrefix${type.name}');
     }
   }
 
-  Box<List<dynamic>> get _getBox {
-    if (_box == null) {
-      throw StateError('HealthDataCache must be initialized before use. Call initialize() first.');
-    }
-    return _box!;
+  DateTime? getLastFullCacheTime() {
+    final metadata = _metadataBox?.get(_lastFullCacheKey);
+    if (metadata == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(metadata['timestamp']);
   }
 
-  String _generateKey(TimeFrame timeframe, int offset, HealthDataType type) => 
-    '${timeframe.name}_${offset}_${type.name}';
-
-  Future<void> cacheDataPoint(
-    TimeFrame timeframe, 
-    int offset, 
-    HealthDataType type, 
-    List<DataPoint> data
-  ) async {
-    final key = _generateKey(timeframe, offset, type);
-    final serializedData = _serializeDataPoints(data, type);
-    await _getBox.put(key, serializedData);
+  Future<void> updateLastFullCacheTime(DateTime time) async {
+    await _metadataBox?.put(_lastFullCacheKey, {
+      'timestamp': time.millisecondsSinceEpoch,
+    });
   }
 
-  List<dynamic> _serializeDataPoints(List<DataPoint> data, HealthDataType type) {
-    return data.map((point) => _serializeDataPoint(point, type)).toList();
-  }
-
-  Map<String, Object> _serializeDataPoint(DataPoint point, HealthDataType type) {
-    var baseData = {
-      'value': point.value,
-      'dateFrom': point.dateFrom.toIso8601String(),
-      'dateTo': point.dateTo.toIso8601String(),
-      'dayOccurred': point.dayOccurred.toIso8601String(),
-    };
-
-    if (type == HealthDataType.SLEEP_ASLEEP && point is SleepDataPoint) {
-      baseData['sleepStage'] = point.sleepStage?.index as Object;
-    }
-
-    return baseData;
-  }
-
-  List<DataPoint>? getDataForType(
-    TimeFrame timeframe, 
-    int offset, 
-    HealthDataType type
+  List<DataPoint>? getDataForTimeFrame(
+    HealthDataType type,
+    DateTime start,
+    DateTime end,
   ) {
-    final key = _generateKey(timeframe, offset, type);
-    final data = _getBox.get(key);
-    
-    if (data == null) return null;
+    final box = _dataBoxes![type];
+    if (box == null) return null;
 
-    return type == HealthDataType.SLEEP_ASLEEP
-        ? _deserializeSleepData(data)
-        : _deserializeDataPoints(data);
-  }
+    final lastFullCache = getLastFullCacheTime();
+    if (lastFullCache == null) return null;
 
-  List<DataPoint> _deserializeDataPoints(List<dynamic> data) {
-    return data.map<DataPoint>((point) => DataPoint(
-      value: point['value'],
-      dateFrom: DateTime.parse(point['dateFrom']),
-      dateTo: DateTime.parse(point['dateTo']),
-      dayOccurred: DateTime.parse(point['dayOccurred']),
-    )).toList();
-  }
+    // Only return cached data up until the last full cache time
+    final effectiveEnd = end.isAfter(lastFullCache) 
+        ? lastFullCache 
+        : end;
 
-  List<SleepDataPoint> _deserializeSleepData(List<dynamic> data) {
-    return data.map<SleepDataPoint>((point) => SleepDataPoint(
-      value: point['value'],
-      dateFrom: DateTime.parse(point['dateFrom']),
-      dateTo: DateTime.parse(point['dateTo']),
-      dayOccurred: DateTime.parse(point['dayOccurred']),
-      sleepStage: point['sleepStage'] != null 
-          ? SleepStage.values[point['sleepStage']]
-          : SleepStage.unknown,
-    )).toList();
-  }
-
-  Future<void> cacheData(TimeFrame timeframe, int offset, Map<HealthDataType, List<DataPoint>> data) async {
-    for (var entry in data.entries) {
-      await cacheDataPoint(timeframe, offset, entry.key, entry.value);
-    }
-  }
-
-  Map<HealthDataType, List<DataPoint>> getData(
-    TimeFrame timeframe, 
-    int offset, 
-    List<HealthDataType> types
-  ) {
-    Map<HealthDataType, List<DataPoint>> result = {};
-    
-    for (var type in types) {
-      final data = getDataForType(timeframe, offset, type);
-      if (data != null) {
-        result[type] = data;
-      }
-    }
-    
-    return result;
+    return box.values
+        .where((data) => 
+            data['dateFrom'] >= start.millisecondsSinceEpoch &&
+            data['dateTo'] <= effectiveEnd.millisecondsSinceEpoch)
+        .map((data) => _deserializeDataPoint(data, type))
+        .toList();
   }
 
   Future<void> clearCache() async {
-    await _getBox.clear();
+    await Hive.deleteFromDisk();
   }
 
-  Future<void> clearCacheForTimeFrameAndOffset(TimeFrame timeframe, int offset) async {
-    final keysToRemove = _getBox.keys.where((key) {
-      final parts = key.toString().split('_');
-      return parts[0] == timeframe.name && parts[1] == offset.toString();
+  bool shouldRefetchRecentData(HealthDataType type) {
+    final lastFullCache = getLastFullCacheTime();
+    if (lastFullCache == null) return true;
+    
+    return DateTime.now().difference(lastFullCache) > _recentDataThreshold;
+  }
+
+  Future<void> cacheDataPoints(HealthDataType type, List<DataPoint> points, DateTime cacheTime) async {
+    final box = _dataBoxes![type];
+    
+    // Store each point with timestamp as key
+    for (var point in points) {
+      await box?.put(point.dateFrom.millisecondsSinceEpoch.toString(), {
+        'value': point.value,
+        'dateFrom': point.dateFrom.millisecondsSinceEpoch,
+        'dateTo': point.dateTo.millisecondsSinceEpoch,
+        'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
+        if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
+      });
+    }
+
+    // Update metadata
+    await _metadataBox?.put(type.name, {
+      'lastCached': cacheTime.millisecondsSinceEpoch,
+    });
+  }
+
+  DataPoint _deserializeDataPoint(Map data, HealthDataType type) {
+    final dateFrom = DateTime.fromMillisecondsSinceEpoch(data['dateFrom']);
+    final dateTo = DateTime.fromMillisecondsSinceEpoch(data['dateTo']);
+    final dayOccurred = DateTime.fromMillisecondsSinceEpoch(data['dayOccurred']);
+    
+    // Handle sleep data points separately
+    if (type == HealthDataType.SLEEP_ASLEEP || type == HealthDataType.SLEEP_AWAKE) {
+      final sleepStageIndex = data['sleepStage'] as int?;
+      return SleepDataPoint(
+        value: data['value'],
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        dayOccurred: dayOccurred,
+        sleepStage: sleepStageIndex != null ? SleepStage.values[sleepStageIndex] : null,
+      );
+    }
+    
+    // Regular data points
+    return DataPoint(
+      value: data['value'],
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      dayOccurred: dayOccurred,
+    );
+  }
+
+  Future<void> replaceRecentDataPoints(
+    HealthDataType type, 
+    List<DataPoint> points, 
+    DateTime cacheTime
+  ) async {
+    final box = _dataBoxes![type];
+    if (box == null) return;
+
+    // Delete existing data from last 2 days
+    final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
+    final keysToDelete = box.keys.where((key) {
+      final data = box.get(key);
+      if (data == null) return false;
+      final dateFrom = DateTime.fromMillisecondsSinceEpoch(data['dateFrom']);
+      return dateFrom.isAfter(twoDaysAgo);
     }).toList();
 
-    for (var key in keysToRemove) {
-      await _getBox.delete(key);
+    // Delete old data
+    for (var key in keysToDelete) {
+      await box.delete(key);
     }
-  }
 
-  bool get isInitialized => _initialized;
+    print('Replacing recent data for $type with ${points.length} points from ${points.first.dateFrom} to ${points.last.dateTo}');
+
+    // Store new data points
+    for (var point in points) {
+      await box.put(point.dateFrom.millisecondsSinceEpoch.toString(), {
+        'value': point.value,
+        'dateFrom': point.dateFrom.millisecondsSinceEpoch,
+        'dateTo': point.dateTo.millisecondsSinceEpoch,
+        'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
+        if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
+      });
+    }
+
+    // Update metadata
+    await _metadataBox?.put(type.name, {
+      'lastCached': cacheTime.millisecondsSinceEpoch,
+    });
+  }
 } 
