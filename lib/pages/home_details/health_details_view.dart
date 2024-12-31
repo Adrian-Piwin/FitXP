@@ -60,17 +60,18 @@ class HealthDataDetailPage extends StatelessWidget {
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(GapSizes.large),
-                          child: InfoBar(
-                            title: controller.widget.healthItem.title,
-                            value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValue : controller.widget.getDisplayAverage,
-                            goal: controller.widget.getDisplayGoal,
-                            percent: controller.widget.getGoalPercent,
-                            color: controller.widget.healthItem.color,
-                            textColor: controller.widget.healthItem.offColor,
+                        if (controller.widget.getGoalPercent != -1)
+                          Padding(
+                            padding: const EdgeInsets.all(GapSizes.large),
+                            child: InfoBar(
+                              title: controller.widget.healthItem.title,
+                              value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValue : controller.widget.getDisplayAverage,
+                              goal: controller.widget.getDisplayGoal,
+                              percent: controller.widget.getGoalPercent,
+                              color: controller.widget.healthItem.color,
+                              textColor: controller.widget.healthItem.offColor,
+                            ),
                           ),
-                        ),
                         GridLayout(widgets: controller.getDetailWidgets),
                       ],
                     ),

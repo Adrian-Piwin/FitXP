@@ -79,6 +79,7 @@ class HealthDataCache {
         'dateFrom': point.dateFrom.millisecondsSinceEpoch,
         'dateTo': point.dateTo.millisecondsSinceEpoch,
         'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
+        'subType': point.subType,
         if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
       });
     }
@@ -95,7 +96,7 @@ class HealthDataCache {
     final dayOccurred = DateTime.fromMillisecondsSinceEpoch(data['dayOccurred']);
     
     // Handle sleep data points separately
-    if (type == HealthDataType.SLEEP_ASLEEP || type == HealthDataType.SLEEP_AWAKE) {
+    if (type == HealthDataType.SLEEP_ASLEEP) {
       final sleepStageIndex = data['sleepStage'] as int?;
       return SleepDataPoint(
         value: data['value'],
@@ -112,6 +113,7 @@ class HealthDataCache {
       dateFrom: dateFrom,
       dateTo: dateTo,
       dayOccurred: dayOccurred,
+      subType: data['subType'],
     );
   }
 
@@ -146,6 +148,7 @@ class HealthDataCache {
         'dateFrom': point.dateFrom.millisecondsSinceEpoch,
         'dateTo': point.dateTo.millisecondsSinceEpoch,
         'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
+        'subType': point.subType,
         if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
       });
     }

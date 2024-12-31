@@ -90,10 +90,16 @@ class HealthFetcherService {
       // Process points for each type
       return points.map((p) {
         return DataPoint(
-          value: (p.value as NumericHealthValue).numericValue.toDouble(),
+          value: p.value is NumericHealthValue 
+          ? (p.value as NumericHealthValue).numericValue.toDouble()
+          : (p.value as WorkoutHealthValue).totalEnergyBurned?.toDouble() 
+          ?? 0.0,
           dateFrom: p.dateFrom,
           dateTo: p.dateTo,
           dayOccurred: p.dateFrom,
+          subType: p.value is WorkoutHealthValue 
+          ? (p.value as WorkoutHealthValue).workoutActivityType.name
+          : null,
         );
       }).toList();
     } catch (e) {
