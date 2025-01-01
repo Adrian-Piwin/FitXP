@@ -81,16 +81,56 @@ class HealthDataCache {
     if (box == null) return;
 
     final dayKey = _getDayKey(day);
-    await box.put(dayKey, {
-      'cacheTime': DateTime.now().millisecondsSinceEpoch,
-      'points': points.map((point) => {
+    List<Map<String, dynamic>> processedPoints;
+
+    if (type == HealthDataType.SLEEP_ASLEEP || type == HealthDataType.SLEEP_AWAKE) {
+      // Don't group sleep data points
+      processedPoints = points.map((point) => {
         'value': point.value,
         'dateFrom': point.dateFrom.millisecondsSinceEpoch,
         'dateTo': point.dateTo.millisecondsSinceEpoch,
         'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
         'subType': point.subType,
         if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
-      }).toList(),
+      }).toList();
+    } else {
+      // Group other data points by hour
+      Map<int, _HourlyData> hourlyGroups = {};
+
+      for (var point in points) {
+        final hour = DateTime(
+          point.dateFrom.year,
+          point.dateFrom.month,
+          point.dateFrom.day,
+          point.dateFrom.hour,
+        );
+        final hourKey = hour.millisecondsSinceEpoch;
+
+        hourlyGroups.putIfAbsent(
+          hourKey,
+          () => _HourlyData(
+            hour: hour,
+            dayOccurred: point.dayOccurred,
+            subType: point.subType,
+          ),
+        );
+
+        hourlyGroups[hourKey]!.addValue(point.value);
+      }
+
+      processedPoints = hourlyGroups.values.map((hourData) => {
+        'value': hourData.totalValue,
+        'dateFrom': hourData.hour.millisecondsSinceEpoch,
+        'dateTo': hourData.hour.add(const Duration(hours: 1)).millisecondsSinceEpoch,
+        'dayOccurred': hourData.dayOccurred.millisecondsSinceEpoch,
+        'subType': hourData.subType,
+        'count': hourData.count, // Store count for average calculations if needed
+      }).toList();
+    }
+
+    await box.put(dayKey, {
+      'cacheTime': DateTime.now().millisecondsSinceEpoch,
+      'points': processedPoints,
     });
   }
 
@@ -100,7 +140,7 @@ class HealthDataCache {
     final dayOccurred = DateTime.fromMillisecondsSinceEpoch(data['dayOccurred']);
     
     // Handle sleep data points separately
-    if (type == HealthDataType.SLEEP_ASLEEP) {
+    if (type == HealthDataType.SLEEP_ASLEEP || type == HealthDataType.SLEEP_AWAKE) {
       final sleepStageIndex = data['sleepStage'] as int?;
       return SleepDataPoint(
         value: data['value'],
@@ -111,7 +151,7 @@ class HealthDataCache {
       );
     }
     
-    // Regular data points
+    // Regular data points (now grouped by hour)
     return DataPoint(
       value: data['value'],
       dateFrom: dateFrom,
@@ -123,5 +163,24 @@ class HealthDataCache {
 
   Future<void> clearCache() async {
     await Hive.deleteFromDisk();
+  }
+}
+
+class _HourlyData {
+  final DateTime hour;
+  final DateTime dayOccurred;
+  final String? subType;
+  double totalValue = 0;
+  int count = 0;
+
+  _HourlyData({
+    required this.hour,
+    required this.dayOccurred,
+    this.subType,
+  });
+
+  void addValue(double value) {
+    totalValue += value;
+    count++;
   }
 } 
