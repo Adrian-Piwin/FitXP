@@ -41,29 +41,42 @@ class HealthFetcherService {
     for (var entity in entities) {
       for (var type in entity.healthItem.dataType) {
         final dateRange = entity.queryDateRange!;
-        final lastFullCache = _cache.getLastFullCacheTime();
         
-        if (lastFullCache != null) {
-          // Fetch fresh data from last cache time to now
-          final freshData = await _fetchHealthData(
-            type, 
-            DateTimeRange(start: lastFullCache, end: DateTime.now())
-          );
-          
-          if (freshData.isNotEmpty) {
-            await _cache.replaceRecentDataPoints(type, freshData, DateTime.now());
-          }
-        }
-        
-        // Get cached data for the requested range
-        final cachedData = _cache.getDataForTimeFrame(
+        // Get cached data and identify missing days
+        final cachedData = await _cache.getDataForDays(
           type,
           dateRange.start,
           dateRange.end,
         );
         
-        if (cachedData != null && cachedData.isNotEmpty) {
-          result[type] = cachedData;
+        List<DataPoint> allData = [];
+        
+        // Fetch fresh data for missing or outdated days
+        for (DateTime date = dateRange.start; 
+             date.isBefore(dateRange.end); 
+             date = date.add(const Duration(days: 1))) {
+          
+          if (!cachedData.containsKey(date)) {
+            // Fetch data for this specific day
+            final dayData = await _fetchHealthData(
+              type,
+              DateTimeRange(
+                start: date,
+                end: date.add(const Duration(days: 1)),
+              ),
+            );
+
+            if (dayData.isNotEmpty) {
+              await _cache.cacheDayData(type, date, dayData);
+              allData.addAll(dayData);
+            }
+          } else {
+            allData.addAll(cachedData[date]!);
+          }
+        }
+        
+        if (allData.isNotEmpty) {
+          result[type] = allData;
         }
       }
     }
@@ -143,32 +156,5 @@ class HealthFetcherService {
     // Filter out any points that are not in the date range
     data = data.where((p) => !p.dayOccurred.isAfter(endDate)).toList();
     return data;
-  }
-
-  Future<void> cacheAllHistoricalData() async {
-    final endDate = DateTime.now();
-    final startDate = endDate.subtract(const Duration(days: 365));
-    
-    await _cache.clearCache();
-    await _cache.initialize();
-
-    for (var type in AllHealthDataTypes) {
-      final data = await _fetchHealthData(
-        type,
-        DateTimeRange(start: startDate, end: endDate),
-      );
-      
-      if (data.isNotEmpty) {
-        await _cache.cacheDataPoints(type, data, endDate);
-      }
-    }
-
-    // Update the last full cache time
-    await _cache.updateLastFullCacheTime(endDate);
-  }
-
-  bool _isRecentDateRange(DateTimeRange range) {
-    final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
-    return range.end.isAfter(twoDaysAgo);
   }
 }

@@ -34,11 +34,6 @@ class SettingsView extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: () => controller.getAllData(context),
-                child: const Text('Get All Data'),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
                 onPressed: controller.isFitbitConnected 
                   ? controller.disconnectFitbit 
                   : controller.connectFitbit,

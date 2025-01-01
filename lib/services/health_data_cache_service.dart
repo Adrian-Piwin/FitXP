@@ -8,13 +8,11 @@ import '../models/data_point.model.dart';
 class HealthDataCache {
   static const String _boxPrefix = 'health_data_';
   static const Duration _recentDataThreshold = Duration(minutes: 10);
-  static const String _lastFullCacheKey = 'last_full_cache';
-  Box<Map>? _metadataBox;
+  static const Duration _oldDataThreshold = Duration(days: 7);
   Map<HealthDataType, Box<Map>>? _dataBoxes;
 
   Future<void> initialize() async {
     await Hive.initFlutter();
-    _metadataBox = await Hive.openBox<Map>('health_data_metadata');
     _dataBoxes = {};
     
     for (var type in AllHealthDataTypes) {
@@ -22,71 +20,77 @@ class HealthDataCache {
     }
   }
 
-  DateTime? getLastFullCacheTime() {
-    final metadata = _metadataBox?.get(_lastFullCacheKey);
-    if (metadata == null) return null;
-    return DateTime.fromMillisecondsSinceEpoch(metadata['timestamp']);
+  String _getDayKey(DateTime date) {
+    return '${date.year}-${date.month}-${date.day}';
   }
 
-  Future<void> updateLastFullCacheTime(DateTime time) async {
-    await _metadataBox?.put(_lastFullCacheKey, {
-      'timestamp': time.millisecondsSinceEpoch,
-    });
+  bool _shouldRefreshData(DateTime cacheTime) {
+    final now = DateTime.now();
+    final daysDifference = now.difference(cacheTime).inDays;
+    
+    if (daysDifference < 2) {
+      // For recent data (last 2 days), check 10-minute threshold
+      return now.difference(cacheTime) > _recentDataThreshold;
+    } else {
+      // For older data, check 7-day threshold
+      return now.difference(cacheTime) > _oldDataThreshold;
+    }
   }
 
-  List<DataPoint>? getDataForTimeFrame(
+  Future<Map<DateTime, List<DataPoint>>> getDataForDays(
     HealthDataType type,
     DateTime start,
     DateTime end,
-  ) {
+  ) async {
     final box = _dataBoxes![type];
-    if (box == null) return null;
+    if (box == null) return {};
 
-    final lastFullCache = getLastFullCacheTime();
-    if (lastFullCache == null) return null;
-
-    // Only return cached data up until the last full cache time
-    final effectiveEnd = end.isAfter(lastFullCache) 
-        ? lastFullCache 
-        : end;
-
-    return box.values
-        .where((data) => 
-            data['dateFrom'] >= start.millisecondsSinceEpoch &&
-            data['dateTo'] <= effectiveEnd.millisecondsSinceEpoch)
-        .map((data) => _deserializeDataPoint(data, type))
-        .toList();
-  }
-
-  Future<void> clearCache() async {
-    await Hive.deleteFromDisk();
-  }
-
-  bool shouldRefetchRecentData(HealthDataType type) {
-    final lastFullCache = getLastFullCacheTime();
-    if (lastFullCache == null) return true;
+    Map<DateTime, List<DataPoint>> result = {};
+    Set<DateTime> daysToFetch = {};
     
-    return DateTime.now().difference(lastFullCache) > _recentDataThreshold;
+    // Check each day in the range
+    for (DateTime date = start; date.isBefore(end); date = date.add(const Duration(days: 1))) {
+      final dayKey = _getDayKey(date);
+      final cachedDay = box.get(dayKey);
+      
+      if (cachedDay == null) {
+        daysToFetch.add(date);
+        continue;
+      }
+
+      final cacheTime = DateTime.fromMillisecondsSinceEpoch(cachedDay['cacheTime']);
+      if (_shouldRefreshData(cacheTime)) {
+        daysToFetch.add(date);
+        continue;
+      }
+
+      // Use cached data
+      final List<dynamic> points = cachedDay['points'];
+      result[date] = points.map((p) => _deserializeDataPoint(p, type)).toList();
+    }
+
+    return result;
   }
 
-  Future<void> cacheDataPoints(HealthDataType type, List<DataPoint> points, DateTime cacheTime) async {
+  Future<void> cacheDayData(
+    HealthDataType type,
+    DateTime day,
+    List<DataPoint> points,
+  ) async {
     final box = _dataBoxes![type];
-    
-    // Store each point with timestamp as key
-    for (var point in points) {
-      await box?.put(point.dateFrom.millisecondsSinceEpoch.toString(), {
+    if (box == null) return;
+
+    final dayKey = _getDayKey(day);
+    await box.put(dayKey, {
+      'cacheTime': DateTime.now().millisecondsSinceEpoch,
+      'points': points.map((point) => {
         'value': point.value,
         'dateFrom': point.dateFrom.millisecondsSinceEpoch,
         'dateTo': point.dateTo.millisecondsSinceEpoch,
         'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
         'subType': point.subType,
         if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
-      });
-    }
-
-    // Update metadata
-    await _metadataBox?.put(type.name, {
-      'lastCached': cacheTime.millisecondsSinceEpoch,
+      }).toList(),
     });
   }
 
@@ -117,45 +121,7 @@ class HealthDataCache {
     );
   }
 
-  Future<void> replaceRecentDataPoints(
-    HealthDataType type, 
-    List<DataPoint> points, 
-    DateTime cacheTime
-  ) async {
-    final box = _dataBoxes![type];
-    if (box == null) return;
-
-    // Delete existing data from last 2 days
-    final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
-    final keysToDelete = box.keys.where((key) {
-      final data = box.get(key);
-      if (data == null) return false;
-      final dateFrom = DateTime.fromMillisecondsSinceEpoch(data['dateFrom']);
-      return dateFrom.isAfter(twoDaysAgo);
-    }).toList();
-
-    // Delete old data
-    for (var key in keysToDelete) {
-      await box.delete(key);
-    }
-
-    print('Replacing recent data for $type with ${points.length} points from ${points.first.dateFrom} to ${points.last.dateTo}');
-
-    // Store new data points
-    for (var point in points) {
-      await box.put(point.dateFrom.millisecondsSinceEpoch.toString(), {
-        'value': point.value,
-        'dateFrom': point.dateFrom.millisecondsSinceEpoch,
-        'dateTo': point.dateTo.millisecondsSinceEpoch,
-        'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
-        'subType': point.subType,
-        if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
-      });
-    }
-
-    // Update metadata
-    await _metadataBox?.put(type.name, {
-      'lastCached': cacheTime.millisecondsSinceEpoch,
-    });
+  Future<void> clearCache() async {
+    await Hive.deleteFromDisk();
   }
 } 

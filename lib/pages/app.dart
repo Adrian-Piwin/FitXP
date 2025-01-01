@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'goals/goals_view.dart';
-import 'data_loading/data_loading_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -82,8 +81,6 @@ class MyApp extends StatelessWidget {
                     return const PermissionsView();
                   case CharacterView.routeName:
                     return const CharacterView();
-                  case DataLoadingView.routeName:
-                    return const DataLoadingView();
                   default:
                     return const AuthGate();
                 }
