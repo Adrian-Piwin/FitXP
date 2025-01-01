@@ -5,7 +5,6 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/character/character_controller.dart';
-import 'package:healthxp/pages/character/components/character_progress_bar.dart';
 
 class CharacterView extends StatelessWidget {
   const CharacterView({super.key});
