@@ -83,8 +83,8 @@ class HealthDataCache {
     final dayKey = _getDayKey(day);
     List<Map<String, dynamic>> processedPoints;
 
-    if (type == HealthDataType.SLEEP_ASLEEP || type == HealthDataType.SLEEP_AWAKE) {
-      // Don't group sleep data points
+    if (sleepTypes.contains(type) || trendTypes.contains(type)) {
+      // Don't group sleep data / trend points
       processedPoints = points.map((point) => {
         'value': point.value,
         'dateFrom': point.dateFrom.millisecondsSinceEpoch,

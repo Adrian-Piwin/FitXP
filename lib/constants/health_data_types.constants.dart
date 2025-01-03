@@ -21,6 +21,12 @@ final List<HealthDataType> sleepTypes = [
   HealthDataType.SLEEP_REM,
 ];
 
+final List<HealthDataType> trendTypes = [
+  HealthDataType.WEIGHT,
+  HealthDataType.BODY_FAT_PERCENTAGE,
+  HealthDataType.BODY_MASS_INDEX,
+];
+
 final List<HealthDataType> AllHealthDataTypes = [
   ...healthDataTypes,
   ...sleepTypes,
