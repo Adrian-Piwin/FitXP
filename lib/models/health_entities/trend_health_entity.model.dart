@@ -58,7 +58,7 @@ class TrendHealthEntity extends HealthEntity {
 
   @override
   String get getDisplayValue {
-    if (isLoading) return "--";
+    if (showLoading) return "--";
     if (mostRecentDataPoint == null) return "--";
     
     return mostRecentDataPoint!.value.toStringAsFixed(1) + healthItem.unit;
@@ -66,7 +66,7 @@ class TrendHealthEntity extends HealthEntity {
 
   @override
   String get getDisplaySubtitle {
-    if (isLoading) return "--";
+    if (showLoading) return "--";
     if (getCombinedData.isEmpty) return "No data";
 
     return "${average.toStringAsFixed(1)}${healthItem.unit} avg";

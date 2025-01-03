@@ -23,8 +23,8 @@ class HealthEntity{
   final int widgetSize;
 
   Map<HealthDataType, List<DataPoint>> data = {};
+  bool showLoading = false;
   bool _isLoading = false;
-  bool _showLoading = false;
   Timer? _loadingTimer;
 
   // Getter and setter for isLoading to handle the delayed showLoading
@@ -34,11 +34,11 @@ class HealthEntity{
     if (value) {
       _loadingTimer?.cancel();
       _loadingTimer = Timer(loadingDelay, () {
-        _showLoading = true;
+        showLoading = true;
       });
     } else {
       _loadingTimer?.cancel();
-      _showLoading = false;
+      showLoading = false;
     }
   }
 
@@ -85,7 +85,7 @@ class HealthEntity{
 
   // The percentage of the goal for this health entity against our total
   double get getGoalPercent {
-    if (_showLoading) return 0;
+    if (showLoading) return 0;
     if (timeframe != TimeFrame.day) {
       return getGoalAveragePercent.clamp(0, 1);
     }
@@ -104,7 +104,7 @@ class HealthEntity{
 
   // The subtitle for the home page widget
   String get getDisplaySubtitle {
-    if (_showLoading) return "--";
+    if (showLoading) return "--";
 
     if (timeframe == TimeFrame.day && goal != -1) {
       return goal - total >= 0 ? 
@@ -117,25 +117,25 @@ class HealthEntity{
 
   // The main value displayed on the home page widget
   String get getDisplayValue {
-    if (_showLoading) return "--";
+    if (showLoading) return "--";
     return formatNumber(total) + healthItem.unit;
   }
 
   // The daily average displayed on the details page widget
   String get getDisplayAverage {
-    if (_showLoading) return "--";
+    if (showLoading) return "--";
     return formatNumber(average) + healthItem.unit;
   }
 
   // The goal value displayed on the details page widget
   String get getDisplayGoal {
-    if (_showLoading) return "--";
+    if (showLoading) return "--";
     return formatNumber(goal) + healthItem.unit;
   }
 
   // The percentage of the goal for this health entity against our daily average
   String get getDisplayGoalAveragePercent {
-    if (_showLoading) return "--";
+    if (showLoading) return "--";
     return "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%";
   }
 
@@ -165,7 +165,7 @@ class HealthEntity{
 
   // The graph widget displayed on the details page
   Widget get getGraphWidget {
-    if (_showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
+    if (showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
 
     return BarChartWidget(
       groupedData: getBarchartData,

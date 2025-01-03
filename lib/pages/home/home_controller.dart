@@ -85,6 +85,7 @@ class HomeController extends ChangeNotifier {
     for (var widget in healthItemEntities) {
       widget.isLoading = true;
     }
+    displayWidgets = _widgetConfigurationService.getWidgets();
     notifyListeners();
 
     try {
@@ -96,6 +97,7 @@ class HomeController extends ChangeNotifier {
       for (var widget in healthItemEntities) {
         widget.isLoading = false;
       }
+      displayWidgets = _widgetConfigurationService.getWidgets();
       notifyListeners();
     }
   }

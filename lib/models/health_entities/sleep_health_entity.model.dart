@@ -49,7 +49,7 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   String get getDisplaySubtitle {
-    if (isLoading) return "--";
+    if (showLoading) return "--";
     if (timeframe == TimeFrame.day && goal != -1) {
       return "${getSleepScore()} Sleep Score";
     }
@@ -59,19 +59,19 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   String get getDisplayValue {
-    if (isLoading) return "--";
+    if (showLoading) return "--";
     return formatMinutes(total.toInt());
   }
 
   @override
   String get getDisplayAverage {
-    if (isLoading) return "--";
+    if (showLoading) return "--";
     return formatMinutes(average.toInt());
   }
 
   @override
   String get getDisplayGoal {
-    if (isLoading) return "--";
+    if (showLoading) return "--";
     return formatMinutes(goal.toInt());
   }
 
@@ -121,7 +121,7 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   Widget get getGraphWidget {
-    if (isLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
+    if (showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
 
     return timeframe == TimeFrame.day ?
       SleepBarChartWidget(
