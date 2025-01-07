@@ -80,7 +80,6 @@ class HealthFetcherService {
         }
       }
     }
-
     return result;
   }
 

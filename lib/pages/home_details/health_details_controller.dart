@@ -16,9 +16,7 @@ class HealthDetailsController extends ChangeNotifier {
     required HealthEntity widget,
   }) : _widget = HealthEntity.from(widget),
        _selectedTimeFrame = widget.timeframe,
-       _offset = widget.offset{
-        _fetchData();
-       }
+       _offset = widget.offset;
 
   bool get isLoading => _isLoading;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
@@ -47,7 +45,7 @@ class HealthDetailsController extends ChangeNotifier {
         [_widget],
       ));
     } catch (e) {
-      await ErrorLogger.logError('Error fetching health data: $e');
+      await ErrorLogger.logError('Errorr fetching health data: $e');
     }
 
     _isLoading = false;
