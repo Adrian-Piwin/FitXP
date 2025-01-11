@@ -1,9 +1,10 @@
 import 'package:health/health.dart';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
-import 'package:healthxp/models/sleep_data_point.model.dart';
+import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
+import 'package:healthxp/models/data_points/workout_data_point.model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../models/data_point.model.dart';
+import '../models/data_points/data_point.model.dart';
 
 class HealthDataCache {
   static const String _boxPrefix = 'health_data_';
@@ -83,15 +84,19 @@ class HealthDataCache {
     final dayKey = _getDayKey(day);
     List<Map<String, dynamic>> processedPoints;
 
-    if (sleepTypes.contains(type) || trendTypes.contains(type)) {
-      // Don't group sleep data / trend points
+    if (sleepTypes.contains(type) || trendTypes.contains(type) || type == HealthDataType.WORKOUT) {
+      // Don't group sleep data / trend points / workout data
       processedPoints = points.map((point) => {
         'value': point.value,
         'dateFrom': point.dateFrom.millisecondsSinceEpoch,
         'dateTo': point.dateTo.millisecondsSinceEpoch,
         'dayOccurred': point.dayOccurred.millisecondsSinceEpoch,
-        'subType': point.subType,
         if (point is SleepDataPoint) 'sleepStage': point.sleepStage?.index,
+        if (point is WorkoutDataPoint) 'workoutType': point.workoutType,
+        if (point is WorkoutDataPoint) 'energyBurned': point.energyBurned,
+        if (point is WorkoutDataPoint) 'distance': point.distance,
+        if (point is WorkoutDataPoint) 'distanceUnit': point.distanceUnit,
+        if (point is WorkoutDataPoint) 'steps': point.steps,
       }).toList();
     } else {
       // Group other data points by hour
@@ -111,7 +116,6 @@ class HealthDataCache {
           () => _HourlyData(
             hour: hour,
             dayOccurred: point.dayOccurred,
-            subType: point.subType,
           ),
         );
 
@@ -123,8 +127,7 @@ class HealthDataCache {
         'dateFrom': hourData.hour.millisecondsSinceEpoch,
         'dateTo': hourData.hour.add(const Duration(hours: 1)).millisecondsSinceEpoch,
         'dayOccurred': hourData.dayOccurred.millisecondsSinceEpoch,
-        'subType': hourData.subType,
-        'count': hourData.count, // Store count for average calculations if needed
+        'count': hourData.count,
       }).toList();
     }
 
@@ -150,6 +153,20 @@ class HealthDataCache {
         sleepStage: sleepStageIndex != null ? SleepStage.values[sleepStageIndex] : null,
       );
     }
+
+    if (type == HealthDataType.WORKOUT) {
+      return WorkoutDataPoint(
+        value: data['value'],
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        dayOccurred: dayOccurred,
+        workoutType: data['workoutType'],
+        energyBurned: data['energyBurned'],
+        distance: data['distance'],
+        distanceUnit: data['distanceUnit'],
+        steps: data['steps'],
+      );
+    }
     
     // Regular data points (now grouped by hour)
     return DataPoint(
@@ -157,7 +174,6 @@ class HealthDataCache {
       dateFrom: dateFrom,
       dateTo: dateTo,
       dayOccurred: dayOccurred,
-      subType: data['subType'],
     );
   }
 
@@ -169,14 +185,12 @@ class HealthDataCache {
 class _HourlyData {
   final DateTime hour;
   final DateTime dayOccurred;
-  final String? subType;
   double totalValue = 0;
   int count = 0;
 
   _HourlyData({
     required this.hour,
     required this.dayOccurred,
-    this.subType,
   });
 
   void addValue(double value) {

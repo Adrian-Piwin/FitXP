@@ -13,6 +13,7 @@ class IconTypes{
   static const IconData netCaloriesIcon = FontAwesomeIcons.scaleBalanced;
   static const IconData stepsIcon = FontAwesomeIcons.shoePrints;
   static const IconData exerciseIcon = FontAwesomeIcons.personRunning;
+  static const IconData workoutIcon = FontAwesomeIcons.dumbbell;
   static const IconData sleepDurationIcon = FontAwesomeIcons.clock;
   static const IconData weightIcon = FontAwesomeIcons.weightScale;
   static const IconData bodyFatIcon = FontAwesomeIcons.person;

@@ -7,6 +7,7 @@ import 'package:health/health.dart';
 import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/netcalories_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/weight_health_entity.model.dart';
+import 'package:healthxp/models/health_entities/workout_health_entity.model.dart';
 import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
 import 'icons.constants.dart';
@@ -67,6 +68,19 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.exerciseIcon
     ..getGoal = (Goal goal) => goal.exerciseMinutesGoal;
+
+  static HealthItem workoutTime = HealthItem()
+    ..dataType = [HealthDataType.WORKOUT]
+    ..itemType = HealthItemType.workoutTime
+    ..title = "Workout time"
+    ..unit = "min"
+    ..color = CoreColors.coreOrange
+    ..offColor = CoreColors.coreGrey
+    ..icon = IconTypes.workoutIcon
+    ..iconSizeMultiplier = 0.85
+    ..getGoal = ((Goal goal) => goal.exerciseMinutesGoal)
+    ..widgetFactory = ((item, goals, widgetSize) =>
+        WorkoutHealthEntity(item, goals, widgetSize));
 
   static HealthItem sleepDuration = HealthItem()
     ..dataType = [HealthDataType.SLEEP_ASLEEP]

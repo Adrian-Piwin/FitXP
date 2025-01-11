@@ -1,4 +1,4 @@
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
 
 class SleepDataPoint extends DataPoint {

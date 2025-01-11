@@ -8,7 +8,7 @@ import 'package:healthxp/constants/magic_numbers.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';

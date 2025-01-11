@@ -1,5 +1,5 @@
 import 'package:health/health.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 
 class NetCaloriesHealthEntity extends HealthEntity {

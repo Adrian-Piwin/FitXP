@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 
 class LineChartWidget extends WidgetFrame {
   final List<DataPoint> dataPoints;

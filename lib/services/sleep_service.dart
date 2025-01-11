@@ -1,5 +1,5 @@
 import 'package:healthxp/enums/sleep_stages.enum.dart';
-import 'package:healthxp/models/sleep_data_point.model.dart';
+import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
 
 class SleepService {
   final List<SleepDataPoint> sleepData;

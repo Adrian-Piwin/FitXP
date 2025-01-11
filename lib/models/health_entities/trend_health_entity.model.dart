@@ -1,6 +1,6 @@
 import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/utility/health.utility.dart';

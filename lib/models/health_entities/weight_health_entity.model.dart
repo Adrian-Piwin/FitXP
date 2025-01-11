@@ -1,7 +1,7 @@
 import 'package:health/health.dart';
 import 'package:healthxp/constants/magic_numbers.constants.dart';
 import 'package:healthxp/enums/unit_system.enum.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 import 'package:healthxp/services/preferences_service.dart';

@@ -31,3 +31,11 @@ final List<HealthDataType> AllHealthDataTypes = [
   ...healthDataTypes,
   ...sleepTypes,
 ];
+
+List<String> strengthTrainingTypes = [
+  "TRADITIONAL_STRENGTH_TRAINING",
+  "FUNCTIONAL_STRENGTH_TRAINING",
+  "WEIGHT_LIFTING",
+  "HIGH_INTENSITY_INTERVAL_TRAINING",
+  "STRENGTH_TRAINING"
+];

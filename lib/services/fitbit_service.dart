@@ -3,9 +3,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/sleep_data_point.model.dart';
+import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
 

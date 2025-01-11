@@ -14,4 +14,5 @@ enum HealthItemType {
   steps,
   weight,
   bodyFatPercentage,
+  workoutTime,
 }

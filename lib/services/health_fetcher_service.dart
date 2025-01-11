@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:health/health.dart';
+import 'package:healthxp/models/data_points/workout_data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/sleep_data_point.model.dart';
+import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/utility/general.utility.dart';
-import '../models/data_point.model.dart';
+import '../models/data_points/data_point.model.dart';
 import '../services/health_data_cache_service.dart';
 import '../utility/health.utility.dart';
 
@@ -88,6 +89,9 @@ class HealthFetcherService {
     if (healthType == HealthDataType.SLEEP_ASLEEP) {
       return await _fetchSleepHealthData(dateRange.start, dateRange.end);
     }
+    if (healthType == HealthDataType.WORKOUT) {
+      return await _fetchWorkoutHealthData(dateRange.start, dateRange.end);
+    }
 
     List<DataPoint> data = [];
 
@@ -102,22 +106,49 @@ class HealthFetcherService {
       // Process points for each type
       return points.map((p) {
         return DataPoint(
-          value: p.value is NumericHealthValue 
-          ? (p.value as NumericHealthValue).numericValue.toDouble()
-          : (p.value as WorkoutHealthValue).totalEnergyBurned?.toDouble() 
-          ?? 0.0,
+          value: (p.value as NumericHealthValue).numericValue.toDouble(),
           dateFrom: p.dateFrom,
           dateTo: p.dateTo,
           dayOccurred: p.dateFrom,
-          subType: p.value is WorkoutHealthValue 
-          ? (p.value as WorkoutHealthValue).workoutActivityType.name
-          : null,
         );
       }).toList();
     } catch (e) {
       await ErrorLogger.logError('Error fetching health data: $e');
     }
 
+    return data;
+  }
+
+  Future<List<WorkoutDataPoint>> _fetchWorkoutHealthData(
+      DateTime startDate, DateTime endDate) async {
+    List<WorkoutDataPoint> data = [];
+    List<HealthDataPoint> points = [];
+
+    try {
+      points = await _health.getHealthDataFromTypes(
+        startTime: startDate,
+        endTime: endDate,
+        types: [HealthDataType.WORKOUT],
+      );
+      points = removeOverlappingData(points);
+    } catch (e) {
+      await ErrorLogger.logError('Error fetching health data: $e');
+      return [];
+    }
+
+    for (var point in points) {
+      data.add(WorkoutDataPoint(
+        value: point.dateTo.difference(point.dateFrom).inMinutes.toDouble(),
+        dateFrom: point.dateFrom,
+        dateTo: point.dateTo,
+        dayOccurred: point.dateFrom,
+        energyBurned: (point.value as WorkoutHealthValue).totalEnergyBurned?.toDouble(),
+        distance: (point.value as WorkoutHealthValue).totalDistance?.toDouble(),
+        distanceUnit: (point.value as WorkoutHealthValue).totalDistanceUnit?.name,
+        steps: (point.value as WorkoutHealthValue).totalSteps?.toInt(),
+        workoutType: (point.value as WorkoutHealthValue).workoutActivityType.name,
+      ));
+    }
     return data;
   }
 

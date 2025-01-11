@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
-import 'package:healthxp/models/sleep_data_point.model.dart';
+import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
 
 import '../models/bar_data.model.dart';
-import '../models/data_point.model.dart';
+import '../models/data_points/data_point.model.dart';
 import '../enums/timeframe.enum.dart';
 import '../utility/timeframe.utility.dart';
 

@@ -1,19 +1,12 @@
+import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/models/data_point.model.dart';
+import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/services/db_goals_service.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
-
-List<String> strengthTrainingTypes = [
-  "traditionalStrengthTraining",
-  "functionalStrengthTraining",
-  "weightLifting",
-  "highIntensityIntervalTraining",
-  "strengthTraining"
-];
 
 double getHealthAverage(List<DataPoint> data) {
   if (data.isEmpty) return 0.0;
