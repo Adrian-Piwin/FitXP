@@ -33,10 +33,6 @@ class WorkoutHealthEntity extends HealthEntity {
 
   @override
   List<DataPoint> get getCurrentData {
-    for (var point in workoutDataPoints) {
-      print(point.workoutType);
-      print(point.value);
-    }
     return workoutDataPoints.where((point) => strengthTrainingTypes.contains(point.workoutType)).toList() as List<DataPoint>;
   }
 

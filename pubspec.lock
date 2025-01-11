@@ -129,22 +129,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
-  dio:
-    dependency: transitive
-    description:
-      name: dio
-      sha256: "5598aa796bbf4699afd5c67c0f5f6e2ed542afc956884b9cd58c306966efc260"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.7.0"
-  dio_web_adapter:
-    dependency: transitive
-    description:
-      name: dio_web_adapter
-      sha256: "33259a9276d6cea88774a0000cfae0d861003497755969c92faa223108620dc8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   email_validator:
     dependency: transitive
     description:
@@ -289,14 +273,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
-  fitbitter:
-    dependency: "direct main"
-    description:
-      name: fitbitter
-      sha256: beab800f4771867bdffee7ae106ada1eb9582b57e674d1f71fd047ce2c89fed1
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.4"
   fl_chart:
     dependency: "direct main"
     description:
@@ -400,14 +376,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_web_auth:
-    dependency: transitive
-    description:
-      name: flutter_web_auth
-      sha256: a69fa8f43b9e4d86ac72176bf747b735e7b977dd7cf215076d95b87cb05affdd
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -573,14 +541,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  logger:
-    dependency: transitive
-    description:
-      name: logger
-      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.5.0"
   matcher:
     dependency: transitive
     description:

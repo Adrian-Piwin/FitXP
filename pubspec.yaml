@@ -29,7 +29,6 @@ dependencies:
   percent_indicator: ^4.2.3
   font_awesome_flutter: ^10.7.0
   gauge_indicator: ^0.4.3
-  fitbitter: ^2.0.4
   flutter_dotenv: ^5.2.1
   flutter_secure_storage: ^9.2.2
   fl_chart: ^0.69.2

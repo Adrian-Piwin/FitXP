@@ -33,17 +33,6 @@ class SettingsView extends StatelessWidget {
                 child: const Text('Clear Cache'),
               ),
               const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: controller.isFitbitConnected 
-                  ? controller.disconnectFitbit 
-                  : controller.connectFitbit,
-                child: Text(
-                  controller.isFitbitConnected 
-                    ? 'Disconnect Fitbit' 
-                    : 'Connect to Fitbit'
-                ),
-              ),
-              const SizedBox(height: 16.0),
               const Text(
                 'Unit System',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

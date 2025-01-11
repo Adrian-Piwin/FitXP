@@ -2,15 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/enums/unit_system.enum.dart';
 import 'package:healthxp/services/health_data_cache_service.dart';
-import 'package:healthxp/services/fitbit_service.dart';
 import 'package:healthxp/services/preferences_service.dart';
 
 class SettingsController with ChangeNotifier {
-  final FitbitService _fitbitService = FitbitService();
 
   UnitSystem _unitSystem = UnitSystem.metric;
 
-  bool get isFitbitConnected => _fitbitService.isConnected;
   UnitSystem get unitSystem => _unitSystem;
 
   SettingsController() {
@@ -45,17 +42,5 @@ class SettingsController with ChangeNotifier {
     await FirebaseAuth.instance.signOut();
 
     navigator.pushNamedAndRemoveUntil('/', (route) => false);
-  }
-
-  Future<void> connectFitbit() async {
-    final success = await _fitbitService.connect();
-    if (success) {
-      notifyListeners();
-    }
-  }
-
-  Future<void> disconnectFitbit() async {
-    await _fitbitService.disconnect();
-    notifyListeners();
   }
 }
