@@ -16,7 +16,7 @@ class BorderRadiusSizes {
 }
 
 class IconSizes{
-  static const double xsmall = 18.0;
+  static const double xsmall = 20.0;
   static const double small = 24.0;
   static const double medium = 28.0;
   static const double large = 40.0;

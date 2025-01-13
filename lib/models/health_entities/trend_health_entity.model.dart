@@ -16,7 +16,7 @@ class TrendHealthEntity extends HealthEntity {
     );
   }
 
-  String get getDisplayGoalProgress {
+  String get getDisplayGoalWithUnitProgress {
     if (mostRecentDataPoint == null) return "--";
     return "${(mostRecentDataPoint!.value - goal).abs().toStringAsFixed(0)}${healthItem.unit} away";
   }
@@ -57,7 +57,7 @@ class TrendHealthEntity extends HealthEntity {
   }
 
   @override
-  String get getDisplayValue {
+  String get getDisplayValueWithUnit {
     if (showLoading) return "--";
     if (mostRecentDataPoint == null) return "--";
     
@@ -81,11 +81,11 @@ class TrendHealthEntity extends HealthEntity {
       ),
       InfoWidget(
         title: "Goal",
-        displayValue: getDisplayGoal,
+        displayValue: getDisplayGoalWithUnit,
       ),
       InfoWidget(
         title: "Goal Progress",
-        displayValue: getDisplayGoalProgress,
+        displayValue: getDisplayGoalWithUnitProgress,
       ),
     ];
   }

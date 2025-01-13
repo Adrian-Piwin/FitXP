@@ -37,22 +37,27 @@ class BasicHealthWidget extends WidgetFrame {
               widget.healthItem.title,
               style: const TextStyle(
                 fontSize: FontSizes.medium,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: GapSizes.medium),
             Row(
               children: [
-                Transform.rotate(
-                  angle: widget.healthItem.iconRotation,
-                  child: Icon(
-                    widget.healthItem.icon,
-                    color: widget.healthItem.color,
-                    size: widget.getIconSize(IconSizes.small),
+                SizedBox(
+                  width: IconSizes.small,
+                  height: IconSizes.small,
+                  child: Transform.rotate(
+                    angle: widget.healthItem.iconRotation,
+                    child: Icon(
+                      widget.healthItem.icon,
+                      color: widget.healthItem.color,
+                      size: IconSizes.xsmall,
+                    ),
                   ),
                 ),
                 const SizedBox(width: GapSizes.medium),
                 Text(
-                  widget.getDisplayValue,
+                  widget.getDisplayValueWithUnit,
                   style: const TextStyle(
                     fontSize: FontSizes.xlarge,
                     fontWeight: FontWeight.bold,

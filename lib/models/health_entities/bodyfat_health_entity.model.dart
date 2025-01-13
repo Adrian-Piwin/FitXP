@@ -13,7 +13,7 @@ class BodyfatHealthEntity extends TrendHealthEntity {
   }
 
   @override
-  String get getDisplayGoal {
+  String get getDisplayGoalWithUnit {
     if (showLoading) return "--";
     return "${goal.toStringAsFixed(1)}%";
   }

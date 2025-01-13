@@ -123,9 +123,14 @@ class HealthEntity extends ChangeNotifier {
   }
 
   // The main value displayed on the home page widget
-  String get getDisplayValue {
+  String get getDisplayValueWithUnit {
     if (showLoading) return "--";
     return formatNumber(total) + healthItem.unit;
+  }
+
+  String get getDisplayValue {
+    if (showLoading) return "--";
+    return formatNumber(total);
   }
 
   // The daily average displayed on the details page widget
@@ -135,13 +140,18 @@ class HealthEntity extends ChangeNotifier {
   }
 
   // The goal value displayed on the details page widget
-  String get getDisplayGoal {
+  String get getDisplayGoalWithUnit {
     if (showLoading) return "--";
     return formatNumber(goal) + healthItem.unit;
   }
 
+  String get getDisplayGoal {
+    if (showLoading) return "--";
+    return formatNumber(goal);
+  }
+
   // The percentage of the goal for this health entity against our daily average
-  String get getDisplayGoalAveragePercent {
+  String get getDisplayGoalWithUnitAveragePercent {
     if (showLoading) return "--";
     return "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%";
   }
@@ -186,7 +196,7 @@ class HealthEntity extends ChangeNotifier {
     return [
       InfoWidget(
         title: "Total",
-        displayValue: getDisplayValue,
+        displayValue: getDisplayValueWithUnit,
       ),
       InfoWidget(
         title: "Average",
@@ -194,11 +204,11 @@ class HealthEntity extends ChangeNotifier {
       ),
       InfoWidget(
         title: "Goal",
-        displayValue: getDisplayGoal,
+        displayValue: getDisplayGoalWithUnit,
       ),
       InfoWidget(
         title: "Goal Progress",
-        displayValue: getDisplayGoalAveragePercent,
+        displayValue: getDisplayGoalWithUnitAveragePercent,
       ),
     ];
   }

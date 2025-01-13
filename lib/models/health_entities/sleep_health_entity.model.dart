@@ -57,7 +57,7 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   @override
-  String get getDisplayValue {
+  String get getDisplayValueWithUnit {
     if (showLoading) return "--";
     return formatMinutes(total.toInt());
   }
@@ -69,7 +69,7 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   @override
-  String get getDisplayGoal {
+  String get getDisplayGoalWithUnit {
     if (showLoading) return "--";
     return formatMinutes(goal.toInt());
   }

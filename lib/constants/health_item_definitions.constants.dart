@@ -51,7 +51,7 @@ class HealthItemDefinitions {
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.workoutIcon
-    ..iconSizeMultiplier = 0.85
+    ..iconSizeMultiplier = 0.80
     ..widgetFactory = ((item, widgetSize) =>
         WorkoutHealthEntity(item, widgetSize));
 

@@ -28,7 +28,7 @@ class HomeController extends ChangeNotifier {
         HealthItemDefinitions.expendedEnergy,
         HealthItemDefinitions.dietaryCalories,
         HealthItemDefinitions.netCalories,
-        HealthItemDefinitions.steps,
+        HealthItemDefinitions.activeCalories,
         HealthItemDefinitions.steps,
         HealthItemDefinitions.proteinIntake,
         HealthItemDefinitions.sleepDuration,

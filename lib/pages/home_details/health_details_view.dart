@@ -65,8 +65,8 @@ class HealthDataDetailPage extends StatelessWidget {
                             padding: const EdgeInsets.all(GapSizes.large),
                             child: InfoBar(
                               title: controller.widget.healthItem.title,
-                              value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValue : controller.widget.getDisplayAverage,
-                              goal: controller.widget.getDisplayGoal,
+                              value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValueWithUnit : controller.widget.getDisplayAverage,
+                              goal: controller.widget.getDisplayGoalWithUnit,
                               percent: controller.widget.getGoalPercent,
                               color: controller.widget.healthItem.color,
                               textColor: controller.widget.healthItem.offColor,
