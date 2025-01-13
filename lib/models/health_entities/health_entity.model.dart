@@ -10,12 +10,12 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
+import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/utility/general.utility.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
-import '../../constants/health_item_definitions.constants.dart';
 import '../../utility/health.utility.dart';
 import '../../services/goals_service.dart';
 
@@ -297,6 +297,7 @@ class HealthEntity extends ChangeNotifier {
       label: 'Edit ${healthItem.title} Goal',
       unit: healthItem.unit,
       allowDecimals: healthItem.doesGoalSupportDecimals,
+      allowNegative: healthItem.doesGoalSupportNegative,
       onSave: (value) async {
         await updateGoal(value);
       },

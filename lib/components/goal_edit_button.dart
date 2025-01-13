@@ -9,6 +9,7 @@ class GoalEditButton extends WidgetFrame {
   final String label;
   final String unit;
   final bool allowDecimals;
+  final bool allowNegative;
   final Function(double value) onSave;
   final double? currentValue;
 
@@ -17,6 +18,7 @@ class GoalEditButton extends WidgetFrame {
     this.label = 'Edit Goal',
     required this.unit,
     this.allowDecimals = false,
+    this.allowNegative = false,
     required this.onSave,
     this.currentValue,
   }) : super(
@@ -67,57 +69,104 @@ class GoalEditButton extends WidgetFrame {
   Future<void> _showEditDialog(BuildContext context) async {
     final controller = TextEditingController(
       text: allowDecimals
-          ? currentValue?.toString() ?? '0'
-          : (currentValue?.toInt() ?? 0).toString(),
+          ? currentValue?.abs().toString() ?? '0'
+          : (currentValue?.abs().toInt() ?? 0).toString(),
     );
+
+    bool isNegative = currentValue != null && currentValue! < 0;
 
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(label),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.numberWithOptions(
-              decimal: allowDecimals,
-            ),
-            inputFormatters: [
-              if (allowDecimals)
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))
-              else
-                FilteringTextInputFormatter.digitsOnly,
-            ],
-            decoration: InputDecoration(
-              suffix: Text(unit),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: PaddingSizes.medium,
-                vertical: PaddingSizes.small,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Center(child: Text(label)),
+              titlePadding: const EdgeInsets.fromLTRB(0, 24, 0, 12),
+              titleTextStyle: const TextStyle(
+                fontSize: FontSizes.xxlarge,
+                color: CoreColors.textColor,
               ),
-            ),
-            autofocus: true,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: PaddingSizes.medium,
-                  vertical: PaddingSizes.small,
+              contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+              content: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: 100,
+                  child: Column(children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (allowNegative) ...[
+                          IconButton(
+                            onPressed: () {
+                              setState(() => isNegative = !isNegative);
+                            },
+                            icon: Icon(
+                              isNegative ? Icons.remove : Icons.add,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: GapSizes.small),
+                        ],
+                        SizedBox(
+                          width: 120,
+                          child: TextField(
+                            controller: controller,
+                            keyboardType: TextInputType.numberWithOptions(
+                              decimal: allowDecimals,
+                            ),
+                            inputFormatters: [
+                              if (allowDecimals)
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d*$'))
+                              else
+                                FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            decoration: InputDecoration(
+                              suffix: Text(unit),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: PaddingSizes.medium,
+                                vertical: PaddingSizes.small,
+                              ),
+                            ),
+                            autofocus: true,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: GapSizes.small),
+                  ])),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                      const SizedBox(width: GapSizes.small),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final value = double.tryParse(controller.text);
+                            if (value != null) {
+                              onSave(isNegative ? -value : value);
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              onPressed: () {
-                final value = double.tryParse(controller.text);
-                if (value != null) {
-                  onSave(value);
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );

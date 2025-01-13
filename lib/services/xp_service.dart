@@ -2,6 +2,7 @@ import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/constants/xp.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
 import 'package:healthxp/utility/health.utility.dart';
 import 'package:hive_flutter/hive_flutter.dart';

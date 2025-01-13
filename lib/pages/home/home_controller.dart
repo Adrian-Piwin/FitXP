@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/services/widget_configuration_service.dart';
 import 'package:healthxp/utility/health.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
-import '../../services/goals_service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HomeController extends ChangeNotifier {

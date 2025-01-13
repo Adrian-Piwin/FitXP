@@ -1,35 +1,14 @@
 import 'package:healthxp/enums/xp_type.enum.dart';
 import 'package:healthxp/models/health_entities/bodyfat_health_entity.model.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/netcalories_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/weight_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/workout_health_entity.model.dart';
+import 'package:healthxp/models/health_item.model.dart';
 import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
 import 'icons.constants.dart';
-
-typedef WidgetFactory = HealthEntity Function(
-    HealthItem item, int widgetSize);
-
-class HealthItem {
-  List<HealthDataType> dataType = [];
-  late HealthItemType itemType;
-  late String title;
-  late String unit;
-  late Color color;
-  late Color offColor;
-  late IconData icon;
-  double iconSizeMultiplier = 1.0;
-  double iconRotation = 0;
-  XPType? xpType;
-  bool doesGoalSupportDecimals = false;
-  WidgetFactory widgetFactory =
-      ((item, widgetSize) =>
-          HealthEntity(item, widgetSize));
-}
 
 class HealthItemDefinitions {
   static HealthItem expendedEnergy = HealthItem()
@@ -38,8 +17,8 @@ class HealthItemDefinitions {
       HealthDataType.BASAL_ENERGY_BURNED
     ]
     ..itemType = HealthItemType.expendedEnergy
-    ..title = "Calories"
-    ..unit = ""
+    ..title = "Expended Energy"
+    ..unit = "cal"
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.caloriesIcon;
@@ -111,7 +90,7 @@ class HealthItemDefinitions {
     ..dataType = [HealthDataType.DIETARY_ENERGY_CONSUMED]
     ..itemType = HealthItemType.dietaryCalories
     ..title = "Dietary Calories"
-    ..unit = ""
+    ..unit = "cal"
     ..color = CoreColors.coreBlue
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.dietaryIcon;
@@ -120,9 +99,10 @@ class HealthItemDefinitions {
     ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED, HealthDataType.DIETARY_ENERGY_CONSUMED]
     ..itemType = HealthItemType.netCalories
     ..title = "Net Calories"
-    ..unit = ""
+    ..unit = "cal"
     ..color = CoreColors.textColor
     ..offColor = CoreColors.coreGrey
+    ..doesGoalSupportNegative = true
     ..icon = IconTypes.netCaloriesIcon
     ..xpType = XPType.hitNetCaloriesGoal
     ..widgetFactory = ((item, widgetSize) =>
