@@ -7,7 +7,7 @@ import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 import 'package:healthxp/services/preferences_service.dart';
 
 class WeightHealthEntity extends TrendHealthEntity {
-  WeightHealthEntity(super.healthItem, super.goals, super.widgetSize);
+  WeightHealthEntity(super.healthItem, super.widgetSize);
 
   @override
   void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
@@ -24,6 +24,6 @@ class WeightHealthEntity extends TrendHealthEntity {
 
   @override
   HealthEntity clone() {
-    return WeightHealthEntity(healthItem, goals, widgetSize)..data = data;
+    return WeightHealthEntity(healthItem, widgetSize)..data = data;
   }
 }

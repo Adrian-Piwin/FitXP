@@ -14,7 +14,7 @@ import '../utility/health.utility.dart';
 
 class HealthFetcherService {
   final Health _health = Health();
-  final HealthDataCache _cache = HealthDataCache();
+  late final HealthDataCache _cache;
   bool _isAuthorized = false;
 
   HealthFetcherService() {
@@ -24,7 +24,7 @@ class HealthFetcherService {
   Future<void> _initialize() async {
     await dotenv.load(fileName: ".env");
     _isAuthorized = await _health.hasPermissions(AllHealthDataTypes) == true;
-    await _cache.initialize();
+    _cache = await HealthDataCache.getInstance();
   }
 
   Future<bool> checkAndRequestPermissions() async {

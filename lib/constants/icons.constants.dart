@@ -17,4 +17,5 @@ class IconTypes{
   static const IconData sleepDurationIcon = FontAwesomeIcons.clock;
   static const IconData weightIcon = FontAwesomeIcons.weightScale;
   static const IconData bodyFatIcon = FontAwesomeIcons.person;
+  static const IconData editIcon = FontAwesomeIcons.solidPenToSquare;
 }

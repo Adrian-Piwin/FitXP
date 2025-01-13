@@ -5,11 +5,10 @@ import 'package:healthxp/utility/health.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
-import '../../services/db_goals_service.dart';
+import '../../services/goals_service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HomeController extends ChangeNotifier {
-  final DBGoalsService _goalsService = DBGoalsService();
   HealthFetcherService _healthFetcherService = HealthFetcherService();
   late WidgetConfigurationService _widgetConfigurationService;
 
@@ -62,7 +61,16 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      healthItemEntities = await initializeWidgets(_goalsService, healthItems);
+      healthItemEntities = await initializeWidgets(healthItems);
+      
+      // Add listeners to each entity
+      for (var entity in healthItemEntities) {
+        entity.addListener(() {
+          displayWidgets = _widgetConfigurationService.getWidgets();
+          notifyListeners();
+        });
+      }
+
       _widgetConfigurationService = WidgetConfigurationService(healthItemEntities);
       displayWidgets = _widgetConfigurationService.getWidgets();
 
@@ -107,5 +115,14 @@ class HomeController extends ChangeNotifier {
     _selectedTimeFrame = TimeFrame.day;
     _offset = 0;
     await fetchHealthData();
+  }
+
+  @override
+  void dispose() {
+    // Remove listeners when disposing
+    for (var entity in healthItemEntities) {
+      entity.dispose();
+    }
+    super.dispose();
   }
 }

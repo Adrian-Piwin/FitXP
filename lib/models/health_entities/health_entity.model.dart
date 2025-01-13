@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/barchart_widget.dart';
+import 'package:healthxp/components/goal_edit_button.dart';
 import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/constants/magic_numbers.constants.dart';
@@ -9,17 +10,19 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
-import 'package:healthxp/models/goal.model.dart';
+import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/utility/general.utility.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../utility/health.utility.dart';
+import '../../services/goals_service.dart';
 
-class HealthEntity{
+class HealthEntity extends ChangeNotifier {
   final HealthItem healthItem;
-  final Goal goals;
+  late final GoalsService _goalsService;
+  double? _cachedGoal;
   final int widgetSize;
 
   Map<HealthDataType, List<DataPoint>> data = {};
@@ -48,10 +51,14 @@ class HealthEntity{
   double? cachedTotal;
   double? cachedAverage;
   List<DataPoint>? cachedMergedData;
-  double goal = 0;
 
-  HealthEntity(this.healthItem, this.goals, this.widgetSize){
-    goal = healthItem.getGoal != null && healthItem.getGoal!(goals) != -1 ? healthItem.getGoal!(goals) : -1;
+  HealthEntity(this.healthItem, this.widgetSize) {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    _goalsService = await GoalsService.getInstance();
+    await _loadGoal();
   }
 
   // #region Getters
@@ -175,10 +182,8 @@ class HealthEntity{
     );
   }
 
-  // The widgets displayed on the details page
-  List<Widget> get getDetailWidgets {
+  List<Widget> get getInfoWidgets {
     return [
-      getGraphWidget,
       InfoWidget(
         title: "Total",
         displayValue: getDisplayValue,
@@ -195,6 +200,15 @@ class HealthEntity{
         title: "Goal Progress",
         displayValue: getDisplayGoalAveragePercent,
       ),
+    ];
+  }
+
+  // The widgets displayed on the details page
+  List<Widget> get getDetailWidgets {
+    return [
+      getGraphWidget,
+      ...getInfoWidgets,
+      getGoalEditButton,
     ];
   }
 
@@ -223,7 +237,7 @@ class HealthEntity{
   // #region Clone
 
   HealthEntity clone() {
-    return HealthEntity(healthItem, goals, widgetSize)..data = data;
+    return HealthEntity(healthItem, widgetSize)..data = data;
   }
 
   static HealthEntity from(HealthEntity widget) {
@@ -240,12 +254,54 @@ class HealthEntity{
     cachedMergedData = null;
   }
 
+  @override
   void dispose() {
     _loadingTimer?.cancel();
+    super.dispose();
   }
   // #endregion
 
   double getIconSize(double size) {
     return size * healthItem.iconSizeMultiplier;
   }
+
+  // #region Goal
+
+  double get goal {
+    return _cachedGoal ?? 0.0;
+  }
+
+  Future<void> _loadGoal() async {
+    try {
+      final primaryType = healthItem.itemType.toString();
+      _cachedGoal = await _goalsService.getGoal(primaryType);
+    } catch (e) {
+      await ErrorLogger.logError('Error loading goal: $e');
+      _cachedGoal = 0.0;
+    }
+  }
+
+  Future<void> updateGoal(double value) async {
+    try {
+      final primaryType = healthItem.itemType.toString();
+      await _goalsService.saveGoal(primaryType, value);
+      _cachedGoal = value;
+      notifyListeners();
+    } catch (e) {
+      await ErrorLogger.logError('Error saving goal: $e');
+    }
+  }
+
+  Widget get getGoalEditButton {
+    return GoalEditButton(
+      label: 'Edit ${healthItem.title} Goal',
+      unit: healthItem.unit,
+      allowDecimals: healthItem.doesGoalSupportDecimals,
+      onSave: (value) async {
+        await updateGoal(value);
+      },
+      currentValue: goal,
+    );
+  }
+  // #endregion
 }

@@ -18,7 +18,6 @@ import 'package:healthxp/utility/general.utility.dart';
 class SleepHealthEntity extends HealthEntity {
   SleepHealthEntity(
     super.healthItem,
-    super.goals,
     super.timeFrame,
   );
   
@@ -76,8 +75,8 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   @override
-  List<Widget> get getDetailWidgets {
-    List<Widget> widgets = super.getDetailWidgets;
+  List<Widget> get getInfoWidgets {
+    List<Widget> widgets = super.getInfoWidgets;
     widgets.addAll(
       [
         InfoWidget(
@@ -143,7 +142,7 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return SleepHealthEntity(healthItem, goals, widgetSize)..data = data;
+    return SleepHealthEntity(healthItem, widgetSize)..data = data;
   }
 
   String _getSleepStagePercent(SleepStage stage){

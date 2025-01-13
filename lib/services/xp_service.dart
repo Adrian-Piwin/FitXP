@@ -2,7 +2,6 @@ import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/constants/xp.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/services/db_goals_service.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
 import 'package:healthxp/utility/health.utility.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,7 +9,6 @@ import 'package:healthxp/models/entity_xp.model.dart';
 
 class XpService {
   final HealthFetcherService _healthFetcherService = HealthFetcherService();
-  final DBGoalsService _goalsService = DBGoalsService();
 
   late Box _xpBox;
   static const String _boxName = 'xp_cache';
@@ -100,7 +98,7 @@ class XpService {
   }
 
   Future<List<EntityXP>> _getXPForReachedGoal(List<HealthItem> healthItems, TimeFrame timeframe) async {
-    List<HealthEntity> entities = await initializeWidgets(_goalsService, healthItems);
+    List<HealthEntity> entities = await initializeWidgets(healthItems);
     await setDataPerWidget(_healthFetcherService, entities, timeframe, 0);
 
     List<EntityXP> entityXPs = [];

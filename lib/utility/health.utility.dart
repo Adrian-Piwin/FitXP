@@ -3,9 +3,8 @@ import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:health/health.dart';
-import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/services/db_goals_service.dart';
+import 'package:healthxp/services/goals_service.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
 
 double getHealthAverage(List<DataPoint> data) {
@@ -308,18 +307,13 @@ Map<DateTime, double> getDailyData(List<DataPoint> data) {
   return dataByDay.map((key, value) => MapEntry(key, value.fold(0.0, (sum, point) => sum + point.value)));
 }
 
-Future<List<HealthEntity>> initializeWidgets(DBGoalsService goalsService, List<HealthItem> healthItems) async {
-  Goal? goals = await goalsService.getGoals();
-  if (goals == null) {
-    throw Exception('Failed to load goals data');
-  }
-
+Future<List<HealthEntity>> initializeWidgets(List<HealthItem> healthItems) async {
   List<HealthEntity> entities = healthItems.map((healthItem) {
-    return healthItem.widgetFactory(
+    var entity = healthItem.widgetFactory(
       healthItem,
-      goals,
       2,
     );
+    return entity;
   }).toList();
 
   return entities;

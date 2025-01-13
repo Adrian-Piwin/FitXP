@@ -6,12 +6,16 @@ abstract class WidgetFrame extends StatelessWidget {
   final int size;
   final double height;
   final Color? color;
+  final double? borderRadius;
+  final double? padding;
 
   const WidgetFrame({
     super.key,
     required this.size,
     required this.height,
     this.color,
+    this.borderRadius,
+    this.padding,
   });
 
   // Abstract child widget to be implemented by subclasses
@@ -23,8 +27,11 @@ abstract class WidgetFrame extends StatelessWidget {
       behavior: HitTestBehavior.translucent, // Ensure gestures pass through
       child: Container(
         decoration: BoxDecoration(
-          gradient: GradientColors.widgetBackgroundGradient,
-          borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+          color: color,
+          gradient: color == null ? GradientColors.widgetBackgroundGradient : null,
+          borderRadius: BorderRadius.circular(
+            borderRadius ?? BorderRadiusSizes.medium
+          ),
           boxShadow: [
             BoxShadow(
               offset: const Offset(2, 2),  // x:2, y:2
@@ -34,7 +41,7 @@ abstract class WidgetFrame extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(PaddingSizes.large),
+        padding: EdgeInsets.all(padding ?? PaddingSizes.large),
         child: buildContent(context), // Render content from subclasses
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:healthxp/enums/xp_type.enum.dart';
-import 'package:healthxp/models/goal.model.dart';
 import 'package:healthxp/models/health_entities/bodyfat_health_entity.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +11,8 @@ import '../enums/health_item_type.enum.dart';
 import 'colors.constants.dart';
 import 'icons.constants.dart';
 
-typedef GoalGetter = double Function(Goal goal);
 typedef WidgetFactory = HealthEntity Function(
-    HealthItem item, Goal goals, int widgetSize);
+    HealthItem item, int widgetSize);
 
 class HealthItem {
   List<HealthDataType> dataType = [];
@@ -27,10 +25,10 @@ class HealthItem {
   double iconSizeMultiplier = 1.0;
   double iconRotation = 0;
   XPType? xpType;
-  GoalGetter? getGoal;
+  bool doesGoalSupportDecimals = false;
   WidgetFactory widgetFactory =
-      ((item, goals, widgetSize) =>
-          HealthEntity(item, goals, widgetSize));
+      ((item, widgetSize) =>
+          HealthEntity(item, widgetSize));
 }
 
 class HealthItemDefinitions {
@@ -44,8 +42,7 @@ class HealthItemDefinitions {
     ..unit = ""
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreGrey
-    ..icon = IconTypes.caloriesIcon
-    ..getGoal = (Goal goal) => goal.caloriesOutGoal;
+    ..icon = IconTypes.caloriesIcon;
 
   static HealthItem proteinIntake = HealthItem()
     ..dataType = [HealthDataType.DIETARY_PROTEIN_CONSUMED]
@@ -56,8 +53,7 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.proteinIcon
     ..iconSizeMultiplier = 0.90
-    ..xpType = XPType.hitProteinGoal
-    ..getGoal = (Goal goal) => goal.proteinGoal;
+    ..xpType = XPType.hitProteinGoal;
 
   static HealthItem exerciseTime = HealthItem()
     ..dataType = [HealthDataType.EXERCISE_TIME]
@@ -66,8 +62,7 @@ class HealthItemDefinitions {
     ..unit = "min"
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreGrey
-    ..icon = IconTypes.exerciseIcon
-    ..getGoal = (Goal goal) => goal.exerciseMinutesGoal;
+    ..icon = IconTypes.exerciseIcon;
 
   static HealthItem workoutTime = HealthItem()
     ..dataType = [HealthDataType.WORKOUT]
@@ -78,9 +73,8 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.workoutIcon
     ..iconSizeMultiplier = 0.85
-    ..getGoal = ((Goal goal) => goal.exerciseMinutesGoal)
-    ..widgetFactory = ((item, goals, widgetSize) =>
-        WorkoutHealthEntity(item, goals, widgetSize));
+    ..widgetFactory = ((item, widgetSize) =>
+        WorkoutHealthEntity(item, widgetSize));
 
   static HealthItem sleepDuration = HealthItem()
     ..dataType = [HealthDataType.SLEEP_ASLEEP]
@@ -92,9 +86,8 @@ class HealthItemDefinitions {
     ..icon = IconTypes.sleepDurationIcon
     ..iconSizeMultiplier = 0.90
     ..xpType = XPType.hitSleepGoal
-    ..getGoal = ((Goal goal) => goal.sleepGoal.inMinutes.toDouble())
-    ..widgetFactory = ((item, goals, widgetSize) =>
-        SleepHealthEntity(item, goals, widgetSize));
+    ..widgetFactory = ((item, widgetSize) =>
+        SleepHealthEntity(item, widgetSize));
 
   static HealthItem activeCalories = HealthItem()
     ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED]
@@ -112,8 +105,7 @@ class HealthItemDefinitions {
     ..unit = "cal"
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreGrey
-    ..icon = IconTypes.caloriesIcon
-    ..getGoal = (Goal goal) => goal.caloriesOutGoal;
+    ..icon = IconTypes.caloriesIcon;
 
   static HealthItem dietaryCalories = HealthItem()
     ..dataType = [HealthDataType.DIETARY_ENERGY_CONSUMED]
@@ -122,8 +114,7 @@ class HealthItemDefinitions {
     ..unit = ""
     ..color = CoreColors.coreBlue
     ..offColor = CoreColors.coreGrey
-    ..icon = IconTypes.dietaryIcon
-    ..getGoal = (Goal goal) => goal.caloriesInGoal;
+    ..icon = IconTypes.dietaryIcon;
 
   static HealthItem netCalories = HealthItem()
     ..dataType = [HealthDataType.ACTIVE_ENERGY_BURNED, HealthDataType.BASAL_ENERGY_BURNED, HealthDataType.DIETARY_ENERGY_CONSUMED]
@@ -134,9 +125,8 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.netCaloriesIcon
     ..xpType = XPType.hitNetCaloriesGoal
-    ..getGoal = ((Goal goal) =>  goal.caloriesInGoal - goal.caloriesOutGoal)
-    ..widgetFactory = ((item, goals, widgetSize) =>
-        NetCaloriesHealthEntity(item, goals, widgetSize));
+    ..widgetFactory = ((item, widgetSize) =>
+        NetCaloriesHealthEntity(item, widgetSize));
 
   static HealthItem steps = HealthItem()
     ..dataType = [HealthDataType.STEPS]
@@ -148,8 +138,7 @@ class HealthItemDefinitions {
     ..icon = IconTypes.stepsIcon
     ..iconSizeMultiplier = 0.80
     ..iconRotation = 4.70
-    ..xpType = XPType.steps
-    ..getGoal = ((Goal goal) => goal.stepsGoal);
+    ..xpType = XPType.steps;
 
   static HealthItem weight = HealthItem()
     ..dataType = [HealthDataType.WEIGHT]
@@ -160,9 +149,8 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.weightIcon
     ..iconSizeMultiplier = 0.80
-    ..getGoal = ((Goal goal) => goal.weightGoal)
-    ..widgetFactory = ((item, goals, widgetSize) =>
-        WeightHealthEntity(item, goals, widgetSize));
+    ..widgetFactory = ((item, widgetSize) =>
+        WeightHealthEntity(item, widgetSize));
 
   static HealthItem bodyFat = HealthItem()
     ..dataType = [HealthDataType.BODY_FAT_PERCENTAGE]
@@ -172,7 +160,7 @@ class HealthItemDefinitions {
     ..color = CoreColors.textColor
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.bodyFatIcon
-    ..getGoal = ((Goal goal) => goal.bodyFatGoal)
-    ..widgetFactory = ((item, goals, widgetSize) =>
-        BodyfatHealthEntity(item, goals, widgetSize));
+    ..doesGoalSupportDecimals = true
+    ..widgetFactory = ((item, widgetSize) =>
+        BodyfatHealthEntity(item, widgetSize));
 }

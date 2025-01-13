@@ -7,17 +7,57 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../models/data_points/data_point.model.dart';
 
 class HealthDataCache {
+  static HealthDataCache? _instance;
+  
+  // Private constructor
+  HealthDataCache._();
+
+  // Factory constructor
+  static Future<HealthDataCache> getInstance() async {
+    if (_instance == null) {
+      _instance = HealthDataCache._();
+      await _instance!._initialize();
+    }
+    return _instance!;
+  }
+
   static const String _boxPrefix = 'health_data_';
   static const Duration _recentDataThreshold = Duration(minutes: 10);
   static const Duration _oldDataThreshold = Duration(days: 7);
   Map<HealthDataType, Box<Map>>? _dataBoxes;
+  bool _isInitialized = false;
 
-  Future<void> initialize() async {
-    await Hive.initFlutter();
-    _dataBoxes = {};
-    
-    for (var type in AllHealthDataTypes) {
-      _dataBoxes![type] = await Hive.openBox<Map>('$_boxPrefix${type.name}');
+  Future<void> _initialize() async {
+    if (!_isInitialized) {
+      await Hive.initFlutter();
+      _dataBoxes = {};
+      
+      for (var type in AllHealthDataTypes) {
+        _dataBoxes![type] = await Hive.openBox<Map>('$_boxPrefix${type.name}');
+      }
+      _isInitialized = true;
+    }
+  }
+
+  Future<void> clearCache() async {
+    if (_dataBoxes != null) {
+      for (var box in _dataBoxes!.values) {
+        if (box.isOpen) {
+          await box.clear();
+        }
+      }
+    }
+  }
+
+  Future<void> dispose() async {
+    if (_dataBoxes != null) {
+      for (var box in _dataBoxes!.values) {
+        if (box.isOpen) {
+          await box.close();
+        }
+      }
+      _dataBoxes = null;
+      _isInitialized = false;
     }
   }
 
@@ -175,10 +215,6 @@ class HealthDataCache {
       dateTo: dateTo,
       dayOccurred: dayOccurred,
     );
-  }
-
-  Future<void> clearCache() async {
-    await Hive.deleteFromDisk();
   }
 }
 

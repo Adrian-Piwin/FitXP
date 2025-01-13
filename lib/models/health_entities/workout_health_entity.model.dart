@@ -5,7 +5,7 @@ import 'package:healthxp/models/data_points/workout_data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 
 class WorkoutHealthEntity extends HealthEntity {
-  WorkoutHealthEntity(super.healthItem, super.goals, super.widgetSize);
+  WorkoutHealthEntity(super.healthItem, super.widgetSize);
 
   List<WorkoutDataPoint> get workoutDataPoints {
     if (data[HealthDataType.WORKOUT] == null || data[HealthDataType.WORKOUT]!.isEmpty) {
@@ -38,6 +38,6 @@ class WorkoutHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return WorkoutHealthEntity(healthItem, goals, widgetSize)..data = data;
+    return WorkoutHealthEntity(healthItem, widgetSize)..data = data;
   }
 }

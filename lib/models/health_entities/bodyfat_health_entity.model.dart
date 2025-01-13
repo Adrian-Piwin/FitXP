@@ -4,7 +4,7 @@ import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 
 class BodyfatHealthEntity extends TrendHealthEntity {
-  BodyfatHealthEntity(super.healthItem, super.goals, super.widgetSize);
+  BodyfatHealthEntity(super.healthItem, super.widgetSize);
 
   @override
   void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
@@ -13,7 +13,13 @@ class BodyfatHealthEntity extends TrendHealthEntity {
   }
 
   @override
+  String get getDisplayGoal {
+    if (showLoading) return "--";
+    return "${goal.toStringAsFixed(1)}%";
+  }
+
+  @override
   HealthEntity clone() {
-    return BodyfatHealthEntity(healthItem, goals, widgetSize)..data = data;
+    return BodyfatHealthEntity(healthItem, widgetSize)..data = data;
   }
 }

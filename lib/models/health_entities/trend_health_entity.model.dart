@@ -7,7 +7,7 @@ import 'package:healthxp/utility/health.utility.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
 
 class TrendHealthEntity extends HealthEntity {
-  TrendHealthEntity(super.healthItem, super.goals, super.widgetSize);
+  TrendHealthEntity(super.healthItem, super.widgetSize);
 
   DataPoint? get mostRecentDataPoint {
     if (getCombinedData.isEmpty) return null;
@@ -73,9 +73,8 @@ class TrendHealthEntity extends HealthEntity {
   }
 
   @override
-  List<Widget> get getDetailWidgets {
+  List<Widget> get getInfoWidgets {
     return [
-      getGraphWidget,
       InfoWidget(
         title: "Average",
         displayValue: getDisplayAverage,
@@ -93,6 +92,6 @@ class TrendHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return TrendHealthEntity(healthItem, goals, widgetSize)..data = data;
+    return TrendHealthEntity(healthItem, widgetSize)..data = data;
   }
 }

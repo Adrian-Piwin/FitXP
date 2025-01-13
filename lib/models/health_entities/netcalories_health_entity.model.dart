@@ -5,7 +5,6 @@ import 'package:healthxp/models/health_entities/health_entity.model.dart';
 class NetCaloriesHealthEntity extends HealthEntity {
   NetCaloriesHealthEntity(
     super.healthItem,
-    super.goals,
     super.timeFrame,
   );
 
@@ -51,6 +50,6 @@ class NetCaloriesHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return NetCaloriesHealthEntity(healthItem, goals, widgetSize)..data = data;
+    return NetCaloriesHealthEntity(healthItem, widgetSize)..data = data;
   }
 }

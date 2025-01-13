@@ -3,7 +3,6 @@ import 'package:healthxp/constants/icons.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/pages/character/character_view.dart';
 import '../pages/home/home_view.dart';
-import '../pages/goals/goals_view.dart';
 import '../pages/settings/settings_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -20,8 +19,6 @@ class BottomNavBar extends StatelessWidget {
       case 1:
         route = CharacterView.routeName;
       case 2:
-        route = GoalsView.routeName;
-      case 3:
         route = SettingsView.routeName;
     }
 
@@ -47,10 +44,6 @@ class BottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(IconTypes.characterIcon),
           label: localizations.navBarCharacter,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(IconTypes.goalsIcon),
-          label: localizations.navBarGoals,
         ),
         BottomNavigationBarItem(
           icon: Icon(IconTypes.settingsIcon),

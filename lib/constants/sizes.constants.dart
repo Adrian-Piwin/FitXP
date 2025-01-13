@@ -16,7 +16,7 @@ class BorderRadiusSizes {
 }
 
 class IconSizes{
-  static const double xsmall = 16.0;
+  static const double xsmall = 18.0;
   static const double small = 24.0;
   static const double medium = 28.0;
   static const double large = 40.0;
@@ -55,7 +55,7 @@ class InputSizes {
 }
 
 class WidgetSizes {
-  static const double xSmallHeight = 100.0;
+  static const double xSmallHeight = 40.0;
   static const double smallHeight = 120.0;
   static const double mediumHeight = 140.0;
   static const double largeHeight = 200.0;

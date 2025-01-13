@@ -7,7 +7,6 @@ import 'package:healthxp/pages/settings/settings_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'goals/goals_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -59,6 +58,23 @@ class MyApp extends StatelessWidget {
               bodyColor: CoreColors.textColor,
               displayColor: CoreColors.textColor,
             ),
+            
+            dialogTheme: DialogTheme(
+              backgroundColor: CoreColors.backgroundColor,
+              surfaceTintColor: Colors.transparent, // Removes Material 3 surface tint
+            ),
+            
+            // Button themes
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: CoreColors.accentAltColor,
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                backgroundColor: CoreColors.accentAltColor,
+              ),
+            ),
           ),
           themeMode: ThemeMode.dark,
           home: const AuthGate(),
@@ -75,8 +91,6 @@ class MyApp extends StatelessWidget {
                     return SettingsView();
                   case HomeView.routeName:
                     return const HomeView();
-                  case GoalsView.routeName:
-                    return const GoalsView();
                   case PermissionsView.routeName:
                     return const PermissionsView();
                   case CharacterView.routeName:

@@ -14,9 +14,21 @@ class HealthDetailsController extends ChangeNotifier {
 
   HealthDetailsController({
     required HealthEntity widget,
-  }) : _widget = HealthEntity.from(widget),
+  }) : _widget = widget,
        _selectedTimeFrame = widget.timeframe,
-       _offset = widget.offset;
+       _offset = widget.offset {
+    _widget.addListener(_onWidgetChanged);
+  }
+
+  void _onWidgetChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _widget.removeListener(_onWidgetChanged);
+    super.dispose();
+  }
 
   bool get isLoading => _isLoading;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
