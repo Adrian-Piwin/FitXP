@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/bottom_nav_bar.dart';
 import 'package:healthxp/components/info_bar.dart';
+import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/constants/colors.constants.dart';
@@ -53,14 +54,80 @@ class CharacterView extends StatelessWidget {
                         top: 20,
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.4,
-                          child: Text(
-                            'LVL ${controller.level}',
-                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              fontSize: FontSizes.xxxlarge,
-                              fontWeight: FontWeight.bold,
-                              height: 0.9,
-                            ),
-                            textAlign: TextAlign.left,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Level section
+                              const Text(
+                                'LEVEL',
+                                style: TextStyle(
+                                  fontSize: FontSizes.large,
+                                  fontWeight: FontWeight.bold,
+                                  color: CoreColors.textColor,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Text(
+                                controller.level,
+                                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                  fontSize: FontSizes.huge,
+                                  fontWeight: FontWeight.bold,
+                                  height: 0.9,
+                                ),
+                              ),
+                              
+                              const SizedBox(height: 40),
+                              
+                              // Rank section
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Rank icon
+                                  SizedBox(
+                                    height: 40,
+                                    width: 20,
+                                    child: Center(
+                                      child: Icon(
+                                        IconTypes.medalIcon,
+                                        color: CoreColors.coreGold,
+                                        size: 35,
+                                      ),
+                                    ),
+                                  ),
+                                  
+                                  const SizedBox(width: 28),
+                                  
+                                  // Rank text
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        controller.rank,
+                                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                          fontSize: FontSizes.xlarge,
+                                          fontWeight: FontWeight.bold,
+                                          height: 1,
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 5),
+
+                                      const Text(
+                                        'Rank',
+                                        style: TextStyle(
+                                          fontSize: FontSizes.medium,
+                                          color: CoreColors.textColor,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -84,35 +151,6 @@ class CharacterView extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-                
-                const SizedBox(height: 20),
-                
-                // Rank section
-                Row(
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    
-                    const SizedBox(width: 16),
-                    
-                    Expanded(
-                      child: InfoBar(
-                        title: '${controller.rank} Rank',
-                        value: controller.xpRankProgress,
-                        goal: controller.xpRankRequired,
-                        percent: controller.xpRankProgressPercent,
-                        color: CoreColors.coreGold,
-                        textColor: CoreColors.coreGold,
-                      ),
-                    ),
-                  ],
                 ),
                 
                 const SizedBox(height: 20),

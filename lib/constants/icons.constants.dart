@@ -18,4 +18,5 @@ class IconTypes{
   static const IconData weightIcon = FontAwesomeIcons.weightScale;
   static const IconData bodyFatIcon = FontAwesomeIcons.person;
   static const IconData editIcon = FontAwesomeIcons.solidPenToSquare;
+  static const IconData medalIcon = FontAwesomeIcons.medal;
 }
