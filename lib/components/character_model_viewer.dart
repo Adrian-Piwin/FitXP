@@ -30,7 +30,7 @@ class CharacterModelViewerState extends State<CharacterModelViewer> {
         disableZoom: true,
         ar: false,
         autoRotate: false,
-        scale: '1.25 1.25 1.25',
+        scale: '1.3 1.3 1.3',
         onWebViewCreated: (controller) {
           this.controller = controller;
           _initializeModelViewer();

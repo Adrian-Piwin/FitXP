@@ -8,7 +8,7 @@ class FontSizes {
   static const double xlarge = 18.0;
   static const double xxlarge = 24.0;
   static const double xxxlarge = 32.0;
-  static const double huge = 90.0;
+  static const double huge = 120.0;
 }
 
 class BorderRadiusSizes {
@@ -31,7 +31,8 @@ class GapSizes {
   static const double large = 12.0;
   static const double xlarge = 16.0;
   static const double xxlarge = 20.0;
-  static const double xxxlarge = 70.0;
+  static const double xxxlarge = 30.0;
+  static const double huge = 60.0;
 }
 
 class PaddingSizes {

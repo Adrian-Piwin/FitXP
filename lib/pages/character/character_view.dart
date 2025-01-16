@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/character/character_controller.dart';
 import 'package:healthxp/components/character_model_viewer.dart';
+import 'package:healthxp/components/three_d_circular_progress.dart';
 
 class CharacterView extends StatelessWidget {
   CharacterView({super.key});
@@ -24,31 +25,52 @@ class CharacterView extends StatelessWidget {
           child: Consumer<CharacterController>(
             builder: (context, controller, _) => Column(
               children: [
-                const SizedBox(height: GapSizes.xxxlarge),
-        
-                InfoBar(
-                  title: 'Level ${controller.level}',
-                  value: controller.xpLevelProgress,
-                  goal: controller.xpLevelRequired,
-                  percent: controller.xpLevelProgressPercent,
-                  color: CoreColors.coreBlue,
-                  textColor: CoreColors.coreOffBlue,
-                ),
-                
-                const SizedBox(height: 20),
+                const SizedBox(height: GapSizes.huge),
                 
                 SizedBox(
-                  height: 400,
+                  height: 600,
                   child: Stack(
                     children: [
+                      // Progress rings layer
+                      Positioned(
+                        top: 0,
+                        bottom: -240,
+                        left: 110,
+                        child: Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Outer ring (Rank)
+                              ThreeDCircularProgress(
+                                progress: controller.xpRankProgressPercent * 100,
+                                radius: 100,
+                                color: CoreColors.coreGold,
+                                backgroundColor: CoreColors.coreGold.withOpacity(0.3),
+                                strokeWidth: 14,
+                              ),
+                              // Inner ring (Level)
+                              ThreeDCircularProgress(
+                                progress: controller.xpLevelProgressPercent * 100,
+                                radius: 120,
+                                color: CoreColors.coreBlue,
+                                backgroundColor: CoreColors.coreBlue.withOpacity(0.3),
+                                strokeWidth: 14,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      // Model viewer layer
                       Positioned(
                         right: -50,
-                        top: -100,
-                        bottom: -100,
+                        top: -80,
+                        bottom: 0,
                         width: MediaQuery.of(context).size.width * 0.9,
                         child: CharacterModelViewer(key: _modelViewerKey),
                       ),
                       
+                      // Text overlay layer
                       Positioned(
                         left: 0,
                         top: 20,
@@ -62,7 +84,7 @@ class CharacterView extends StatelessWidget {
                                 'LEVEL',
                                 style: TextStyle(
                                   fontSize: FontSizes.large,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w400,
                                   color: CoreColors.textColor,
                                   letterSpacing: 1.2,
                                 ),
@@ -74,7 +96,6 @@ class CharacterView extends StatelessWidget {
                                 controller.level,
                                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                                   fontSize: FontSizes.huge,
-                                  fontWeight: FontWeight.bold,
                                   height: 0.9,
                                 ),
                               ),
@@ -119,6 +140,7 @@ class CharacterView extends StatelessWidget {
                                         'Rank',
                                         style: TextStyle(
                                           fontSize: FontSizes.medium,
+                                          fontWeight: FontWeight.w400,
                                           color: CoreColors.textColor,
                                           letterSpacing: 1.2,
                                         ),
