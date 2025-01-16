@@ -5,11 +5,13 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/character/character_controller.dart';
+import 'package:healthxp/components/character_model_viewer.dart';
 
 class CharacterView extends StatelessWidget {
-  const CharacterView({super.key});
-
+  CharacterView({super.key});
   static const routeName = '/character';
+
+  final _modelViewerKey = GlobalKey<CharacterModelViewerState>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class CharacterView extends StatelessWidget {
             builder: (context, controller, _) => Column(
               children: [
                 const SizedBox(height: GapSizes.xxxlarge),
-
+        
                 InfoBar(
                   title: 'Level ${controller.level}',
                   value: controller.xpLevelProgress,
@@ -34,12 +36,34 @@ class CharacterView extends StatelessWidget {
                 
                 const SizedBox(height: 20),
                 
-                // Placeholder for main character image
-                Container(
+                SizedBox(
                   height: 300,
-                  width: double.infinity,
-                  color: Colors.grey[300],
-                  child: const Center(child: Text('Character Image')),
+                  child: Stack(
+                    children: [
+                      CharacterModelViewer(key: _modelViewerKey),
+                      
+                      Positioned.fill(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onHorizontalDragEnd: (details) {
+                            print('Model Viewer Drag ended: ${details.primaryVelocity}');
+                            if (details.primaryVelocity == null) return;
+                            
+                            if (details.primaryVelocity! < 0) {
+                              print('Model Viewer Swipe left');
+                              _modelViewerKey.currentState?.animateToSideView();
+                            } else if (details.primaryVelocity! > 0) {
+                              print('Model Viewer Swipe right');
+                              _modelViewerKey.currentState?.animateToFrontView();
+                            }
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 
                 const SizedBox(height: 20),
@@ -47,7 +71,6 @@ class CharacterView extends StatelessWidget {
                 // Rank section
                 Row(
                   children: [
-                    // Small placeholder image with rounded corners
                     Container(
                       height: 50,
                       width: 50,
@@ -59,7 +82,6 @@ class CharacterView extends StatelessWidget {
                     
                     const SizedBox(width: 16),
                     
-                    // Rank progress bar
                     Expanded(
                       child: InfoBar(
                         title: '${controller.rank} Rank',

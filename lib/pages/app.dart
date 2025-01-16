@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
                   case PermissionsView.routeName:
                     return const PermissionsView();
                   case CharacterView.routeName:
-                    return const CharacterView();
+                    return CharacterView();
                   default:
                     return const AuthGate();
                 }
