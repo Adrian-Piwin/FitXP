@@ -6,7 +6,8 @@ class FontSizes {
   static const double medium = 14.0;
   static const double large = 16.0;
   static const double xlarge = 18.0;
-  static const double xxlarge = 20.0;
+  static const double xxlarge = 24.0;
+  static const double xxxlarge = 32.0;
 }
 
 class BorderRadiusSizes {

@@ -17,7 +17,7 @@ class CharacterModelViewerState extends State<CharacterModelViewer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 1000,
       width: double.infinity,
       child: ModelViewer(
         backgroundColor: Colors.transparent,
@@ -29,6 +29,7 @@ class CharacterModelViewerState extends State<CharacterModelViewer> {
         disableZoom: true,
         ar: false,
         autoRotate: false,
+        scale: '1.3 1.3 1.3',
         onWebViewCreated: (controller) {
           print('WebView created');
           this.controller = controller;

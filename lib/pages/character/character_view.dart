@@ -37,23 +37,43 @@ class CharacterView extends StatelessWidget {
                 const SizedBox(height: 20),
                 
                 SizedBox(
-                  height: 300,
+                  height: 400,
                   child: Stack(
                     children: [
-                      CharacterModelViewer(key: _modelViewerKey),
+                      Positioned(
+                        right: -50,
+                        top: -100,
+                        bottom: -100,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: CharacterModelViewer(key: _modelViewerKey),
+                      ),
+                      
+                      Positioned(
+                        left: 0,
+                        top: 20,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: Text(
+                            'LVL ${controller.level}',
+                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                              fontSize: FontSizes.xxxlarge,
+                              fontWeight: FontWeight.bold,
+                              height: 0.9,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ),
                       
                       Positioned.fill(
                         child: GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onHorizontalDragEnd: (details) {
-                            print('Model Viewer Drag ended: ${details.primaryVelocity}');
                             if (details.primaryVelocity == null) return;
                             
                             if (details.primaryVelocity! < 0) {
-                              print('Model Viewer Swipe left');
                               _modelViewerKey.currentState?.animateToSideView();
                             } else if (details.primaryVelocity! > 0) {
-                              print('Model Viewer Swipe right');
                               _modelViewerKey.currentState?.animateToFrontView();
                             }
                           },
