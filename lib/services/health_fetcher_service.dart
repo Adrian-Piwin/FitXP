@@ -67,10 +67,8 @@ class HealthFetcherService {
               ),
             );
 
-            if (dayData.isNotEmpty) {
-              await _cache.cacheDayData(type, date, dayData);
-              allData.addAll(dayData);
-            }
+            await _cache.cacheDayData(type, date, dayData);
+            allData.addAll(dayData);
           } else {
             allData.addAll(cachedData[date]!);
           }

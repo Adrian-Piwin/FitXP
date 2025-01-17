@@ -105,9 +105,13 @@ class HealthDataCache {
         continue;
       }
 
-      // Use cached data
-      final List<dynamic> points = cachedDay['points'];
-      result[date] = points.map((p) => _deserializeDataPoint(p, type)).toList();
+      // Use cached data - handle empty days
+      final List<dynamic>? points = cachedDay['points'];
+      if (points != null) { // Day has data
+        result[date] = points.map((p) => _deserializeDataPoint(p, type)).toList();
+      } else { // Day is confirmed to have no data
+        result[date] = [];
+      }
     }
 
     return result;
@@ -122,6 +126,16 @@ class HealthDataCache {
     if (box == null) return;
 
     final dayKey = _getDayKey(day);
+    
+    if (points.isEmpty) {
+      // Cache empty day
+      await box.put(dayKey, {
+        'cacheTime': DateTime.now().millisecondsSinceEpoch,
+        'points': null, // Explicitly store null for empty days
+      });
+      return;
+    }
+
     List<Map<String, dynamic>> processedPoints;
 
     if (sleepTypes.contains(type) || trendTypes.contains(type) || type == HealthDataType.WORKOUT) {

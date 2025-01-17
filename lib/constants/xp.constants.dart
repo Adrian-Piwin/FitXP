@@ -4,8 +4,8 @@ const int levelUpXPAmt = 1000;
 const int rankUpXPAmt = 5000;
 
 final Map<XPType, double> xpMapping = {
-  XPType.protein: 1,
-  XPType.exerciseTime: 1,
+  XPType.protein: 0.25,
+  XPType.exerciseTime: 0.5,
   XPType.steps: 0.03,
 };
 
