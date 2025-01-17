@@ -12,8 +12,8 @@ class FontSizes {
 }
 
 class BorderRadiusSizes {
-  static const double small = 4.0;
-  static const double medium = 8.0;
+  static const double small = 6.0;
+  static const double medium = 10.0;
   static const double large = 16.0;
 }
 
