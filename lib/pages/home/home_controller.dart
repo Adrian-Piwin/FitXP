@@ -8,7 +8,7 @@ import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
 
-class HomeController extends ChangeNotifier {
+class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   HealthFetcherService _healthFetcherService = HealthFetcherService();
   late WidgetConfigurationService _widgetConfigurationService;
 
@@ -42,6 +42,7 @@ class HomeController extends ChangeNotifier {
   List<Widget> displayWidgets = [];
 
   HomeController(BuildContext context) {
+    WidgetsBinding.instance.addObserver(this);
     _initialize();
   }
 
@@ -118,7 +119,15 @@ class HomeController extends ChangeNotifier {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      refresh();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     // Remove listeners when disposing
     for (var entity in healthItemEntities) {
       entity.dispose();
