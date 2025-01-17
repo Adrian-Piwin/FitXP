@@ -32,7 +32,7 @@ class HealthDataCache {
       await Hive.initFlutter();
       _dataBoxes = {};
       
-      for (var type in AllHealthDataTypes) {
+      for (var type in allHealthDataTypes) {
         _dataBoxes![type] = await Hive.openBox<Map>('$_boxPrefix${type.name}');
       }
       _isInitialized = true;

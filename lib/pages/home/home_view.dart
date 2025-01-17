@@ -1,34 +1,36 @@
 import 'package:healthxp/components/timeframe_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../components/bottom_nav_bar.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
 
 class HomeView extends StatefulWidget {
+  static const routeName = '/home';
+  
   const HomeView({super.key});
-
-  static const routeName = "/home";
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
+class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   late HomeController _controller;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addObserver(this);
+  // }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   WidgetsBinding.instance.removeObserver(this);
+  //   super.dispose();
+  // }
 
   // @override
   // void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -39,6 +41,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ChangeNotifierProvider(
       create: (context) {
         _controller = HomeController(context);
@@ -103,7 +106,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               );
             },
           ),
-          bottomNavigationBar: const BottomNavBar(currentIndex: 0)),
+        ),
     );
   }
 }

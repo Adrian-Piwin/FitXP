@@ -1,3 +1,4 @@
+import 'package:healthxp/components/bottom_nav_bar.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/auth/auth_gate.dart';
 import 'package:healthxp/pages/character/character_view.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  
   const MyApp({
     super.key,
   });
@@ -17,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       restorationScopeId: 'app',
 
           localizationsDelegates: const [
@@ -79,22 +83,17 @@ class MyApp extends StatelessWidget {
           themeMode: ThemeMode.dark,
           home: const AuthGate(),
 
-          // Define a function to handle named routes in order to support
-          // Flutter web url navigation and deep linking.
+          // Only keep routes for non-bottom-nav pages if needed
           onGenerateRoute: (RouteSettings routeSettings) {
             return PageRouteBuilder<void>(
               settings: routeSettings,
               pageBuilder: (BuildContext context, Animation<double> animation,
                   Animation<double> secondaryAnimation) {
                 switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView();
-                  case HomeView.routeName:
-                    return const HomeView();
                   case PermissionsView.routeName:
                     return const PermissionsView();
-                  case CharacterView.routeName:
-                    return CharacterView();
+                  case MainView.routeName:
+                    return const MainView();
                   default:
                     return const AuthGate();
                 }
@@ -104,5 +103,57 @@ class MyApp extends StatelessWidget {
             );
           },
         );
+  }
+}
+
+class MainView extends StatefulWidget {
+  const MainView({super.key});
+
+  static const routeName = '/main';
+
+  @override
+  State<MainView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  int _selectedPageIndex = 0;
+  late final PageController _pageController;
+  
+  final List<Widget> _pages = [
+    const HomeView(),
+    CharacterView(),
+    SettingsView(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedPageIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _selectedPageIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedPageIndex = index;
+            _pageController.jumpToPage(index);
+          });
+        },
+      ),
+    );
   }
 }

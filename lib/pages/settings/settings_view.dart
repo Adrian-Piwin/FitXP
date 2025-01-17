@@ -1,18 +1,27 @@
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/enums/unit_system.enum.dart';
-import '../../components/bottom_nav_bar.dart';
 import 'settings_controller.dart';
 import '../../services/error_logger.service.dart';
 
-class SettingsView extends StatelessWidget {
-  SettingsView({super.key});
-  final SettingsController controller = SettingsController();
-
+class SettingsView extends StatefulWidget {
   static const routeName = '/settings';
+  
+  const SettingsView({super.key});
+
+  @override
+  State<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  final SettingsController controller = SettingsController();
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -75,7 +84,6 @@ class SettingsView extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(currentIndex: 2)
     );
   }
 }

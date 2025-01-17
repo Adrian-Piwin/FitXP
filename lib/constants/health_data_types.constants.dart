@@ -27,7 +27,7 @@ final List<HealthDataType> trendTypes = [
   HealthDataType.BODY_MASS_INDEX,
 ];
 
-final List<HealthDataType> AllHealthDataTypes = [
+final List<HealthDataType> allHealthDataTypes = [
   ...healthDataTypes,
   ...sleepTypes,
 ];

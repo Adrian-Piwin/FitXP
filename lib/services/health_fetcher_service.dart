@@ -23,14 +23,14 @@ class HealthFetcherService {
 
   Future<void> _initialize() async {
     await dotenv.load(fileName: ".env");
-    _isAuthorized = await _health.hasPermissions(AllHealthDataTypes) == true;
+    _isAuthorized = await _health.hasPermissions(allHealthDataTypes) == true;
     _cache = await HealthDataCache.getInstance();
   }
 
   Future<bool> checkAndRequestPermissions() async {
-    _isAuthorized = await _health.hasPermissions(AllHealthDataTypes) == true;
+    _isAuthorized = await _health.hasPermissions(allHealthDataTypes) == true;
     if (!_isAuthorized) {
-      _isAuthorized = await _health.requestAuthorization(AllHealthDataTypes);
+      _isAuthorized = await _health.requestAuthorization(allHealthDataTypes);
     }
     return _isAuthorized;
   }

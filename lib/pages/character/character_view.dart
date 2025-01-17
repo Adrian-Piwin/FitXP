@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/bottom_nav_bar.dart';
 import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +7,22 @@ import 'package:healthxp/pages/character/character_controller.dart';
 import 'package:healthxp/components/character_model_viewer.dart';
 import 'package:healthxp/components/three_d_circular_progress.dart';
 
-class CharacterView extends StatelessWidget {
+class CharacterView extends StatefulWidget {
   CharacterView({super.key});
-  static const routeName = '/character';
+
+  @override
+  State<CharacterView> createState() => _CharacterViewState();
+}
+
+class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
 
   final _modelViewerKey = GlobalKey<CharacterModelViewerState>();
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ChangeNotifierProvider<CharacterController>(
       create: (context) => CharacterController(),
       child: Scaffold(
@@ -184,7 +191,6 @@ class CharacterView extends StatelessWidget {
             ),
           ),
         ),
-        bottomNavigationBar: const BottomNavBar(currentIndex: 1),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
+import 'package:healthxp/pages/app.dart';
 import 'permissions_controller.dart';
-import '../home/home_view.dart';
 
 class PermissionsView extends StatefulWidget {
   const PermissionsView({super.key});
@@ -24,7 +24,7 @@ class _PermissionsViewState extends State<PermissionsView> {
   Future<void> _checkPermissions() async {
     bool isAuthorized = await _controller.checkPermissions();
     if (isAuthorized && mounted) {
-      Navigator.of(context).pushReplacementNamed(HomeView.routeName);
+      Navigator.of(context).pushReplacementNamed(MainView.routeName);
     } else {
       // Permissions not granted, stay on this page
       setState(() {});
