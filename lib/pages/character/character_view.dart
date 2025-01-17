@@ -34,13 +34,13 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                 const SizedBox(height: GapSizes.huge),
                 
                 SizedBox(
-                  height: 600,
+                  height: 550,
                   child: Stack(
                     children: [
                       // Progress rings layer
                       Positioned(
                         top: 0,
-                        bottom: -240,
+                        bottom: -280,
                         left: 110,
                         child: Center(
                           child: Stack(
@@ -70,8 +70,8 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                       // Model viewer layer
                       Positioned(
                         right: -50,
-                        top: -80,
-                        bottom: 0,
+                        top: 0,
+                        bottom: 50,
                         width: MediaQuery.of(context).size.width * 0.9,
                         child: CharacterModelViewer(key: _modelViewerKey),
                       ),
@@ -180,8 +180,6 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                     ],
                   ),
                 ),
-                
-                const SizedBox(height: 20),
                 
                 ElevatedButton(
                   onPressed: controller.refreshXP,
