@@ -57,23 +57,40 @@ class HealthDataDetailPage extends StatelessWidget {
             Expanded(
               child: Consumer<HealthDetailsController>(
                 builder: (context, controller, _) {
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        if (controller.widget.getGoalPercent != -1)
-                          Padding(
-                            padding: const EdgeInsets.all(GapSizes.large),
-                            child: InfoBar(
-                              title: controller.widget.healthItem.title,
-                              value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValueWithUnit : controller.widget.getDisplayAverage,
-                              goal: controller.widget.getDisplayGoalWithUnit,
-                              percent: controller.widget.getGoalPercent,
-                              color: controller.widget.healthItem.color,
-                              textColor: controller.widget.healthItem.offColor,
+                  return GestureDetector(
+                    onHorizontalDragEnd: (details) {
+                      if (details.primaryVelocity == null) return;
+                      
+                      // Swiping right (positive velocity)
+                      if (details.primaryVelocity! > 0) {
+                        controller.updateOffset(controller.offset - 1);
+                      }
+                      // Swiping left (negative velocity)
+                      else if (details.primaryVelocity! < 0) {
+                        // Only allow going forward if not at current date
+                        if (controller.offset != 0) {
+                          controller.updateOffset(controller.offset + 1);
+                        }
+                      }
+                    },
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          if (controller.widget.getGoalPercent != -1)
+                            Padding(
+                              padding: const EdgeInsets.all(GapSizes.large),
+                              child: InfoBar(
+                                title: controller.widget.healthItem.title,
+                                value: controller.widget.timeframe == TimeFrame.day ? controller.widget.getDisplayValueWithUnit : controller.widget.getDisplayAverage,
+                                goal: controller.widget.getDisplayGoalWithUnit,
+                                percent: controller.widget.getGoalPercent,
+                                color: controller.widget.healthItem.color,
+                                textColor: controller.widget.healthItem.offColor,
+                              ),
                             ),
-                          ),
-                        GridLayout(widgets: controller.getDetailWidgets),
-                      ],
+                          GridLayout(widgets: controller.getDetailWidgets),
+                        ],
+                      ),
                     ),
                   );
                 },
