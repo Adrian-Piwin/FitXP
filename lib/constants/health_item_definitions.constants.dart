@@ -32,7 +32,7 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreGrey
     ..icon = IconTypes.proteinIcon
     ..iconSizeMultiplier = 0.90
-    ..xpType = XPType.hitProteinGoal;
+    ..xpType = XPType.protein;
 
   static HealthItem exerciseTime = HealthItem()
     ..dataType = [HealthDataType.EXERCISE_TIME]
@@ -41,7 +41,8 @@ class HealthItemDefinitions {
     ..unit = "min"
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreGrey
-    ..icon = IconTypes.exerciseIcon;
+    ..icon = IconTypes.exerciseIcon
+    ..xpType = XPType.exerciseTime;
 
   static HealthItem workoutTime = HealthItem()
     ..dataType = [HealthDataType.WORKOUT]

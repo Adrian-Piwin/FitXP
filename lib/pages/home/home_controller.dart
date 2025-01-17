@@ -98,7 +98,7 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await setDataPerWidget(_healthFetcherService, healthItemEntities, _selectedTimeFrame, _offset);
+      await setDataPerWidgetWithTimeframe(_healthFetcherService, healthItemEntities, _selectedTimeFrame, _offset);
       displayWidgets = _widgetConfigurationService.getWidgets();
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/constants/xp.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
@@ -18,9 +19,20 @@ class XpService {
   static const String _allTimeXPLastFetchedKey = 'all_time_xp_last_fetched';
   static const String _rankXPLastFetchedKey = 'rank_xp_last_fetched';
 
+  static final DateTimeRange _defaultDateRange = DateTimeRange(
+    start: DateTime.now().subtract(const Duration(days: 365)),
+    end: DateTime.now(),
+  );
+
   static List<HealthItem> goalEntities = [
     HealthItemDefinitions.sleepDuration,
     HealthItemDefinitions.netCalories,
+    HealthItemDefinitions.proteinIntake,
+  ];
+
+  List<HealthItem> valueEntities = [
+    HealthItemDefinitions.exerciseTime,
+    HealthItemDefinitions.steps,
     HealthItemDefinitions.proteinIntake,
   ];
 
@@ -59,7 +71,7 @@ class XpService {
       _xp = cachedAllTimeXP;
       _rankXP = cachedRankXP;
     } else {
-      var allXPs = await _getXPForReachedGoal(goalEntities, TimeFrame.year);
+      var allXPs = await _getXPForValue(valueEntities, TimeFrame.year);
       _xp = await getAllTimeXP(allXPs);
       _rankXP = await getRankXP(allXPs);
     }
@@ -67,7 +79,7 @@ class XpService {
 
   Future<void> reset() async {
     await _xpBox.clear();
-    var allXPs = await _getXPForReachedGoal(goalEntities, TimeFrame.year);
+    var allXPs = await _getXPForValue(valueEntities, TimeFrame.year);
     _xp = await getAllTimeXP(allXPs);
     _rankXP = await getRankXP(allXPs);
   }
@@ -98,9 +110,24 @@ class XpService {
     return totalXP;
   }
 
+  Future<List<EntityXP>> _getXPForValue(List<HealthItem> healthItems, TimeFrame timeframe) async {
+    List<HealthEntity> entities = await initializeWidgets(healthItems);
+    await setDataPerWidgetWithDateRange(_healthFetcherService, entities, _defaultDateRange);
+
+    List<EntityXP> entityXPs = [];
+    for (var entity in entities) {
+      entityXPs.add(EntityXP(
+          entity: entity,
+          value: xpMapping[entity.healthItem.xpType]! * entity.total,
+          date: DateTime.now(),
+        ));
+    }
+    return entityXPs;
+  }
+
   Future<List<EntityXP>> _getXPForReachedGoal(List<HealthItem> healthItems, TimeFrame timeframe) async {
     List<HealthEntity> entities = await initializeWidgets(healthItems);
-    await setDataPerWidget(_healthFetcherService, entities, timeframe, 0);
+    await setDataPerWidgetWithDateRange(_healthFetcherService, entities, _defaultDateRange);
 
     List<EntityXP> entityXPs = [];
     for (var entity in entities) {
@@ -109,7 +136,7 @@ class XpService {
         if (data.value.abs() >= entity.goal.abs()) {
           entityXPs.add(EntityXP(
             entity: entity,
-            value: xpMapping[entity.healthItem.xpType]!,
+            value: xpGoalMapping[entity.healthItem.xpType]!,
             date: data.key,
           ));
         }

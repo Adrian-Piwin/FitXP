@@ -4,5 +4,7 @@ enum XPType {
   hitSleepGoal,
   minuteOfCardio,
   minuteOfStrengthTraining,
-  steps
+  steps,
+  protein,
+  exerciseTime,
 }

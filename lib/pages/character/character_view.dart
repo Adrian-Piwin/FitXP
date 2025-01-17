@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/bottom_nav_bar.dart';
-import 'package:healthxp/components/info_bar.dart';
 import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:provider/provider.dart';

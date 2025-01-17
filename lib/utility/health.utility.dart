@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
@@ -318,9 +319,20 @@ Future<List<HealthEntity>> initializeWidgets(List<HealthItem> healthItems) async
   return entities;
 }
 
-Future<void> setDataPerWidget(HealthFetcherService healthFetcherService, List<HealthEntity> entities, TimeFrame timeframe, int offset) async {
+Future<void> setDataPerWidgetWithTimeframe(HealthFetcherService healthFetcherService, List<HealthEntity> entities, TimeFrame timeframe, int offset) async {
   for (var widget in entities) {
     widget.updateQuery(timeframe, offset);
+  }
+  final batchData = await healthFetcherService.fetchBatchData(entities);
+
+  for (var widget in entities) {
+    widget.updateData(batchData);
+  }
+}
+
+Future<void> setDataPerWidgetWithDateRange(HealthFetcherService healthFetcherService, List<HealthEntity> entities, DateTimeRange dateRange) async {
+  for (var widget in entities) {
+    widget.queryDateRange = dateRange;
   }
   final batchData = await healthFetcherService.fetchBatchData(entities);
 
