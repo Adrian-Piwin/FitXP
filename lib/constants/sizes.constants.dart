@@ -8,6 +8,7 @@ class FontSizes {
   static const double xlarge = 18.0;
   static const double xxlarge = 24.0;
   static const double xxxlarge = 32.0;
+  static const double xxxxlarge = 36.0;
   static const double huge = 120.0;
 }
 

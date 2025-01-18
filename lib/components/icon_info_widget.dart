@@ -17,7 +17,7 @@ class IconInfoWidget extends WidgetFrame {
     required this.iconColor,
   }) : super(
           size: 2,
-          height: WidgetSizes.smallHeight,
+          height: WidgetSizes.mediumHeight,
         );
 
   @override
@@ -33,13 +33,13 @@ class IconInfoWidget extends WidgetFrame {
           ),
           textAlign: TextAlign.center,
         ),
-        const Spacer(),
+        const SizedBox(height: GapSizes.large),
         FaIcon(
           icon,
-          size: FontSizes.xxlarge,
+          size: FontSizes.xxxxlarge,
           color: iconColor,
         ),
-        const Spacer(),
+        const SizedBox(height: GapSizes.medium),
         Text(
           displayValue,
           style: const TextStyle(

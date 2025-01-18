@@ -19,4 +19,6 @@ class IconTypes{
   static const IconData bodyFatIcon = FontAwesomeIcons.person;
   static const IconData editIcon = FontAwesomeIcons.solidPenToSquare;
   static const IconData medalIcon = FontAwesomeIcons.medal;
+  static const IconData streakIcon = FontAwesomeIcons.fire;
+  static const IconData averageIcon = FontAwesomeIcons.stopwatch;
 }

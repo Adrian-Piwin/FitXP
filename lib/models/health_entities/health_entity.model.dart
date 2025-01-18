@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/goal_edit_button.dart';
+import 'package:healthxp/components/icon_info_widget.dart';
 import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
+import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/magic_numbers.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
@@ -203,17 +205,23 @@ class HealthEntity extends ChangeNotifier {
 
   List<Widget> get getInfoWidgets {
     return [
-      InfoWidget(
+      IconInfoWidget(
         title: "Streak",
-        displayValue: cachedStreak.toString(),
+        displayValue: "${cachedStreak.toString()} day streak",
+        icon: IconTypes.streakIcon,
+        iconColor: healthItem.color,
       ),
-      InfoWidget(
+      IconInfoWidget(
         title: "Total",
         displayValue: getDisplayValueWithUnit,
+        icon: healthItem.icon,
+        iconColor: healthItem.color,
       ),
-      InfoWidget(
+      IconInfoWidget(
         title: "Average",
         displayValue: getDisplayAverage,
+        icon: IconTypes.averageIcon,
+        iconColor: healthItem.color,
       ),
     ];
   }
@@ -247,16 +255,24 @@ class HealthEntity extends ChangeNotifier {
     _clearCache();
   }
 
-  Future<Map<HealthDataType, List<DataPoint>>> getData(DateTimeRange dateRange) async {
+  Future<List<DataPoint>> getData(DateTimeRange dateRange) async {
     var oldQueryDateRange = queryDateRange;
+    var oldData = data;
+    _clearCache();
+
     queryDateRange = dateRange;
     final batchData = await healthFetcherService.fetchBatchData([this]);
-    queryDateRange = oldQueryDateRange;
-    return Map.fromEntries(
+    data = Map.fromEntries(
       healthItem.dataType.map((type) => 
         MapEntry(type, batchData[type] ?? [])
       )
     );
+    final result = getCurrentData;
+
+    data = oldData;
+    queryDateRange = oldQueryDateRange;
+    _clearCache();
+    return result;
   }
 
   // #endregion

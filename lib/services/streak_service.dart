@@ -5,8 +5,8 @@ class StreakService {
   Future<int> getStreak(HealthEntity entity, double goalValue) async {
     final now = DateTime.now();
     final startDate = now.subtract(const Duration(days: 30));
-    
-    final data = await entity.getData(DateTimeRange(
+
+    var data = await entity.getData(DateTimeRange(
       start: startDate,
       end: now,
     ));
@@ -15,38 +15,25 @@ class StreakService {
     DateTime currentDate = now;
     
     while (currentDate.isAfter(startDate)) {
-      bool metGoalForDay = false;
+      final dayData = data.where((point) => 
+        point.dayOccurred.year == currentDate.year &&
+        point.dayOccurred.month == currentDate.month &&
+        point.dayOccurred.day == currentDate.day
+      ).toList();
       
-      for (var type in entity.healthItem.dataType) {
-        final dayData = data[type]?.where((point) => 
-          point.dayOccurred.year == currentDate.year &&
-          point.dayOccurred.month == currentDate.month &&
-          point.dayOccurred.day == currentDate.day
-        ).toList() ?? [];
-        
-        if (dayData.isEmpty) {
-          metGoalForDay = false;
-          break;
-        }
-        
-        double dailyTotal = 0;
-        for (var point in dayData) {
-          dailyTotal += point.value;
-        }
-        
-        if (dailyTotal >= goalValue) {
-          metGoalForDay = true;
-        } else {
-          metGoalForDay = false;
-          break;
-        }
+      if (dayData.isEmpty) break;
+      
+      double dailyTotal = 0;
+      for (var point in dayData) {
+        dailyTotal += point.value;
       }
       
-      if (!metGoalForDay) {
+      if (dailyTotal >= goalValue) {
+        streak++;
+      } else {
         break;
       }
       
-      streak++;
       currentDate = currentDate.subtract(const Duration(days: 1));
     }
     
