@@ -341,6 +341,7 @@ class HealthEntity extends ChangeNotifier {
       unit: healthItem.unit,
       allowDecimals: healthItem.doesGoalSupportDecimals,
       allowNegative: healthItem.doesGoalSupportNegative,
+      allowTimeInput: healthItem.doesGoalSupportTimeInput,
       onSave: (value) async {
         await updateGoal(value);
       },

@@ -66,6 +66,7 @@ class HealthItemDefinitions {
     ..icon = IconTypes.sleepDurationIcon
     ..iconSizeMultiplier = 0.90
     ..xpType = XPType.hitSleepGoal
+    ..doesGoalSupportTimeInput = true
     ..widgetFactory = ((item, widgetSize, healthFetcherService) =>
         SleepHealthEntity(item, widgetSize, healthFetcherService));
 

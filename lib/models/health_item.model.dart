@@ -22,6 +22,7 @@ class HealthItem {
   bool doesGoalSupportStreaks = true;
   bool doesGoalSupportDecimals = false;
   bool doesGoalSupportNegative = false;
+  bool doesGoalSupportTimeInput = false;
   WidgetFactory widgetFactory =
       ((item, widgetSize, healthFetcherService) =>
           HealthEntity(item, widgetSize, healthFetcherService));

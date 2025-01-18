@@ -10,6 +10,7 @@ class GoalEditButton extends WidgetFrame {
   final String unit;
   final bool allowDecimals;
   final bool allowNegative;
+  final bool allowTimeInput;
   final Function(double value) onSave;
   final double? currentValue;
 
@@ -19,6 +20,7 @@ class GoalEditButton extends WidgetFrame {
     required this.unit,
     this.allowDecimals = false,
     this.allowNegative = false,
+    this.allowTimeInput = false,
     required this.onSave,
     this.currentValue,
   }) : super(
@@ -41,7 +43,6 @@ class GoalEditButton extends WidgetFrame {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // Centered text
             Center(
               child: Text(
                 label,
@@ -52,7 +53,6 @@ class GoalEditButton extends WidgetFrame {
                 ),
               ),
             ),
-            // Right-aligned icon
             Positioned(
               right: 0,
               child: const Icon(
@@ -67,10 +67,16 @@ class GoalEditButton extends WidgetFrame {
   }
 
   Future<void> _showEditDialog(BuildContext context) async {
-    final controller = TextEditingController(
-      text: allowDecimals
-          ? currentValue?.abs().toString() ?? '0'
-          : (currentValue?.abs().toInt() ?? 0).toString(),
+    final hoursController = TextEditingController(
+      text: allowTimeInput
+          ? ((currentValue ?? 0) ~/ 60).toString()
+          : currentValue?.abs().toInt().toString() ?? '0',
+    );
+    
+    final minutesController = TextEditingController(
+      text: allowTimeInput
+          ? ((currentValue ?? 0) % 60).toInt().toString()
+          : '',
     );
 
     bool isNegative = currentValue != null && currentValue! < 0;
@@ -89,9 +95,10 @@ class GoalEditButton extends WidgetFrame {
               ),
               contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
               content: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: 100,
-                  child: Column(children: [
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 100,
+                child: Column(
+                  children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -107,39 +114,84 @@ class GoalEditButton extends WidgetFrame {
                           ),
                           const SizedBox(width: GapSizes.small),
                         ],
-                        SizedBox(
-                          width: 120,
-                          child: TextField(
-                            controller: controller,
-                            keyboardType: TextInputType.numberWithOptions(
-                              decimal: allowDecimals,
-                            ),
-                            inputFormatters: [
-                              if (allowDecimals)
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d*$'))
-                              else
+                        if (allowTimeInput) ...[
+                          // Hours input
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: hoursController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            decoration: InputDecoration(
-                              suffix: Text(unit),
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: PaddingSizes.medium,
-                                vertical: PaddingSizes.small,
+                              ],
+                              decoration: const InputDecoration(
+                                suffix: Text('h'),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: PaddingSizes.medium,
+                                  vertical: PaddingSizes.small,
+                                ),
                               ),
+                              autofocus: true,
+                              textAlign: TextAlign.center,
                             ),
-                            autofocus: true,
-                            textAlign: TextAlign.center,
                           ),
-                        ),
+                          const SizedBox(width: GapSizes.small),
+                          // Minutes input
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: minutesController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              decoration: const InputDecoration(
+                                suffix: Text('m'),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: PaddingSizes.medium,
+                                  vertical: PaddingSizes.small,
+                                ),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ] else ...[
+                          SizedBox(
+                            width: 120,
+                            child: TextField(
+                              controller: hoursController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                if (allowDecimals)
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d*$'))
+                                else
+                                  FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              decoration: InputDecoration(
+                                suffix: Text(unit),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: PaddingSizes.medium,
+                                  vertical: PaddingSizes.small,
+                                ),
+                              ),
+                              autofocus: true,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: GapSizes.small),
-                  ])),
+                  ],
+                ),
+              ),
               actions: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -152,8 +204,18 @@ class GoalEditButton extends WidgetFrame {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            final value = double.tryParse(controller.text);
-                            if (value != null) {
+                            double value;
+                            if (allowTimeInput) {
+                              final hours = int.tryParse(hoursController.text) ?? 0;
+                              final minutes = int.tryParse(minutesController.text) ?? 0;
+                              value = hours * 60 + minutes.toDouble();
+                            } else {
+                              value = double.tryParse(hoursController.text) ?? 0;
+                              if (!allowDecimals) {
+                                value = value.roundToDouble();
+                              }
+                            }
+                            if (value != 0) {
                               onSave(isNegative ? -value : value);
                               Navigator.of(context).pop();
                             }
