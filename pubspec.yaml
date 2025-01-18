@@ -35,7 +35,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   syncfusion_flutter_charts: ^27.2.5
-  o3d: ^3.1.0
   model_viewer_plus: ^1.7.0
   webview_flutter: ^4.10.0
 

@@ -64,10 +64,10 @@ class HealthEntity extends ChangeNotifier {
     _goalsService = await GoalsService.getInstance();
     await _loadGoal();
 
-    // if (healthItem.doesGoalSupportStreaks) {
-    //   var streakService = StreakService(healthFetcherService);
-    //   cachedStreak = await streakService.getStreak(this, goal);
-    // }
+    if (healthItem.doesGoalSupportStreaks) {
+      var streakService = StreakService();
+      cachedStreak = await streakService.getStreak(this, goal);
+    }
   }
 
   // #region Getters
@@ -245,6 +245,18 @@ class HealthEntity extends ChangeNotifier {
       )
     );
     _clearCache();
+  }
+
+  Future<Map<HealthDataType, List<DataPoint>>> getData(DateTimeRange dateRange) async {
+    var oldQueryDateRange = queryDateRange;
+    queryDateRange = dateRange;
+    final batchData = await healthFetcherService.fetchBatchData([this]);
+    queryDateRange = oldQueryDateRange;
+    return Map.fromEntries(
+      healthItem.dataType.map((type) => 
+        MapEntry(type, batchData[type] ?? [])
+      )
+    );
   }
 
   // #endregion
