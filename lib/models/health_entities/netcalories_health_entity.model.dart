@@ -6,13 +6,15 @@ class NetCaloriesHealthEntity extends HealthEntity {
   NetCaloriesHealthEntity(
     super.healthItem,
     super.timeFrame,
+    super.healthFetcherService,
   );
 
   @override
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
-    Map<HealthDataType, List<DataPoint>> newData = Map.from(batchData);
-    if (batchData.containsKey(HealthDataType.ACTIVE_ENERGY_BURNED)) {
-      newData[HealthDataType.ACTIVE_ENERGY_BURNED] = batchData[HealthDataType.ACTIVE_ENERGY_BURNED]!
+  Future<void> updateData() async {
+    await super.updateData();
+    Map<HealthDataType, List<DataPoint>> newData = Map.from(data);
+    if (data.containsKey(HealthDataType.ACTIVE_ENERGY_BURNED)) {
+      newData[HealthDataType.ACTIVE_ENERGY_BURNED] = data[HealthDataType.ACTIVE_ENERGY_BURNED]!
           .map((point) => DataPoint(
                 value: -point.value,
                 dateFrom: point.dateFrom,
@@ -21,8 +23,8 @@ class NetCaloriesHealthEntity extends HealthEntity {
               ))
           .toList();
     }
-    if (batchData.containsKey(HealthDataType.BASAL_ENERGY_BURNED)) {
-      newData[HealthDataType.BASAL_ENERGY_BURNED] = batchData[HealthDataType.BASAL_ENERGY_BURNED]!
+    if (data.containsKey(HealthDataType.BASAL_ENERGY_BURNED)) {
+      newData[HealthDataType.BASAL_ENERGY_BURNED] = data[HealthDataType.BASAL_ENERGY_BURNED]!
           .map((point) => DataPoint(
                 value: -point.value,
                 dateFrom: point.dateFrom,
@@ -31,7 +33,8 @@ class NetCaloriesHealthEntity extends HealthEntity {
               ))
           .toList();
     }
-    super.updateData(newData);
+
+    data = newData;
   }
 
   @override
@@ -50,6 +53,6 @@ class NetCaloriesHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return NetCaloriesHealthEntity(healthItem, widgetSize)..data = data;
+    return NetCaloriesHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 }

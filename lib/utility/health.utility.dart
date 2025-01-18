@@ -307,11 +307,12 @@ Map<DateTime, double> getDailyData(List<DataPoint> data) {
   return dataByDay.map((key, value) => MapEntry(key, value.fold(0.0, (sum, point) => sum + point.value)));
 }
 
-Future<List<HealthEntity>> initializeWidgets(List<HealthItem> healthItems) async {
+Future<List<HealthEntity>> initializeWidgets(List<HealthItem> healthItems, HealthFetcherService healthFetcherService) async {
   List<HealthEntity> entities = healthItems.map((healthItem) {
     var entity = healthItem.widgetFactory(
       healthItem,
       2,
+      healthFetcherService,
     );
     return entity;
   }).toList();
@@ -323,10 +324,9 @@ Future<void> setDataPerWidgetWithTimeframe(HealthFetcherService healthFetcherSer
   for (var widget in entities) {
     widget.updateQuery(timeframe, offset);
   }
-  final batchData = await healthFetcherService.fetchBatchData(entities);
 
   for (var widget in entities) {
-    widget.updateData(batchData);
+    await widget.updateData();
   }
 }
 
@@ -334,9 +334,8 @@ Future<void> setDataPerWidgetWithDateRange(HealthFetcherService healthFetcherSer
   for (var widget in entities) {
     widget.queryDateRange = dateRange;
   }
-  final batchData = await healthFetcherService.fetchBatchData(entities);
 
   for (var widget in entities) {
-    widget.updateData(batchData);
+    await widget.updateData();
   }
 }

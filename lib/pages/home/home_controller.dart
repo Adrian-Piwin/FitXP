@@ -58,11 +58,12 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> _initialize() async {
+    await _healthFetcherService.initialize();
     _isLoading = true;
     notifyListeners();
 
     try {
-      healthItemEntities = await initializeWidgets(healthItems);
+      healthItemEntities = await initializeWidgets(healthItems, _healthFetcherService);
       
       // Add listeners to each entity
       for (var entity in healthItemEntities) {

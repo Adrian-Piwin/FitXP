@@ -7,7 +7,7 @@ import 'package:healthxp/utility/health.utility.dart';
 import 'package:healthxp/utility/timeframe.utility.dart';
 
 class TrendHealthEntity extends HealthEntity {
-  TrendHealthEntity(super.healthItem, super.widgetSize);
+  TrendHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);
 
   DataPoint? get mostRecentDataPoint {
     if (getCombinedData.isEmpty) return null;
@@ -92,6 +92,6 @@ class TrendHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return TrendHealthEntity(healthItem, widgetSize)..data = data;
+    return TrendHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 }

@@ -12,6 +12,8 @@ import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthxp/services/health_fetcher_service.dart';
+import 'package:healthxp/services/streak_service.dart';
 import 'package:healthxp/utility/chart.utility.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/utility/general.utility.dart';
@@ -22,6 +24,7 @@ import '../../services/goals_service.dart';
 class HealthEntity extends ChangeNotifier {
   final HealthItem healthItem;
   late final GoalsService _goalsService;
+  final HealthFetcherService healthFetcherService;
   double? _cachedGoal;
   final int widgetSize;
 
@@ -50,15 +53,21 @@ class HealthEntity extends ChangeNotifier {
   DateTimeRange? queryDateRange;
   double? cachedTotal;
   double? cachedAverage;
+  int? cachedStreak = 0;
   List<DataPoint>? cachedMergedData;
 
-  HealthEntity(this.healthItem, this.widgetSize) {
+  HealthEntity(this.healthItem, this.widgetSize, this.healthFetcherService) {
     _initialize();
   }
 
   Future<void> _initialize() async {
     _goalsService = await GoalsService.getInstance();
     await _loadGoal();
+
+    // if (healthItem.doesGoalSupportStreaks) {
+    //   var streakService = StreakService(healthFetcherService);
+    //   cachedStreak = await streakService.getStreak(this, goal);
+    // }
   }
 
   // #region Getters
@@ -195,20 +204,16 @@ class HealthEntity extends ChangeNotifier {
   List<Widget> get getInfoWidgets {
     return [
       InfoWidget(
+        title: "Streak",
+        displayValue: cachedStreak.toString(),
+      ),
+      InfoWidget(
         title: "Total",
         displayValue: getDisplayValueWithUnit,
       ),
       InfoWidget(
         title: "Average",
         displayValue: getDisplayAverage,
-      ),
-      InfoWidget(
-        title: "Goal",
-        displayValue: getDisplayGoalWithUnit,
-      ),
-      InfoWidget(
-        title: "Goal Progress",
-        displayValue: getDisplayGoalWithUnitAveragePercent,
       ),
     ];
   }
@@ -232,8 +237,8 @@ class HealthEntity extends ChangeNotifier {
     offset = newOffset;
   }
 
-  // Update the data we will use for this health entity
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
+  Future<void> updateData() async {
+    final batchData = await healthFetcherService.fetchBatchData([this]);
     data = Map.fromEntries(
       healthItem.dataType.map((type) => 
         MapEntry(type, batchData[type] ?? [])
@@ -247,7 +252,7 @@ class HealthEntity extends ChangeNotifier {
   // #region Clone
 
   HealthEntity clone() {
-    return HealthEntity(healthItem, widgetSize)..data = data;
+    return HealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 
   static HealthEntity from(HealthEntity widget) {

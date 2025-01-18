@@ -1,4 +1,3 @@
-import 'package:health/health.dart';
 import 'package:healthxp/constants/magic_numbers.constants.dart';
 import 'package:healthxp/enums/unit_system.enum.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
@@ -7,12 +6,12 @@ import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 import 'package:healthxp/services/preferences_service.dart';
 
 class WeightHealthEntity extends TrendHealthEntity {
-  WeightHealthEntity(super.healthItem, super.widgetSize);
+  WeightHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);
 
   @override
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
-    super.updateData(batchData);
-    _convertToImperialIfNeeded();
+  Future<void> updateData() async {
+    await super.updateData();
+    await _convertToImperialIfNeeded();
   }
 
   Future<void> _convertToImperialIfNeeded() async {
@@ -24,6 +23,6 @@ class WeightHealthEntity extends TrendHealthEntity {
 
   @override
   HealthEntity clone() {
-    return WeightHealthEntity(healthItem, widgetSize)..data = data;
+    return WeightHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 }

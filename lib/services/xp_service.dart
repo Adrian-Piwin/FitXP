@@ -56,6 +56,7 @@ class XpService {
   };
 
   Future<void> initialize() async {
+    await _healthFetcherService.initialize();
     await Hive.initFlutter();
     _xpBox = await Hive.openBox(_boxName);
     
@@ -111,7 +112,7 @@ class XpService {
   }
 
   Future<List<EntityXP>> _getXPForValue(List<HealthItem> healthItems, TimeFrame timeframe) async {
-    List<HealthEntity> entities = await initializeWidgets(healthItems);
+    List<HealthEntity> entities = await initializeWidgets(healthItems, _healthFetcherService);
     await setDataPerWidgetWithDateRange(_healthFetcherService, entities, _defaultDateRange);
 
     List<EntityXP> entityXPs = [];
@@ -126,7 +127,7 @@ class XpService {
   }
 
   Future<List<EntityXP>> _getXPForReachedGoal(List<HealthItem> healthItems, TimeFrame timeframe) async {
-    List<HealthEntity> entities = await initializeWidgets(healthItems);
+    List<HealthEntity> entities = await initializeWidgets(healthItems, _healthFetcherService);
     await setDataPerWidgetWithDateRange(_healthFetcherService, entities, _defaultDateRange);
 
     List<EntityXP> entityXPs = [];

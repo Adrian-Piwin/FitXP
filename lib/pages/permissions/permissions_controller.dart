@@ -7,6 +7,7 @@ class PermissionsController {
   String? errorMessage;
 
   Future<bool> checkPermissions() async {
+    await _healthService.initialize();
     try {
       isLoading = true;
       errorMessage = null;

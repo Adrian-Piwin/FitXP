@@ -1,14 +1,13 @@
-import 'package:health/health.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
 
 class BodyfatHealthEntity extends TrendHealthEntity {
-  BodyfatHealthEntity(super.healthItem, super.widgetSize);
+  BodyfatHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);
 
   @override
-  void updateData(Map<HealthDataType, List<DataPoint>> batchData) {
-    super.updateData(batchData);
+  Future<void> updateData() async {
+    await super.updateData();
     data = data.map((key, value) => MapEntry(key, value.map((point) => DataPoint(value: point.value * 100, dateFrom: point.dateFrom, dateTo: point.dateTo, dayOccurred: point.dayOccurred)).toList()));
   }
 
@@ -20,6 +19,6 @@ class BodyfatHealthEntity extends TrendHealthEntity {
 
   @override
   HealthEntity clone() {
-    return BodyfatHealthEntity(healthItem, widgetSize)..data = data;
+    return BodyfatHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 }

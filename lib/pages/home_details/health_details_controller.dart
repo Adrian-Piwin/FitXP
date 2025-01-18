@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
-import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HealthDetailsController extends ChangeNotifier {
   final HealthEntity _widget;
-  final HealthFetcherService _healthFetcherService = HealthFetcherService();
 
   bool _isLoading = false;
   TimeFrame _selectedTimeFrame;
@@ -53,9 +51,7 @@ class HealthDetailsController extends ChangeNotifier {
 
     try {
       _widget.updateQuery(_selectedTimeFrame, _offset);
-      _widget.updateData(await _healthFetcherService.fetchBatchData(
-        [_widget],
-      ));
+      await _widget.updateData();
     } catch (e) {
       await ErrorLogger.logError('Errorr fetching health data: $e');
     }

@@ -19,6 +19,7 @@ class SleepHealthEntity extends HealthEntity {
   SleepHealthEntity(
     super.healthItem,
     super.timeFrame,
+    super.healthFetcherService,
   );
   
   List<SleepDataPoint> get sleepDataPoints {
@@ -142,7 +143,7 @@ class SleepHealthEntity extends HealthEntity {
 
   @override
   HealthEntity clone() {
-    return SleepHealthEntity(healthItem, widgetSize)..data = data;
+    return SleepHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 
   String _getSleepStagePercent(SleepStage stage){

@@ -17,11 +17,7 @@ class HealthFetcherService {
   late final HealthDataCache _cache;
   bool _isAuthorized = false;
 
-  HealthFetcherService() {
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
+  Future<void> initialize() async {
     await dotenv.load(fileName: ".env");
     _isAuthorized = await _health.hasPermissions(allHealthDataTypes) == true;
     _cache = await HealthDataCache.getInstance();
