@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:healthxp/constants/animations.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/pages/character/components/character_stats_display.dart';
 import 'package:healthxp/pages/character/components/character_tab_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/pages/character/character_controller.dart';
 import 'package:healthxp/pages/character/components/character_model_viewer.dart';
+import 'package:healthxp/components/animations/fade_transition_switcher.dart';
+import 'package:healthxp/components/backgrounds/parallax_triangles_background.dart';
 
 class CharacterView extends StatefulWidget {
   CharacterView({super.key});
@@ -20,6 +23,18 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
   final _modelViewerKey = GlobalKey<CharacterModelViewerState>();
   late final TabController _tabController;
 
+  void _handleTabChange() {
+    if (!_tabController.indexIsChanging) return;
+    setState(() {
+      // Trigger rebuild to update fade transitions
+    });
+    if (_tabController.index == 0) {
+      _modelViewerKey.currentState?.animateToFrontView();
+    } else {
+      _modelViewerKey.currentState?.animateToSideView();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -29,17 +44,9 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
-  }
-
-  void _handleTabChange() {
-    if (!_tabController.indexIsChanging) return;
-    if (_tabController.index == 0) {
-      _modelViewerKey.currentState?.animateToFrontView();
-    } else {
-      _modelViewerKey.currentState?.animateToSideView();
-    }
   }
 
   @override
@@ -58,14 +65,42 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                 SizedBox(
                   height: 550,
                   child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
-                      CharacterStatsDisplay(
-                        xpRankProgressPercent: controller.xpRankProgressPercent,
-                        xpLevelProgressPercent: controller.xpLevelProgressPercent,
-                        level: controller.level,
-                        rank: controller.rank,
+                      // Background triangles - position to fill entire width
+                      Positioned(
+                        left: -MediaQuery.of(context).padding.left - 16, // Compensate for safe area and padding
+                        right: -MediaQuery.of(context).padding.right - 16,
+                        top: 0,
+                        bottom: 0,
+                        child: FadeTransitionSwitcher(
+                          showChild: _tabController.index != 0,
+                          fadeInDelay: Duration(milliseconds: 0),
+                          fadeOutDelay: const Duration(milliseconds: 0),
+                          fadeInSlideDistance: 0.25,
+                          fadeOutSlideDistance: 0,
+                          fadeInSlideDirection: SlideDirection.right,
+                          fadeOutSlideDirection: SlideDirection.right,
+                          child: const ParallaxTrianglesBackground(),
+                        ),
                       ),
                       
+                      // Stats display
+                      Positioned.fill(
+                        child: FadeTransitionSwitcher(
+                          showChild: _tabController.index == 0,
+                          fadeInDelay: Duration(milliseconds: 0),
+                          fadeOutDelay: const Duration(milliseconds: 0),
+                          child: CharacterStatsDisplay(
+                            xpRankProgressPercent: controller.xpRankProgressPercent,
+                            xpLevelProgressPercent: controller.xpLevelProgressPercent,
+                            level: controller.level,
+                            rank: controller.rank,
+                          ),
+                        ),
+                      ),
+                      
+                      // Character model
                       Positioned(
                         right: -50,
                         top: 0,
