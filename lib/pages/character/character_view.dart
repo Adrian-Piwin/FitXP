@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/animations.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/pages/character/components/character_stats_display.dart';
 import 'package:healthxp/pages/character/components/character_tab_bar.dart';
@@ -8,6 +7,7 @@ import 'package:healthxp/pages/character/character_controller.dart';
 import 'package:healthxp/pages/character/components/character_model_viewer.dart';
 import 'package:healthxp/components/animations/fade_transition_switcher.dart';
 import 'package:healthxp/components/backgrounds/parallax_triangles_background.dart';
+import 'package:healthxp/pages/character/components/progress_rings.dart';
 
 class CharacterView extends StatefulWidget {
   CharacterView({super.key});
@@ -67,9 +67,9 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // Background triangles - position to fill entire width
+                      // Background triangles
                       Positioned(
-                        left: -MediaQuery.of(context).padding.left - 16, // Compensate for safe area and padding
+                        left: -MediaQuery.of(context).padding.left - 16,
                         right: -MediaQuery.of(context).padding.right - 16,
                         top: 0,
                         bottom: 0,
@@ -85,18 +85,30 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                         ),
                       ),
                       
-                      // Stats display
-                      Positioned.fill(
-                        child: FadeTransitionSwitcher(
-                          showChild: _tabController.index == 0,
-                          fadeInDelay: Duration(milliseconds: 0),
-                          fadeOutDelay: const Duration(milliseconds: 0),
-                          child: CharacterStatsDisplay(
-                            xpRankProgressPercent: controller.xpRankProgressPercent,
-                            xpLevelProgressPercent: controller.xpLevelProgressPercent,
-                            level: controller.level,
-                            rank: controller.rank,
+                      // Progress Rings with fade transition
+                      Positioned(
+                        top: 0,
+                        bottom: -280,
+                        left: 110,
+                        child: Center(
+                          child: FadeTransitionSwitcher(
+                            showChild: _tabController.index == 0,
+                            fadeInDelay: Duration(milliseconds: 0),
+                            fadeOutDelay: const Duration(milliseconds: 0),
+                            child: ProgressRings(
+                              xpRankProgressPercent: controller.xpRankProgressPercent,
+                              xpLevelProgressPercent: controller.xpLevelProgressPercent,
+                            ),
                           ),
+                        ),
+                      ),
+                      
+                      // Stats display with its own animations
+                      Positioned.fill(
+                        child: CharacterStatsDisplay(
+                          showStats: _tabController.index == 0,
+                          level: controller.level,
+                          rank: controller.rank,
                         ),
                       ),
                       
