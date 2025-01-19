@@ -55,7 +55,7 @@ class CharacterStatsDisplay extends StatelessWidget {
           left: 0,
           top: 20,
           child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.4,
+            width: MediaQuery.of(context).size.width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

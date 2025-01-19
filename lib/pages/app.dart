@@ -23,86 +23,126 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       restorationScopeId: 'app',
 
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en', ''), // English, no country code
-          ],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English, no country code
+      ],
 
-          onGenerateTitle: (BuildContext context) =>
-              AppLocalizations.of(context)!.appTitle,
+      onGenerateTitle: (BuildContext context) =>
+          AppLocalizations.of(context)!.appTitle,
 
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark().copyWith(
-            // Main background color
-            scaffoldBackgroundColor: CoreColors.backgroundColor,  // Darker background
-            
-            // Primary color used across components
-            primaryColor: Colors.white,  // Your desired primary color
-            
-            // Color scheme affects many components
-            colorScheme: ColorScheme.dark(
-              primary: Colors.white,  // Primary color
-              secondary: Colors.white,  // Secondary color
-              surface: CoreColors.backgroundColor,  // Card/Surface color
-            ),
-            
-            // Update text theme to use Inter
-            textTheme: const TextTheme(
-              bodyLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
-              bodyMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
-              bodySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
-              // This affects all default text
-            ).apply(
-              fontFamily: 'Inter',  // This ensures Inter is used everywhere
-              bodyColor: CoreColors.textColor,
-              displayColor: CoreColors.textColor,
-            ),
-            
-            dialogTheme: DialogTheme(
-              backgroundColor: CoreColors.backgroundColor,
-              surfaceTintColor: Colors.transparent, // Removes Material 3 surface tint
-            ),
-            
-            // Button themes
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CoreColors.accentAltColor,
-              ),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                backgroundColor: CoreColors.accentAltColor,
-              ),
-            ),
+      theme: ThemeData(
+        fontFamily: 'Inter',
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontFamily: 'Inter'),
+          displayMedium: TextStyle(fontFamily: 'Inter'),
+          displaySmall: TextStyle(fontFamily: 'Inter'),
+          headlineLarge: TextStyle(fontFamily: 'Inter'),
+          headlineMedium: TextStyle(fontFamily: 'Inter'),
+          headlineSmall: TextStyle(fontFamily: 'Inter'),
+          titleLarge: TextStyle(fontFamily: 'Inter'),
+          titleMedium: TextStyle(fontFamily: 'Inter'),
+          titleSmall: TextStyle(fontFamily: 'Inter'),
+          bodyLarge: TextStyle(fontFamily: 'Inter'),
+          bodyMedium: TextStyle(fontFamily: 'Inter'),
+          bodySmall: TextStyle(fontFamily: 'Inter'),
+          labelLarge: TextStyle(fontFamily: 'Inter'),
+          labelMedium: TextStyle(fontFamily: 'Inter'),
+          labelSmall: TextStyle(fontFamily: 'Inter'),
+        ),
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        // Main background color
+        scaffoldBackgroundColor: CoreColors.backgroundColor,
+        
+        // Primary color used across components
+        primaryColor: Colors.white,
+        
+        // Color scheme affects many components
+        colorScheme: ColorScheme.dark(
+          primary: Colors.white,
+          secondary: Colors.white,
+          surface: CoreColors.backgroundColor,
+        ),
+        
+        // Text theme with Inter font
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontFamily: 'Inter'),
+          displayMedium: TextStyle(fontFamily: 'Inter'),
+          displaySmall: TextStyle(fontFamily: 'Inter'),
+          headlineLarge: TextStyle(fontFamily: 'Inter'),
+          headlineMedium: TextStyle(fontFamily: 'Inter'),
+          headlineSmall: TextStyle(fontFamily: 'Inter'),
+          titleLarge: TextStyle(fontFamily: 'Inter'),
+          titleMedium: TextStyle(fontFamily: 'Inter'),
+          titleSmall: TextStyle(fontFamily: 'Inter'),
+          bodyLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+          bodyMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+          bodySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+          labelLarge: TextStyle(fontFamily: 'Inter'),
+          labelMedium: TextStyle(fontFamily: 'Inter'),
+          labelSmall: TextStyle(fontFamily: 'Inter'),
+        ).apply(
+          fontFamily: 'Inter',
+          bodyColor: CoreColors.textColor,
+          displayColor: CoreColors.textColor,
+        ),
+        
+        // Dialog theme
+        dialogTheme: DialogTheme(
+          backgroundColor: CoreColors.backgroundColor,
+          surfaceTintColor: Colors.transparent,
+          titleTextStyle: const TextStyle(
+            fontFamily: 'Inter',
+            color: CoreColors.textColor,
           ),
-          themeMode: ThemeMode.dark,
-          home: const AuthGate(),
+          contentTextStyle: const TextStyle(
+            fontFamily: 'Inter',
+            color: CoreColors.textColor,
+          ),
+        ),
+        
+        // Button themes
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: CoreColors.accentAltColor,
+            textStyle: const TextStyle(fontFamily: 'Inter'),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            backgroundColor: CoreColors.accentAltColor,
+          ),
+        ),
+      ),
+      themeMode: ThemeMode.dark,
+      home: const AuthGate(),
 
-          // Only keep routes for non-bottom-nav pages if needed
-          onGenerateRoute: (RouteSettings routeSettings) {
-            return PageRouteBuilder<void>(
-              settings: routeSettings,
-              pageBuilder: (BuildContext context, Animation<double> animation,
-                  Animation<double> secondaryAnimation) {
-                switch (routeSettings.name) {
-                  case PermissionsView.routeName:
-                    return const PermissionsView();
-                  case MainView.routeName:
-                    return const MainView();
-                  default:
-                    return const AuthGate();
-                }
-              },
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
-            );
+      // Only keep routes for non-bottom-nav pages if needed
+      onGenerateRoute: (RouteSettings routeSettings) {
+        return PageRouteBuilder<void>(
+          settings: routeSettings,
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            switch (routeSettings.name) {
+              case PermissionsView.routeName:
+                return const PermissionsView();
+              case MainView.routeName:
+                return const MainView();
+              default:
+                return const AuthGate();
+            }
           },
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         );
+      },
+    );
   }
 }
 
