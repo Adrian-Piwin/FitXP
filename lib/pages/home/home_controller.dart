@@ -77,7 +77,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
       displayWidgets = _widgetConfigurationService.getWidgets();
 
       // Deplay so our widgets are loaded before we fetch data
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 200));
 
       await fetchHealthData();
       _isLoading = false;

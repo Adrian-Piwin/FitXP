@@ -3,7 +3,7 @@ import 'package:healthxp/models/health_entities/health_entity.model.dart';
 
 class StreakService {
   Future<int> getStreak(HealthEntity entity, double goalValue) async {
-    final now = DateTime.now();
+    final now = DateTime.now().subtract(const Duration(days: 1));
     final startDate = now.subtract(const Duration(days: 30));
 
     var data = await entity.getData(DateTimeRange(
@@ -28,7 +28,7 @@ class StreakService {
         dailyTotal += point.value;
       }
       
-      if (dailyTotal >= goalValue) {
+      if (dailyTotal.abs() >= goalValue.abs()) {
         streak++;
       } else {
         break;
