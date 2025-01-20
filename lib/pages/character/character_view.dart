@@ -24,10 +24,8 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
   late final TabController _tabController;
 
   void _handleTabChange() {
-    if (!_tabController.indexIsChanging) return;
-    setState(() {
-      // Trigger rebuild to update fade transitions
-    });
+    setState(() {});
+    
     if (_tabController.index == 0) {
       _modelViewerKey.currentState?.animateToFrontView();
     } else {
@@ -63,7 +61,7 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                 const SizedBox(height: GapSizes.huge),
                 
                 SizedBox(
-                  height: 550,
+                  height: 500,
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
@@ -89,7 +87,7 @@ class _CharacterViewState extends State<CharacterView> with AutomaticKeepAliveCl
                       Positioned(
                         top: 0,
                         bottom: -280,
-                        left: 110,
+                        right: -5,
                         child: Center(
                           child: FadeTransitionSwitcher(
                             showChild: _tabController.index == 0,

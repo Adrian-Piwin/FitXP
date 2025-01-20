@@ -43,12 +43,22 @@ class CharacterModelViewerState extends State<CharacterModelViewer> {
             const modelViewer = document.querySelector('model-viewer');
             
             if (modelViewer) {
+              // Disable dragging/scrolling
+              modelViewer.style.touchAction = 'none';
+              
+              // Prevent all mouse/touch events that could move the model
+              modelViewer.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+              modelViewer.addEventListener('mousemove', (e) => e.preventDefault());
+              modelViewer.addEventListener('mousedown', (e) => e.preventDefault());
+              modelViewer.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+              
               // Set up load event listener
               modelViewer.addEventListener('load', () => {
                 
                 // Set initial camera position
                 modelViewer.cameraOrbit = '0deg 90deg 5m';
                 modelViewer.fieldOfView = '30deg';
+                modelViewer.interactionPrompt = 'none';  // Disable interaction prompt
                 
                 // Setup animations
                 modelViewer.play();
