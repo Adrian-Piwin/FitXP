@@ -55,7 +55,7 @@ class HealthFetcherService {
           
           if (!cachedData.containsKey(date)) {
             // Fetch data for this specific day
-            final dayData = await _fetchHealthData(
+            final dayData = await fetchHealthData(
               type,
               DateTimeRange(
                 start: date,
@@ -78,7 +78,7 @@ class HealthFetcherService {
     return result;
   }
 
-  Future<List<DataPoint>> _fetchHealthData(
+  Future<List<DataPoint>> fetchHealthData(
       HealthDataType healthType, DateTimeRange dateRange) async {
     if (healthType == HealthDataType.SLEEP_ASLEEP) {
       return await _fetchSleepHealthData(dateRange.start, dateRange.end);

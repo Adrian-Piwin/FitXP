@@ -317,10 +317,14 @@ Future<List<HealthEntity>> initializeWidgets(List<HealthItem> healthItems, Healt
     return entity;
   }).toList();
 
+  for (var entity in entities) {
+    await entity.initialize();
+  }
+
   return entities;
 }
 
-Future<void> setDataPerWidgetWithTimeframe(HealthFetcherService healthFetcherService, List<HealthEntity> entities, TimeFrame timeframe, int offset) async {
+Future<void> setDataPerWidgetWithTimeframe(List<HealthEntity> entities, TimeFrame timeframe, int offset) async {
   for (var widget in entities) {
     widget.updateQuery(timeframe, offset);
   }
@@ -330,7 +334,7 @@ Future<void> setDataPerWidgetWithTimeframe(HealthFetcherService healthFetcherSer
   }
 }
 
-Future<void> setDataPerWidgetWithDateRange(HealthFetcherService healthFetcherService, List<HealthEntity> entities, DateTimeRange dateRange) async {
+Future<void> setDataPerWidgetWithDateRange(List<HealthEntity> entities, DateTimeRange dateRange) async {
   for (var widget in entities) {
     widget.queryDateRange = dateRange;
   }

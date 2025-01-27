@@ -64,7 +64,8 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
 
     try {
       healthItemEntities = await initializeWidgets(healthItems, _healthFetcherService);
-      
+      _widgetConfigurationService = WidgetConfigurationService(healthItemEntities);
+
       // Add listeners to each entity
       for (var entity in healthItemEntities) {
         entity.addListener(() {
@@ -72,12 +73,6 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
           notifyListeners();
         });
       }
-
-      _widgetConfigurationService = WidgetConfigurationService(healthItemEntities);
-      displayWidgets = _widgetConfigurationService.getWidgets();
-
-      // Deplay so our widgets are loaded before we fetch data
-      await Future.delayed(const Duration(milliseconds: 200));
 
       await fetchHealthData();
       _isLoading = false;
@@ -100,7 +95,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     notifyListeners();
 
     try {
-      await setDataPerWidgetWithTimeframe(_healthFetcherService, healthItemEntities, _selectedTimeFrame, _offset);
+      await setDataPerWidgetWithTimeframe(healthItemEntities, _selectedTimeFrame, _offset);
       displayWidgets = _widgetConfigurationService.getWidgets();
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');

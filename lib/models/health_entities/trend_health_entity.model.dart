@@ -4,14 +4,13 @@ import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/utility/health.utility.dart';
-import 'package:healthxp/utility/timeframe.utility.dart';
 
 class TrendHealthEntity extends HealthEntity {
   TrendHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);
 
   DataPoint? get mostRecentDataPoint {
-    if (getCombinedData.isEmpty) return null;
-    return getCombinedData.reduce(
+    if (getCurrentData.isEmpty) return null;
+    return getCurrentData.reduce(
       (a, b) => a.dateFrom.isAfter(b.dateFrom) ? a : b
     );
   }
@@ -28,21 +27,14 @@ class TrendHealthEntity extends HealthEntity {
 
   @override
   double get average {
-    cachedAverage ??= getTrendHealthAverage(getCombinedData);
+    cachedAverage ??= getTrendHealthAverage(getCurrentData);
     return cachedAverage!;
-  }
-
-  // Filter out the data points that are not in the current timeframe
-  @override
-  List<DataPoint> get getCurrentData {
-    var contextDataRange = calculateDateRange(timeframe, offset);
-    return getCombinedData.where((point) => point.dateFrom.isAfter(contextDataRange.start) && point.dateTo.isBefore(contextDataRange.end)).toList();
   }
 
   // We only want the most recent data point for each day
   @override
-  List<DataPoint> get getCombinedData {
-    List<DataPoint> data = super.getCombinedData;
+  List<DataPoint> get getCurrentData {
+    List<DataPoint> data = super.getCurrentData;
     return getLatestPointPerDay(data);
   }
 
@@ -67,7 +59,7 @@ class TrendHealthEntity extends HealthEntity {
   @override
   String get getDisplaySubtitle {
     if (showLoading) return "--";
-    if (getCombinedData.isEmpty) return "No data";
+    if (getCurrentData.isEmpty) return "No data";
 
     return "${average.toStringAsFixed(1)}${healthItem.unit} avg";
   }

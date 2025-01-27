@@ -21,6 +21,27 @@ class SleepHealthEntity extends HealthEntity {
     super.timeFrame,
     super.healthFetcherService,
   );
+
+  @override
+  List<DataPoint> aggregateData(Map<HealthDataType, List<DataPoint>> data) {
+    if (data[HealthDataType.SLEEP_ASLEEP] == null || data[HealthDataType.SLEEP_ASLEEP]!.isEmpty) {
+      return [];
+    }
+    
+    return data[HealthDataType.SLEEP_ASLEEP]!.map((point) {
+      if (point is SleepDataPoint) {
+        return point;
+      }
+      // If it's a regular DataPoint, convert it to SleepDataPoint
+      return SleepDataPoint(
+        value: point.value,
+        dateFrom: point.dateFrom,
+        dateTo: point.dateTo,
+        dayOccurred: point.dayOccurred,
+        sleepStage: SleepStage.unknown, // Default value if not available
+      );
+    }).toList();
+  }
   
   List<SleepDataPoint> get sleepDataPoints {
     if (data[HealthDataType.SLEEP_ASLEEP] == null || data[HealthDataType.SLEEP_ASLEEP]!.isEmpty) {

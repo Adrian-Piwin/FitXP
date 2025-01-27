@@ -6,14 +6,15 @@ class StreakService {
     final now = DateTime.now().subtract(const Duration(days: 1));
     final startDate = now.subtract(const Duration(days: 30));
 
-    var data = await entity.getData(DateTimeRange(
+    var rawData = await entity.getData(DateTimeRange(
       start: startDate,
       end: now,
     ));
-    
+    var data = entity.aggregateData(rawData);
+
     int streak = 0;
     DateTime currentDate = now;
-    
+
     while (currentDate.isAfter(startDate)) {
       final dayData = data.where((point) => 
         point.dayOccurred.year == currentDate.year &&

@@ -113,7 +113,7 @@ class XpService {
 
   Future<List<EntityXP>> _getXPForValue(List<HealthItem> healthItems, TimeFrame timeframe) async {
     List<HealthEntity> entities = await initializeWidgets(healthItems, _healthFetcherService);
-    await setDataPerWidgetWithDateRange(_healthFetcherService, entities, _defaultDateRange);
+    await setDataPerWidgetWithDateRange(entities, _defaultDateRange);
 
     List<EntityXP> entityXPs = [];
     for (var entity in entities) {
@@ -128,11 +128,11 @@ class XpService {
 
   Future<List<EntityXP>> _getXPForReachedGoal(List<HealthItem> healthItems, TimeFrame timeframe) async {
     List<HealthEntity> entities = await initializeWidgets(healthItems, _healthFetcherService);
-    await setDataPerWidgetWithDateRange(_healthFetcherService, entities, _defaultDateRange);
+    await setDataPerWidgetWithDateRange(entities, _defaultDateRange);
 
     List<EntityXP> entityXPs = [];
     for (var entity in entities) {
-      Map<DateTime, double> dailyData = getDailyData(entity.getCombinedData);
+      Map<DateTime, double> dailyData = getDailyData(entity.getCurrentData);
       for (MapEntry<DateTime, double> data in dailyData.entries) {
         if (data.value.abs() >= entity.goal.abs()) {
           entityXPs.add(EntityXP(

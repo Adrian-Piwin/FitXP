@@ -7,7 +7,7 @@ import 'package:healthxp/models/health_entities/health_entity.model.dart';
 class WorkoutHealthEntity extends HealthEntity {
   WorkoutHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);
 
-  List<WorkoutDataPoint> get workoutDataPoints {
+  List<WorkoutDataPoint> workoutDataPoints(Map<HealthDataType, List<DataPoint>> data) {
     if (data[HealthDataType.WORKOUT] == null || data[HealthDataType.WORKOUT]!.isEmpty) {
       return [];
     }
@@ -32,8 +32,8 @@ class WorkoutHealthEntity extends HealthEntity {
   }
 
   @override
-  List<DataPoint> get getCurrentData {
-    return workoutDataPoints.where((point) => strengthTrainingTypes.contains(point.workoutType)).toList() as List<DataPoint>;
+  List<DataPoint> aggregateData(Map<HealthDataType, List<DataPoint>> data) {
+    return workoutDataPoints(data).where((point) => strengthTrainingTypes.contains(point.workoutType)).toList() as List<DataPoint>;
   }
 
   @override

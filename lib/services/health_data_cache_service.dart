@@ -22,7 +22,7 @@ class HealthDataCache {
   }
 
   static const String _boxPrefix = 'health_data_';
-  static const Duration _recentDataThreshold = Duration(minutes: 10);
+  static const Duration _recentDataThreshold = Duration(minutes: 5);
   static const Duration _oldDataThreshold = Duration(days: 7);
   Map<HealthDataType, Box<Map>>? _dataBoxes;
   bool _isInitialized = false;

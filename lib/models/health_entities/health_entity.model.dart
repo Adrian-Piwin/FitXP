@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:healthxp/components/barchart_widget.dart';
 import 'package:healthxp/components/goal_edit_button.dart';
 import 'package:healthxp/components/icon_info_widget.dart';
-import 'package:healthxp/components/info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/magic_numbers.constants.dart';
@@ -55,14 +54,12 @@ class HealthEntity extends ChangeNotifier {
   DateTimeRange? queryDateRange;
   double? cachedTotal;
   double? cachedAverage;
-  int? cachedStreak = 0;
-  List<DataPoint>? cachedMergedData;
+  int? cachedStreak;
+  List<DataPoint>? cachedCurrentData;
 
-  HealthEntity(this.healthItem, this.widgetSize, this.healthFetcherService) {
-    _initialize();
-  }
+  HealthEntity(this.healthItem, this.widgetSize, this.healthFetcherService);
 
-  Future<void> _initialize() async {
+  Future<void> initialize() async {
     _goalsService = await GoalsService.getInstance();
     await _loadGoal();
 
@@ -86,19 +83,15 @@ class HealthEntity extends ChangeNotifier {
     return cachedAverage!;
   }
 
-  List<DataPoint> get getMergedData {
-    cachedMergedData ??= mergeDataPoints(data);
-    return cachedMergedData!;
-  }
-
   // The combined data points for all types
-  List<DataPoint> get getCombinedData {
+  List<DataPoint> aggregateData(Map<HealthDataType, List<DataPoint>> data) {
     return data.values.expand((list) => list).toList();
   }
 
   // Use this for the context of our datapoints for the selected timeframe and offset
   List<DataPoint> get getCurrentData {
-    return getCombinedData;
+    cachedCurrentData ??= aggregateData(data);
+    return cachedCurrentData!;
   }
 
   // The percentage of the goal for this health entity against our total
@@ -255,23 +248,11 @@ class HealthEntity extends ChangeNotifier {
     _clearCache();
   }
 
-  Future<List<DataPoint>> getData(DateTimeRange dateRange) async {
-    var oldQueryDateRange = queryDateRange;
-    var oldData = data;
-    _clearCache();
-
-    queryDateRange = dateRange;
-    final batchData = await healthFetcherService.fetchBatchData([this]);
-    data = Map.fromEntries(
-      healthItem.dataType.map((type) => 
-        MapEntry(type, batchData[type] ?? [])
-      )
-    );
-    final result = getCurrentData;
-
-    data = oldData;
-    queryDateRange = oldQueryDateRange;
-    _clearCache();
+  Future<Map<HealthDataType, List<DataPoint>>> getData(DateTimeRange dateRange) async {
+    Map<HealthDataType, List<DataPoint>> result = {};
+    for (var type in healthItem.dataType) {
+      result[type] = await healthFetcherService.fetchHealthData(type, dateRange);
+    }
     return result;
   }
 
@@ -294,7 +275,7 @@ class HealthEntity extends ChangeNotifier {
   void _clearCache() {
     cachedTotal = null;
     cachedAverage = null;
-    cachedMergedData = null;
+    cachedCurrentData = null;
   }
 
   @override

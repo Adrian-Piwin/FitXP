@@ -10,9 +10,9 @@ class NetCaloriesHealthEntity extends HealthEntity {
   );
 
   @override
-  Future<void> updateData() async {
-    await super.updateData();
+  List<DataPoint> aggregateData(Map<HealthDataType, List<DataPoint>> data) {
     Map<HealthDataType, List<DataPoint>> newData = Map.from(data);
+
     if (data.containsKey(HealthDataType.ACTIVE_ENERGY_BURNED)) {
       newData[HealthDataType.ACTIVE_ENERGY_BURNED] = data[HealthDataType.ACTIVE_ENERGY_BURNED]!
           .map((point) => DataPoint(
@@ -33,8 +33,7 @@ class NetCaloriesHealthEntity extends HealthEntity {
               ))
           .toList();
     }
-
-    data = newData;
+    return newData.values.expand((list) => list).toList();
   }
 
   @override
