@@ -13,8 +13,10 @@ class SettingsController with ChangeNotifier {
 
   UnitSystem get unitSystem => _unitSystem;
 
-  SettingsController() {
-    _initialize();
+  SettingsController();
+
+  Future<void> initialize() async {
+    await _initialize();
   }
 
   Future<void> _initialize() async {

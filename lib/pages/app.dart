@@ -119,6 +119,31 @@ class MyApp extends StatelessWidget {
             backgroundColor: CoreColors.accentAltColor,
           ),
         ),
+        
+        // Add segmented button theme
+        segmentedButtonTheme: SegmentedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith<Color>(
+              (Set<WidgetState> states) {
+                if (states.contains(WidgetState.selected)) {
+                  return CoreColors.accentAltColor;
+                }
+                return CoreColors.backgroundColor;
+              },
+            ),
+            foregroundColor: WidgetStateProperty.resolveWith<Color>(
+              (Set<WidgetState> states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
+                return CoreColors.textColor;
+              },
+            ),
+            side: WidgetStateProperty.all(
+              const BorderSide(color: CoreColors.accentAltColor),
+            ),
+          ),
+        ),
       ),
       themeMode: ThemeMode.dark,
       home: const AuthGate(),
