@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthxp/services/health_data_cache_service.dart';
 import 'package:healthxp/services/widget_configuration_service.dart';
 import 'package:healthxp/utility/health.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
@@ -10,6 +11,7 @@ import '../../enums/timeframe.enum.dart';
 
 class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   HealthFetcherService _healthFetcherService = HealthFetcherService();
+  late final HealthDataCache _healthDataCache;
   late WidgetConfigurationService _widgetConfigurationService;
 
   // State variables
@@ -59,6 +61,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> _initialize() async {
     await _healthFetcherService.initialize();
+    _healthDataCache = await HealthDataCache.getInstance();
     _isLoading = true;
     notifyListeners();
 
@@ -108,16 +111,19 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh(bool hardRefresh) async {
     _selectedTimeFrame = TimeFrame.day;
     _offset = 0;
+    if (hardRefresh) {
+      await _healthDataCache.clearTodaysCache();
+    }
     await fetchHealthData();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      refresh();
+      refresh(false);
     }
   }
 

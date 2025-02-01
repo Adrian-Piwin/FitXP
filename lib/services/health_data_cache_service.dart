@@ -49,6 +49,15 @@ class HealthDataCache {
     }
   }
 
+  // Clear cache for today
+  Future<void> clearTodaysCache() async {
+    final today = DateTime.now();
+    final todayKey = _getDayKey(today);
+    for (var box in _dataBoxes!.values) {
+      await box.delete(todayKey);
+    }
+  }
+
   Future<void> dispose() async {
     if (_dataBoxes != null) {
       for (var box in _dataBoxes!.values) {

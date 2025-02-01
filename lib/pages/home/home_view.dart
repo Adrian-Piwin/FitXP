@@ -58,7 +58,7 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                       const Text('Failed to load widgets'),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: controller.refresh,
+                        onPressed: () => controller.refresh(true),
                         child: const Text('Retry'),
                       ),
                     ],
@@ -91,7 +91,7 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                         }
                       },
                       child: RefreshIndicator(
-                        onRefresh: controller.refresh,
+                        onRefresh: () => controller.refresh(true),
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           child: GridLayout(
