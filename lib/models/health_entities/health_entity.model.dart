@@ -247,7 +247,7 @@ class HealthEntity extends ChangeNotifier {
         MapEntry(type, batchData[type] ?? [])
       )
     );
-    _clearCache();
+    clearCache();
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> getData(DateTimeRange dateRange) async {
@@ -274,7 +274,7 @@ class HealthEntity extends ChangeNotifier {
 
   // #region Internal functions
 
-  void _clearCache() {
+  void clearCache() {
     cachedTotal = null;
     cachedAverage = null;
     cachedCurrentData = null;

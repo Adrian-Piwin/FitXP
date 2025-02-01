@@ -18,32 +18,33 @@ class IconInfoWidget extends WidgetFrame {
   }) : super(
           size: 2,
           height: WidgetSizes.mediumHeight,
+          padding: GapSizes.small,
         );
 
   @override
   Widget buildContent(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const SizedBox(height: GapSizes.large),
         Text(
           title,
           style: const TextStyle(
             fontSize: FontSizes.large,
-            fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: GapSizes.large),
         FaIcon(
           icon,
-          size: FontSizes.xxxxlarge,
+          size: FontSizes.xxxlarge,
           color: iconColor,
         ),
-        const SizedBox(height: GapSizes.medium),
+        const SizedBox(height: GapSizes.large),
         Text(
           displayValue,
           style: const TextStyle(
             fontSize: FontSizes.medium,
+            fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
         ),

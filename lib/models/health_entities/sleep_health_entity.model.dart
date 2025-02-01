@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/components/barchart_widget.dart';
-import 'package:healthxp/components/info_widget.dart';
+import 'package:healthxp/components/icon_info_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/components/sleep_barchart_widget.dart';
+import 'package:healthxp/components/sleep_info_widget.dart';
+import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/sleep_stages.enum.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
@@ -16,6 +18,8 @@ import 'package:healthxp/utility/chart.utility.dart';
 import 'package:healthxp/utility/general.utility.dart';
 
 class SleepHealthEntity extends HealthEntity {
+  int? sleepScoreCache;
+
   SleepHealthEntity(
     super.healthItem,
     super.timeFrame,
@@ -64,8 +68,10 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   int getSleepScore() {
+    if (sleepScoreCache != null) return sleepScoreCache!;
     SleepService sleepService = SleepService(sleepDataPoints);
-    return sleepService.calculateSleepScore();
+    sleepScoreCache = sleepService.calculateSleepScore();
+    return sleepScoreCache!;
   }
 
   @override
@@ -101,25 +107,31 @@ class SleepHealthEntity extends HealthEntity {
     List<Widget> widgets = super.getInfoWidgets;
     widgets.addAll(
       [
-        InfoWidget(
+        IconInfoWidget(
           title: "Sleep Score",
-          displayValue: getSleepScore().toString(),
+          displayValue: "${getSleepScore()} ${SleepService.getSleepQualityDescription(getSleepScore())}",
+          icon: IconTypes.sleepScoreIcon,
+          iconColor: healthItem.color,
         ),
-        InfoWidget(
-          title: "REM ${_getSleepStagePercent(SleepStage.rem)}",
-          displayValue: _getSleepStageDuration(SleepStage.rem),
-        ),
-        InfoWidget(
-          title: "Deep ${_getSleepStagePercent(SleepStage.deep)}",
-          displayValue: _getSleepStageDuration(SleepStage.deep),
-        ),
-        InfoWidget(
-          title: "Light ${_getSleepStagePercent(SleepStage.light)}",
-          displayValue: _getSleepStageDuration(SleepStage.light),
-        ),
-        InfoWidget(
-          title: "Awake ${_getSleepStagePercent(SleepStage.awake)}",
-          displayValue: _getSleepStageDuration(SleepStage.awake),
+        SleepInfoWidget(
+          sleepStages: {
+            'rem': {
+              'duration': _getSleepStageDuration(SleepStage.rem),
+              'percentage': _getSleepStagePercent(SleepStage.rem),
+            },
+            'deep': {
+              'duration': _getSleepStageDuration(SleepStage.deep),
+              'percentage': _getSleepStagePercent(SleepStage.deep),
+            },
+            'light': {
+              'duration': _getSleepStageDuration(SleepStage.light),
+              'percentage': _getSleepStagePercent(SleepStage.light),
+            },
+            'awake': {
+              'duration': _getSleepStageDuration(SleepStage.awake),
+              'percentage': _getSleepStagePercent(SleepStage.awake),
+            },
+          },
         ),
       ],
     );
@@ -163,14 +175,20 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   @override
+  void clearCache() {
+    sleepScoreCache = null;
+    super.clearCache();
+  }
+
+  @override
   HealthEntity clone() {
     return SleepHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 
-  String _getSleepStagePercent(SleepStage stage){
-    if (sleepDataPoints.isEmpty) return "0%";
+  double _getSleepStagePercent(SleepStage stage){
+    if (sleepDataPoints.isEmpty) return 0;
     List<SleepDataPoint> stageDataPoints = sleepDataPoints.where((point) => point.sleepStage == stage).toList();
-    return "${(stageDataPoints.length / sleepDataPoints.length * 100).round()}%";
+    return (stageDataPoints.length / sleepDataPoints.length * 100);
   }
 
   String _getSleepStageDuration(SleepStage stage) {

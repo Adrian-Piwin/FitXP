@@ -6,7 +6,7 @@ class SleepService {
 
   SleepService(this.sleepData);
 
-  String getSleepQualityDescription(int score) {
+  static String getSleepQualityDescription(int score) {
     if (score >= 85) return 'Excellent';
     if (score >= 70) return 'Good';
     if (score >= 55) return 'Fair';

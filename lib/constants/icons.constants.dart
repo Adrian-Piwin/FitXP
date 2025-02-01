@@ -21,4 +21,5 @@ class IconTypes{
   static const IconData medalIcon = FontAwesomeIcons.medal;
   static const IconData streakIcon = FontAwesomeIcons.fire;
   static const IconData averageIcon = FontAwesomeIcons.stopwatch;
+  static const IconData sleepScoreIcon = FontAwesomeIcons.star;
 }

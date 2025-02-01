@@ -140,7 +140,7 @@ class _SleepBarChartStateState extends State<_SleepBarChartState> {
               ),
             ),
             gridData: FlGridData(
-              show: true,
+              show: false,
               horizontalInterval: intervalMinutes.toDouble(),
               checkToShowHorizontalLine: (value) => intervalPoints.contains(value),
               drawVerticalLine: true,
