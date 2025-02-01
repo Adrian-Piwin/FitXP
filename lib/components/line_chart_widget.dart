@@ -201,10 +201,21 @@ class LineChartWidget extends WidgetFrame {
                 return touchedSpots.map((LineBarSpot touchedSpot) {
                   final index = touchedSpot.x.toInt();
                   return LineTooltipItem(
-                    '${groupedData[index].label}\n${touchedSpot.y.toStringAsFixed(1)}',
+                    '${groupedData[index].label}\n',
                     const TextStyle(
-                      fontWeight: FontWeight.bold,
+                      color: CoreColors.textColor,
+                      fontSize: FontSizes.small,
                     ),
+                    children: [
+                      TextSpan(
+                        text: touchedSpot.y.toStringAsFixed(1),
+                        style: const TextStyle(
+                          color: CoreColors.textColor,
+                          fontSize: FontSizes.large,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   );
                 }).toList();
               },

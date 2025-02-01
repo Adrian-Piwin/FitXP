@@ -63,13 +63,27 @@ class BarChartWidget extends WidgetFrame {
                     getTooltipColor: (value) => CoreColors.backgroundColor,
                     tooltipPadding: const EdgeInsets.all(8),
                     tooltipMargin: 8,
-                    fitInsideVertically: false, // Prevents tooltip from being constrained vertically
+                    fitInsideVertically: false,
                     fitInsideHorizontally: true,
-                    direction: TooltipDirection.top, // Forces tooltip to always show above
+                    direction: TooltipDirection.top,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      final value = getBarchartValue(rod.toY);
                       return BarTooltipItem(
-                        '${groupedData[groupIndex].label}\n${getBarchartValue(rod.toY)}',
-                        const TextStyle(color: Colors.white),
+                        '${groupedData[groupIndex].label}\n',
+                        const TextStyle(
+                          color: CoreColors.textColor,
+                          fontSize: FontSizes.small,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: value,
+                            style: const TextStyle(
+                              color: CoreColors.textColor,
+                              fontSize: FontSizes.large,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -85,11 +99,36 @@ class BarChartWidget extends WidgetFrame {
                         final isMiddle = value == (groupedData.length - 1) ~/ 2;
                         
                         if (isFirst || isMiddle || isLast) {
+                          final label = getXAxisLabel(value);
+                          
+                          // Check if the label is a time (hour) value
+                          if (label.endsWith(':00')) {
+                            final hour = int.tryParse(label.split(':')[0]);
+                            if (hour != null) {
+                              final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+                              final period = hour < 12 ? 'AM' : 'PM';
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  '$displayHour$period',
+                                  style: const TextStyle(
+                                    fontSize: FontSizes.xsmall,
+                                    color: CoreColors.textColor,
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                          
+                          // For non-time labels, display as is
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
-                              getXAxisLabel(value),
-                              style: const TextStyle(fontSize: 10),
+                              label,
+                              style: const TextStyle(
+                                fontSize: FontSizes.xsmall,
+                                color: CoreColors.textColor,
+                              ),
                             ),
                           );
                         }

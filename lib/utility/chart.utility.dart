@@ -38,10 +38,14 @@ class ChartUtility {
     }
 
     return List.generate(24, (hour) {
+      // Convert to 12-hour format
+      final int displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+      final String period = hour < 12 ? 'AM' : 'PM';
+      
       return BarData(
         x: hour.toDouble(),
         y: hourlyData[hour] ?? 0,
-        label: '${hour.toString().padLeft(2, '0')}:00',
+        label: '$displayHour$period',
       );
     });
   }
