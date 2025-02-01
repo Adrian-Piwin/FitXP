@@ -5,6 +5,7 @@ import '../../enums/timeframe.enum.dart';
 
 class HealthDetailsController extends ChangeNotifier {
   final HealthEntity _widget;
+  final List<TimeFrame> timeFrameOptions;
 
   bool _isLoading = false;
   TimeFrame _selectedTimeFrame;
@@ -14,7 +15,8 @@ class HealthDetailsController extends ChangeNotifier {
     required HealthEntity widget,
   }) : _widget = widget,
        _selectedTimeFrame = widget.timeframe,
-       _offset = widget.offset {
+       _offset = widget.offset,
+       timeFrameOptions = widget.supportedTimeFrames {
     _widget.addListener(_onWidgetChanged);
   }
 

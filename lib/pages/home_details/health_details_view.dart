@@ -36,6 +36,7 @@ class HealthDataDetailPage extends StatelessWidget {
                   onChanged: (newTimeFrame) {
                     controller.updateTimeFrame(newTimeFrame);
                   },
+                  timeFrameOptions: controller.timeFrameOptions,
                 );
               },
             ),

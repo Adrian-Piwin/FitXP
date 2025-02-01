@@ -297,6 +297,28 @@ List<DataPoint> getLatestPointPerDay(List<DataPoint> data) {
   return latestPointPerDay.values.toList();
 }
 
+List<DataPoint> getLatestPointPerMonth(List<DataPoint> data) {
+  // Group data by month
+  Map<DateTime, List<DataPoint>> dataByMonth = {};
+  for (var point in data) {
+    var monthKey = DateTime(point.dayOccurred.year, point.dayOccurred.month);
+    if (!dataByMonth.containsKey(monthKey)) {
+      dataByMonth[monthKey] = [];
+    }
+    dataByMonth[monthKey]!.add(point);
+  }
+  
+  // Get latest point for each month
+  Map<DateTime, DataPoint> latestPointPerMonth = {};
+  for (var entry in dataByMonth.entries) {
+    var latestPoint = entry.value.reduce((a, b) => 
+      a.dateFrom.isAfter(b.dateFrom) ? a : b);
+    latestPointPerMonth[entry.key] = latestPoint;
+  }
+  
+  return latestPointPerMonth.values.toList();
+}
+
 // Get daily data for a list of data points
 Map<DateTime, double> getDailyData(List<DataPoint> data) {
   // Group data by dayOccurred

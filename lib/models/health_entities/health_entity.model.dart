@@ -71,6 +71,8 @@ class HealthEntity extends ChangeNotifier {
 
   // #region Getters
 
+  List<TimeFrame> get supportedTimeFrames => [TimeFrame.day, TimeFrame.week, TimeFrame.month, TimeFrame.year];
+
   // The total sum of all combined data points
   double get total {
     cachedTotal ??= getHealthTotal(getCurrentData);
@@ -186,7 +188,7 @@ class HealthEntity extends ChangeNotifier {
 
   // The graph widget displayed on the details page
   Widget get getGraphWidget {
-    if (showLoading) return LoadingWidget(size: widgetSize, height: WidgetSizes.largeHeight);
+    if (showLoading) return LoadingWidget(size: 6, height: WidgetSizes.largeHeight);
 
     return BarChartWidget(
       groupedData: getBarchartData,
