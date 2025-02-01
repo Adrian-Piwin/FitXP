@@ -61,7 +61,7 @@ class LineChartWidget extends WidgetFrame {
     ];
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 16, 12, 8),
+      padding: const EdgeInsets.fromLTRB(0, 16, 24, 0),
       child: LineChart(
         LineChartData(
           lineBarsData: [
@@ -147,7 +147,7 @@ class LineChartWidget extends WidgetFrame {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 32,
+                reservedSize: 40,
                 interval: 1, // Show all possible values
                 getTitlesWidget: (value, meta) {
                   // Calculate our three target values
