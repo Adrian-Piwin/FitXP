@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 
@@ -23,6 +24,27 @@ class LineChartWidget extends WidgetFrame {
 
   @override
   Widget buildContent(BuildContext context) {
+    if (groupedData.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
+
+    // Find min and max Y values BEFORE filtering
+    final maxY = groupedData.map((d) => d.y).reduce((a, b) => a > b ? a : b);
+    final minY = groupedData.map((d) => d.y).where((y) => y > 0).reduce((a, b) => a < b ? a : b);
+    
+    // Calculate bottom value: 10% lower than minY, rounded down to nearest 10
+    final bottomValue = (minY * 0.9).floor(); // 90% of minimum value
+    final roundedBottom = ((bottomValue - 9) ~/ 10) * 10; // Round down to nearest 10
+    
+    // Calculate top value
+    final paddedMaxY = (maxY * 1.1).ceil();
+    final roundedTop = ((paddedMaxY + 9) ~/ 10) * 10;
+    
+    // Calculate interval based on the full range
+    final range = roundedTop - roundedBottom;
+    final interval = max(1, (range / 4).ceil());
+
+    // Now create validSpots after calculating the ranges
     final validSpots = groupedData.asMap().entries
         .where((entry) => entry.value.y > 0)
         .map((entry) => FlSpot(entry.key.toDouble(), entry.value.y))
@@ -37,15 +59,6 @@ class LineChartWidget extends WidgetFrame {
       ...validSpots,
       FlSpot(groupedData.length - 0.5, validSpots.last.y),
     ];
-
-    final maxY = groupedData.map((d) => d.y).reduce((a, b) => a > b ? a : b);
-    final minChartValue = 10.0;
-    
-    final effectiveMaxY = maxY <= 0 ? minChartValue : maxY;
-    final paddedMaxY = (effectiveMaxY * 1.1).ceil();
-    final roundedMaxY = ((paddedMaxY + 9) ~/ 10) * 10;
-    
-    final interval = max(1, (roundedMaxY / 4).ceil());
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 16, 12, 8),
@@ -76,9 +89,9 @@ class LineChartWidget extends WidgetFrame {
                     );
                   }
                   return FlDotCirclePainter(
-                    radius: 4,
+                    radius: 2.5,
                     color: Colors.white,
-                    strokeWidth: 2,
+                    strokeWidth: 1.5,
                     strokeColor: lineColor,
                   );
                 },
@@ -97,22 +110,9 @@ class LineChartWidget extends WidgetFrame {
             ),
           ],
           gridData: FlGridData(
-            show: true,
-            drawVerticalLine: true,
-            horizontalInterval: interval.toDouble(),
-            verticalInterval: 2,
-            getDrawingHorizontalLine: (value) {
-              return FlLine(
-                color: Colors.grey.withOpacity(0.15),
-                strokeWidth: 1,
-              );
-            },
-            getDrawingVerticalLine: (value) {
-              return FlLine(
-                color: Colors.grey.withOpacity(0.15),
-                strokeWidth: 1,
-              );
-            },
+            show: false,
+            drawVerticalLine: false,
+            drawHorizontalLine: false,
           ),
           titlesData: FlTitlesData(
             show: true,
@@ -133,8 +133,8 @@ class LineChartWidget extends WidgetFrame {
                         child: Text(
                           getXAxisLabel(valueInt.toDouble()),
                           style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey,
+                            fontSize: FontSizes.xsmall,
+                            color: CoreColors.textColor,
                           ),
                         ),
                       );
@@ -147,27 +147,33 @@ class LineChartWidget extends WidgetFrame {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
+                reservedSize: 32,
+                interval: 1, // Show all possible values
                 getTitlesWidget: (value, meta) {
-                  if (value == 0 || 
-                      value == roundedMaxY || 
-                      value == roundedMaxY / 2 || 
-                      value == roundedMaxY / 4 || 
-                      value == roundedMaxY * 3 / 4) {
+                  // Calculate our three target values
+                  final bottomValue = roundedBottom.toDouble();
+                  final topValue = roundedTop.toDouble();
+                  final middleValue = ((bottomValue + topValue) / 2).roundToDouble();
+                  
+                  // Create list of values we want to show
+                  final targetValues = [bottomValue, middleValue, topValue];
+                  
+                  // Only show label if value matches one of our target values
+                  if (targetValues.contains(value)) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Text(
                         value.toInt().toString(),
                         style: const TextStyle(
-                          fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                          fontSize: FontSizes.xsmall,
+                          color: CoreColors.textColor,
                         ),
                       ),
                     );
                   }
                   return const SizedBox.shrink();
                 },
-                reservedSize: 32,
               ),
             ),
             rightTitles: const AxisTitles(
@@ -178,17 +184,15 @@ class LineChartWidget extends WidgetFrame {
             ),
           ),
           borderData: FlBorderData(
-            show: true,
-            border: Border.all(
-              color: Colors.grey.withOpacity(0.2),
-            ),
+            show: false,
           ),
-          minY: 0,
-          maxY: max(roundedMaxY, interval * 4).toDouble(),
+          minY: roundedBottom.toDouble(),
+          maxY: roundedTop.toDouble(),
           minX: -0.5,
           maxX: groupedData.length - 0.5,
           lineTouchData: LineTouchData(
             touchTooltipData: LineTouchTooltipData(
+              getTooltipColor: (value) => CoreColors.backgroundColor,
               tooltipPadding: const EdgeInsets.all(8),
               tooltipMargin: 8,
               fitInsideVertically: false,
@@ -199,7 +203,6 @@ class LineChartWidget extends WidgetFrame {
                   return LineTooltipItem(
                     '${groupedData[index].label}\n${touchedSpot.y.toStringAsFixed(1)}',
                     const TextStyle(
-                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   );
