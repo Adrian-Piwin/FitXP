@@ -7,7 +7,7 @@ class IconTypes{
   static const IconData settingsIcon = Icons.settings;
   static const IconData characterIcon = Icons.person;
   static const IconData dietaryIcon = FontAwesomeIcons.utensils;
-  static const IconData caloriesIcon = FontAwesomeIcons.fire;
+  static const IconData caloriesIcon = FontAwesomeIcons.bolt;
   static const IconData proteinIcon = FontAwesomeIcons.dna;
   static const IconData activeCaloriesIcon = FontAwesomeIcons.personRunning;
   static const IconData netCaloriesIcon = FontAwesomeIcons.scaleBalanced;
@@ -20,6 +20,8 @@ class IconTypes{
   static const IconData editIcon = FontAwesomeIcons.solidPenToSquare;
   static const IconData medalIcon = FontAwesomeIcons.medal;
   static const IconData streakIcon = FontAwesomeIcons.fire;
-  static const IconData averageIcon = FontAwesomeIcons.stopwatch;
+  static const IconData averageIcon = FontAwesomeIcons.chartSimple;
   static const IconData sleepScoreIcon = FontAwesomeIcons.star;
+  static const IconData minimumIcon = FontAwesomeIcons.arrowTrendDown;
+  static const IconData maximumIcon = FontAwesomeIcons.arrowTrendUp;
 }

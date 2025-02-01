@@ -85,6 +85,20 @@ class HealthEntity extends ChangeNotifier {
     return cachedAverage!;
   }
 
+  // The lowest value of all combined data points
+  double get minimum {
+    var points = aggregateData(data);
+    if (points.isEmpty) return 0;
+    return points.reduce((a, b) => a.value < b.value ? a : b).value;
+  }
+
+  // The highest value of all combined data points
+  double get maximum {
+    var points = aggregateData(data);
+    if (points.isEmpty) return 0;
+    return points.reduce((a, b) => a.value > b.value ? a : b).value;
+  }
+
   // The combined data points for all types
   List<DataPoint> aggregateData(Map<HealthDataType, List<DataPoint>> data) {
     return data.values.expand((list) => list).toList();

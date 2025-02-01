@@ -1,6 +1,7 @@
-import 'package:healthxp/components/info_widget.dart';
+import 'package:healthxp/components/icon_info_widget.dart';
 import 'package:healthxp/components/line_chart_widget.dart';
 import 'package:healthxp/components/loading_widget.dart';
+import 'package:healthxp/constants/icons.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
@@ -100,17 +101,23 @@ class TrendHealthEntity extends HealthEntity {
   @override
   List<Widget> get getInfoWidgets {
     return [
-      InfoWidget(
+      IconInfoWidget(
         title: "Average",
         displayValue: getDisplayAverage,
+        icon: IconTypes.averageIcon,
+        iconColor: healthItem.color,
       ),
-      InfoWidget(
-        title: "Goal",
-        displayValue: getDisplayGoalWithUnit,
+      IconInfoWidget(
+        title: "Minimum",
+        displayValue: minimum.toStringAsFixed(1) + healthItem.unit,
+        icon: IconTypes.minimumIcon,
+        iconColor: healthItem.color,
       ),
-      InfoWidget(
-        title: "Goal Progress",
-        displayValue: getDisplayGoalWithUnitProgress,
+      IconInfoWidget(
+        title: "Maximum",
+        displayValue: maximum.toStringAsFixed(1) + healthItem.unit,
+        icon: IconTypes.maximumIcon,
+        iconColor: healthItem.color,
       ),
     ];
   }
