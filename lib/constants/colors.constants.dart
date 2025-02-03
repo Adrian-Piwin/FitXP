@@ -8,6 +8,8 @@ class CoreColors{
   static const Color textColor = Color(0xFFeeebe9);
   static const Color navBarColor = Color(0xFF282828);
   static const Color coreGrey = Color(0x33dad3d0);
+  static const Color coreLightGrey = Color(0xFFeeebe9);
+  static const Color coreOffLightGrey = Color(0xFFbdbdbd);
   static const Color coreBlue = Color(0xFF26a7e3);
   static const Color coreOffBlue = Color(0xFF9ddefc);
   static const Color coreOrange = Color(0xFFf96e2a);

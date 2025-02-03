@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:healthxp/constants/animations.constants.dart';
+import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/pages/home_details/health_details_view.dart';
@@ -38,7 +39,7 @@ class CircularHealthWidget extends StatelessWidget {
                         color: widget.healthItem.color),
           ),
           progressColor: widget.healthItem.color,
-          backgroundColor: widget.healthItem.offColor,
+          backgroundColor: CoreColors.coreGrey,
           animation: true,
           animationDuration: PercentIndicatorAnimations.duration,
           footer: Padding(
