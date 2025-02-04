@@ -10,6 +10,7 @@ import 'package:healthxp/constants/magic_numbers.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/bar_data.model.dart';
+import 'package:healthxp/models/daily_goal_status.model.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/error_logger.service.dart';
@@ -177,6 +178,32 @@ class HealthEntity extends ChangeNotifier {
   }
 
   // #endregion
+
+  List<DailyGoalStatus> getWeeklyGoalStatus() {
+    final weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final now = DateTime.now();
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    
+    // Create a map to store daily totals
+    Map<int, double> dailyTotals = {};
+    
+    // Sum up values for each day of the week
+    for (var dataPoint in getCurrentData) {
+      final dayIndex = dataPoint.dayOccurred.weekday - 1; // 0-6 for Monday-Sunday
+      dailyTotals[dayIndex] = (dailyTotals[dayIndex] ?? 0) + dataPoint.value;
+    }
+    
+    // Create DailyGoalStatus for each day
+    return List.generate(7, (index) {
+      final date = startOfWeek.add(Duration(days: index));
+      return DailyGoalStatus(
+        dayLetter: weekDays[index],
+        value: dailyTotals[index] ?? 0,
+        goalValue: goal,
+        date: date,
+      );
+    });
+  }
 
   // #region Bar Chart
 

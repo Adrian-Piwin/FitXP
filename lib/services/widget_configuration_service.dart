@@ -4,6 +4,7 @@ import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/pages/home/components/basic_health_widget.dart';
 import 'package:healthxp/pages/home/components/circular_health_widget.dart';
 import 'package:healthxp/pages/home/components/header_widget_item.dart';
+import 'package:healthxp/pages/insights/components/basic_weekly_health_widget.dart';
 
 class WidgetConfigurationService {
   List<HealthEntity> healthEntities = [];
@@ -23,6 +24,12 @@ class WidgetConfigurationService {
       default:
         return BasicHealthWidget(widget: healthEntity);
     }
+  }
+
+  List<Widget> getWeeklyInsightWidgets() {
+    return healthEntities
+        .map((entity) => BasicWeeklyHealthWidget(widget: entity))
+        .toList();
   }
 }
 

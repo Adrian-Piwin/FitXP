@@ -71,7 +71,7 @@ class BasicHealthWidget extends WidgetFrame {
               widget.getDisplaySubtitle,
               style: const TextStyle(
                 fontSize: FontSizes.medium,
-                color: Colors.grey,
+                color: CoreColors.coreOffLightGrey,
               ),
             ),
             const SizedBox(height: GapSizes.medium),

@@ -6,6 +6,7 @@ class IconTypes{
   static const IconData goalsIcon = Icons.flag;
   static const IconData settingsIcon = Icons.settings;
   static const IconData characterIcon = Icons.person;
+  static const IconData insightsIcon = Icons.insights;
   static const IconData dietaryIcon = FontAwesomeIcons.utensils;
   static const IconData caloriesIcon = FontAwesomeIcons.bolt;
   static const IconData proteinIcon = FontAwesomeIcons.dna;

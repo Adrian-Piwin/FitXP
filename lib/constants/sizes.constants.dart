@@ -22,7 +22,8 @@ class IconSizes{
   static const double xsmall = 20.0;
   static const double small = 24.0;
   static const double medium = 28.0;
-  static const double large = 40.0;
+  static const double large = 32.0;
+  static const double xlarge = 36.0;
 }
 
 class GapSizes {
