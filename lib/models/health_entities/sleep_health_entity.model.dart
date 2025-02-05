@@ -185,10 +185,22 @@ class SleepHealthEntity extends HealthEntity {
     return SleepHealthEntity(healthItem, widgetSize, healthFetcherService)..data = data;
   }
 
-  double _getSleepStagePercent(SleepStage stage){
+  double _getSleepStagePercent(SleepStage stage) {
     if (sleepDataPoints.isEmpty) return 0;
-    List<SleepDataPoint> stageDataPoints = sleepDataPoints.where((point) => point.sleepStage == stage).toList();
-    return (stageDataPoints.length / sleepDataPoints.length * 100);
+    
+    // Get duration string for this stage and convert to minutes
+    String stageDuration = _getSleepStageDuration(stage);
+    int stageMinutes = int.parse(stageDuration.replaceAll(RegExp(r'[^0-9]'), ''));
+    
+    // Get total duration across all stages
+    int totalMinutes = 0;
+    for (SleepStage s in SleepStage.values) {
+      String duration = _getSleepStageDuration(s);
+      totalMinutes += int.parse(duration.replaceAll(RegExp(r'[^0-9]'), ''));
+    }
+    
+    if (totalMinutes == 0) return 0;
+    return (stageMinutes / totalMinutes * 100);
   }
 
   String _getSleepStageDuration(SleepStage stage) {

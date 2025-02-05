@@ -191,7 +191,7 @@ class BarChartWidget extends WidgetFrame {
                         toY: displayValue,
                         fromY: 0, // Ensure bars start from zero
                         color: isZeroOrNull ? Colors.grey.withOpacity(0.3) : 
-                               value < 0 ? barColor.withOpacity(0.7) : barColor,
+                               barColor,
                         width: adjustedBarWidth,
                         borderRadius: isZeroOrNull ? const BorderRadius.vertical(top: Radius.circular(4)) :
                                    value < 0 ? const BorderRadius.vertical(bottom: Radius.circular(4)) :

@@ -18,7 +18,7 @@ class CoreColors{
   static const Color coreSilver = Color(0xFFc0c0c0);
   static const Color coreBronze = Color(0xFFcd853f);
   static const Color coreLightOrange = Color(0xFFfaea3f);
-  static const Color coreOffLightOrange = Color(0xFFfdd2bd);
+  static const Color coreOffLightOrange = Color(0xE9FAEA3F);
   static const Color coreBrown = Color.fromARGB(255, 205, 51, 13);
 }
 
