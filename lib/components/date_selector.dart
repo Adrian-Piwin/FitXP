@@ -7,12 +7,14 @@ class DateSelector extends StatefulWidget {
   final TimeFrame selectedTimeFrame;
   final int offset;
   final ValueChanged<int> onOffsetChanged;
+  final Widget child;
 
   const DateSelector({
     super.key,
     required this.selectedTimeFrame,
     required this.offset,
     required this.onOffsetChanged,
+    required this.child,
   });
 
   @override
@@ -106,15 +108,39 @@ class DateSelectorState extends State<DateSelector> with WidgetsBindingObserver 
           : null,
     );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        leftArrow,
-        Text(
-          displayedDateString,
-          style: const TextStyle(fontSize: FontSizes.large),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            leftArrow,
+            Text(
+              displayedDateString,
+              style: const TextStyle(fontSize: FontSizes.large),
+            ),
+            rightArrow,
+          ],
         ),
-        rightArrow,
+        Expanded(
+          child: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity == null) return;
+              
+              // Swiping right (positive velocity)
+              if (details.primaryVelocity! > 0) {
+                widget.onOffsetChanged(widget.offset - 1);
+              }
+              // Swiping left (negative velocity)
+              else if (details.primaryVelocity! < 0) {
+                // Only allow going forward if not at current date
+                if (widget.offset != 0) {
+                  widget.onOffsetChanged(widget.offset + 1);
+                }
+              }
+            },
+            child: widget.child,
+          ),
+        ),
       ],
     );
   }

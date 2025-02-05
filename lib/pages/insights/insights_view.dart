@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/components/grid_layout.dart';
+import 'package:healthxp/components/date_selector.dart';
+import 'package:healthxp/enums/timeframe.enum.dart';
 import 'insights_controller.dart';
 
 class InsightsView extends StatefulWidget {
@@ -31,12 +33,17 @@ class _InsightsViewState extends State<InsightsView> with AutomaticKeepAliveClie
               return const Center(child: CircularProgressIndicator());
             }
 
-            return RefreshIndicator(
-              onRefresh: () => controller.refresh(),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: GridLayout(
-                  widgets: controller.displayWidgets,
+            return DateSelector(
+              selectedTimeFrame: TimeFrame.week,
+              offset: controller.offset,
+              onOffsetChanged: controller.updateOffset,
+              child: RefreshIndicator(
+                onRefresh: () => controller.refresh(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: GridLayout(
+                    widgets: controller.displayWidgets,
+                  ),
                 ),
               ),
             );

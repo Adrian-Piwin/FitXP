@@ -32,13 +32,13 @@ class LineChartWidget extends WidgetFrame {
     final maxY = groupedData.map((d) => d.y).reduce((a, b) => a > b ? a : b);
     final minY = groupedData.map((d) => d.y).where((y) => y > 0).reduce((a, b) => a < b ? a : b);
     
-    // Calculate bottom value: 3% lower than minY, rounded down to nearest 10
-    final bottomValue = (minY * 0.97).floor(); // 90% of minimum value
-    final roundedBottom = ((bottomValue - 9) ~/ 10) * 10; // Round down to nearest 10
+    // Calculate bottom value: 3% lower than minY, rounded down to nearest 5
+    final bottomValue = (minY * 0.97).floor(); // 97% of minimum value
+    final roundedBottom = ((bottomValue - 4) ~/ 5) * 5; // Round down to nearest 5
     
-    // Calculate top value
+    // Calculate top value: 3% higher than maxY, rounded up to nearest 5
     final paddedMaxY = (maxY * 1.03).ceil();
-    final roundedTop = ((paddedMaxY + 9) ~/ 10) * 10;
+    final roundedTop = ((paddedMaxY + 4) ~/ 5) * 5; // Round up to nearest 5
     
     // Calculate interval based on the full range
     final range = roundedTop - roundedBottom;

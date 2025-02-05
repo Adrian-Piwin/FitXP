@@ -14,8 +14,10 @@ class InsightsController extends ChangeNotifier {
   late final HealthDataCache _healthDataCache;
   late WidgetConfigurationService _widgetConfigurationService;
   bool _isLoading = false;
+  int _offset = 0;
 
   bool get isLoading => _isLoading;
+  int get offset => _offset;
 
   List<HealthItem> get healthItems => [
         HealthItemDefinitions.steps,
@@ -70,7 +72,7 @@ class InsightsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await setDataPerWidgetWithTimeframe(healthItemEntities, TimeFrame.week, 0);
+      await setDataPerWidgetWithTimeframe(healthItemEntities, TimeFrame.week, _offset);
       displayWidgets = _widgetConfigurationService.getWeeklyInsightWidgets();
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
@@ -84,8 +86,14 @@ class InsightsController extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
+    _offset = 0;
     await _healthDataCache.clearTodaysCache();
     await fetchHealthData();
+  }
+
+  void updateOffset(int newOffset) {
+    _offset = newOffset;
+    fetchHealthData();
   }
 
   @override

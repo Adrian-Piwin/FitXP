@@ -66,42 +66,19 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                 );
               }
 
-              return Column(
-                children: [
-                  DateSelector(
-                    selectedTimeFrame: controller.selectedTimeFrame,
-                    offset: controller.offset,
-                    onOffsetChanged: controller.updateOffset,
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onHorizontalDragEnd: (details) {
-                        if (details.primaryVelocity == null) return;
-                        
-                        // Swiping right (positive velocity)
-                        if (details.primaryVelocity! > 0) {
-                          controller.updateOffset(controller.offset - 1);
-                        }
-                        // Swiping left (negative velocity)
-                        else if (details.primaryVelocity! < 0) {
-                          // Only allow going forward if not at current date
-                          if (controller.offset != 0) {
-                            controller.updateOffset(controller.offset + 1);
-                          }
-                        }
-                      },
-                      child: RefreshIndicator(
-                        onRefresh: () => controller.refresh(true),
-                        child: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: GridLayout(
-                            widgets: controller.displayWidgets,
-                          ),
-                        ),
-                      ),
+              return DateSelector(
+                selectedTimeFrame: controller.selectedTimeFrame,
+                offset: controller.offset,
+                onOffsetChanged: controller.updateOffset,
+                child: RefreshIndicator(
+                  onRefresh: () => controller.refresh(true),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: GridLayout(
+                      widgets: controller.displayWidgets,
                     ),
-                  )
-                ],
+                  ),
+                ),
               );
             },
           ),

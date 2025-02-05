@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/models/bar_data.model.dart';
 import 'package:healthxp/utility/general.utility.dart';
@@ -174,6 +175,7 @@ class _SleepBarChartStateState extends State<_SleepBarChartState> {
             barTouchData: BarTouchData(
               enabled: true,
               touchTooltipData: BarTouchTooltipData(
+                getTooltipColor: (value) => CoreColors.backgroundColor,
                 tooltipPadding: const EdgeInsets.all(8),
                 tooltipMargin: -150,
                 direction: TooltipDirection.top,
