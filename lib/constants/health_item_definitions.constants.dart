@@ -62,7 +62,7 @@ class HealthItemDefinitions {
     ..title = "Sleep"
     ..unit = "hrs"
     ..color = CoreColors.coreLightOrange
-    ..offColor = CoreColors.coreOffOrange
+    ..offColor = CoreColors.coreOffLightOrange
     ..icon = IconTypes.sleepDurationIcon
     ..iconSizeMultiplier = 0.90
     ..xpType = XPType.hitSleepGoal
@@ -102,8 +102,8 @@ class HealthItemDefinitions {
     ..itemType = HealthItemType.netCalories
     ..title = "Net Calories"
     ..unit = "cal"
-    ..color = CoreColors.textColor
-    ..offColor = CoreColors.coreOffBlue
+    ..color = CoreColors.coreLightGrey
+    ..offColor = CoreColors.coreOffLightGrey
     ..doesGoalSupportNegative = true
     ..icon = IconTypes.netCaloriesIcon
     ..xpType = XPType.hitNetCaloriesGoal

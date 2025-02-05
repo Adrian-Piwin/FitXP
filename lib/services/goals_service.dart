@@ -86,7 +86,6 @@ class GoalsService extends DBService {
     if (userId == null) throw Exception('User not logged in');
 
     final normalizedKey = _normalizeGoalKey(goalKey);
-    
     try {
       await updateDocument(
         collectionPath: collectionName,

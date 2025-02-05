@@ -70,7 +70,9 @@ class GoalEditButton extends WidgetFrame {
     final hoursController = TextEditingController(
       text: allowTimeInput
           ? ((currentValue ?? 0) ~/ 60).toString()
-          : currentValue?.abs().toInt().toString() ?? '0',
+          : allowDecimals 
+              ? (currentValue?.abs() ?? 0).toStringAsFixed(2).replaceAll(RegExp(r'\.?0*$'), '')
+              : (currentValue?.abs() ?? 0).toInt().toString(),
     );
     
     final minutesController = TextEditingController(
@@ -160,11 +162,12 @@ class GoalEditButton extends WidgetFrame {
                             width: 120,
                             child: TextField(
                               controller: hoursController,
-                              keyboardType: TextInputType.number,
+                              keyboardType: allowDecimals 
+                                ? const TextInputType.numberWithOptions(decimal: true)
+                                : TextInputType.number,
                               inputFormatters: [
                                 if (allowDecimals)
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'^\d*\.?\d*$'))
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$'))
                                 else
                                   FilteringTextInputFormatter.digitsOnly,
                               ],
