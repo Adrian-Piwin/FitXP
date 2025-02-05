@@ -95,6 +95,8 @@ class TrendHealthEntity extends HealthEntity {
       groupedData: getBarchartData,
       lineColor: healthItem.color,
       getXAxisLabel: getXAxisLabel,
+      targetValue: goal,
+      targetValueText: getDisplayGoalWithUnit,
     );
   }
 
