@@ -1,29 +1,15 @@
-# fitxp
+# FitXP
 
-A new Flutter project.
+A mobile app made with flutter for providing insights on your health data.
+Provides trends and charts of your data over time, while repersenting your progress in a gamified way.
 
-## Getting Started
+## Screenshots
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/to/state-management-sample).
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img src="https://github.com/user-attachments/assets/2e9bc087-c209-47c9-8a22-ede61fcf2e89" width="20%" height="405px" /> 
+<img src="https://github.com/user-attachments/assets/5aa72bbd-8673-4243-a1a8-5f3a893385b7" width="20%" height="405px" /> 
+<img src="https://github.com/user-attachments/assets/1ffa141a-5e87-4a9e-8367-87989f874739" width="20%" height="405px" /> 
+<img src="https://github.com/user-attachments/assets/a8ce88ba-1e84-4452-a113-50fd5b6c7868" width="20%" height="405px" /> 
+<img src="https://github.com/user-attachments/assets/c95edb92-c9ac-430d-96ef-3577c5dd6b63" width="20%" height="405px" /> 
+<img src="https://github.com/user-attachments/assets/70d34364-8c74-43ea-af89-729b53470611" width="20%" height="405px" /> 
 
-## Assets
-
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
-
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/to/resolution-aware-images).
-
-## Localization
-
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
-
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter apps](https://flutter.dev/to/internationalization).
