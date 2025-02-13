@@ -51,7 +51,7 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(PaddingSizes.large),
+          padding: const EdgeInsets.all(PaddingSizes.xlarge),
           child: ListenableBuilder(
             listenable: controller,
             builder: (context, _) {

@@ -1,7 +1,6 @@
 import 'package:healthxp/components/bottom_nav_bar.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/auth/auth_gate.dart';
-import 'package:healthxp/pages/character/character_view.dart';
 import 'package:healthxp/pages/home/home_view.dart';
 import 'package:healthxp/pages/insights/insights_view.dart';
 import 'package:healthxp/pages/permissions/permissions_view.dart';

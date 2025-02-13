@@ -1,4 +1,3 @@
-import 'package:healthxp/enums/xp_type.enum.dart';
 import 'package:healthxp/models/health_entities/bodyfat_health_entity.model.dart';
 import 'package:health/health.dart';
 import 'package:healthxp/models/health_entities/sleep_health_entity.model.dart';
@@ -11,6 +10,26 @@ import 'colors.constants.dart';
 import 'icons.constants.dart';
 
 class HealthItemDefinitions {
+  
+  static HealthItem getHealthItemByName(String name) {
+    return valueEntities.firstWhere((item) => item.title == name);
+  }
+
+  static List<HealthItem> valueEntities = [
+    expendedEnergy,
+    proteinIntake,
+    exerciseTime,
+    workoutTime,
+    sleepDuration,
+    activeCalories,
+    restingCalories,
+    dietaryCalories,
+    netCalories,
+    steps,
+    weight,
+    bodyFat,
+  ];
+
   static HealthItem expendedEnergy = HealthItem()
     ..dataType = [
       HealthDataType.ACTIVE_ENERGY_BURNED,
@@ -31,8 +50,7 @@ class HealthItemDefinitions {
     ..color = CoreColors.coreBlue
     ..offColor = CoreColors.coreOffBlue
     ..icon = IconTypes.proteinIcon
-    ..iconSizeMultiplier = 0.90
-    ..xpType = XPType.protein;
+    ..iconSizeMultiplier = 0.90;
 
   static HealthItem exerciseTime = HealthItem()
     ..dataType = [HealthDataType.EXERCISE_TIME]
@@ -41,8 +59,7 @@ class HealthItemDefinitions {
     ..unit = "min"
     ..color = CoreColors.coreOrange
     ..offColor = CoreColors.coreOffOrange
-    ..icon = IconTypes.exerciseIcon
-    ..xpType = XPType.exerciseTime;
+    ..icon = IconTypes.exerciseIcon;
 
   static HealthItem workoutTime = HealthItem()
     ..dataType = [HealthDataType.WORKOUT]
@@ -65,7 +82,6 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreOffLightOrange
     ..icon = IconTypes.sleepDurationIcon
     ..iconSizeMultiplier = 0.90
-    ..xpType = XPType.hitSleepGoal
     ..doesGoalSupportTimeInput = true
     ..widgetFactory = ((item, widgetSize, healthFetcherService) =>
         SleepHealthEntity(item, widgetSize, healthFetcherService));
@@ -106,7 +122,6 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreOffLightGrey
     ..doesGoalSupportNegative = true
     ..icon = IconTypes.netCaloriesIcon
-    ..xpType = XPType.hitNetCaloriesGoal
     ..widgetFactory = ((item, widgetSize, healthFetcherService) =>
         NetCaloriesHealthEntity(item, widgetSize, healthFetcherService));
 
@@ -119,8 +134,7 @@ class HealthItemDefinitions {
     ..offColor = CoreColors.coreOffOrange
     ..icon = IconTypes.stepsIcon
     ..iconSizeMultiplier = 0.80
-    ..iconRotation = 4.70
-    ..xpType = XPType.steps;
+    ..iconRotation = 4.70;
 
   static HealthItem weight = HealthItem()
     ..dataType = [HealthDataType.WEIGHT]

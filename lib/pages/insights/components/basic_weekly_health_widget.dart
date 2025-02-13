@@ -6,7 +6,6 @@ import 'package:healthxp/models/daily_goal_status.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/services/medal_service.dart';
 
 class BasicWeeklyHealthWidget extends WidgetFrame {
   final HealthEntity widget;
@@ -23,7 +22,13 @@ class BasicWeeklyHealthWidget extends WidgetFrame {
   Widget buildContent(BuildContext context) {
     final List<DailyGoalStatus> weeklyStatus = widget.getWeeklyGoalStatus();
     final int completedDays = weeklyStatus.where((day) => day.isCompleted).length;
-    final medalInfo = MedalService.getMedalInfo(widget.healthItem.itemType, completedDays);
+    final subtitle = completedDays <= 2 
+        ? "Just getting started"
+        : completedDays <= 4 
+            ? "On track" 
+            : completedDays <= 6
+                ? "Working hard"
+                : "Perfectionist";
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,12 +49,15 @@ class BasicWeeklyHealthWidget extends WidgetFrame {
               const SizedBox(height: GapSizes.xlarge),
               Row(
                 children: [
-                  FaIcon(
-                    medalInfo.icon,
-                    color: medalInfo.color,
-                    size: IconSizes.large,
+                  Transform.rotate(
+                    angle: widget.healthItem.iconRotation,
+                    child: FaIcon(
+                      widget.healthItem.icon,
+                      color: widget.healthItem.color,
+                      size: IconSizes.small,
+                    ),
                   ),
-                  const SizedBox(width: GapSizes.medium),
+                  const SizedBox(width: GapSizes.large),
                   Text(
                     '$completedDays/7',
                     style: const TextStyle(
@@ -61,7 +69,7 @@ class BasicWeeklyHealthWidget extends WidgetFrame {
               ),
               const SizedBox(height: GapSizes.small),
               Text(
-                medalInfo.title,
+                subtitle,
                 style: const TextStyle(
                   fontSize: FontSizes.small,
                   color: CoreColors.coreOffLightGrey,

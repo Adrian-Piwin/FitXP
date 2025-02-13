@@ -1,13 +1,15 @@
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-
 class EntityXP {
-  final HealthEntity entity;
+  final String entityName;
   final double value;
+  final double rawTotal;
+  final double rawAverage;
   final DateTime date;
 
   EntityXP({
-    required this.entity,
+    required this.entityName,
     required this.value,
+    required this.rawTotal,
+    required this.rawAverage,
     required this.date,
   });
 } 

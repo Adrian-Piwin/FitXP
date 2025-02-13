@@ -355,13 +355,3 @@ Future<void> setDataPerWidgetWithTimeframe(List<HealthEntity> entities, TimeFram
     await widget.updateData();
   }
 }
-
-Future<void> setDataPerWidgetWithDateRange(List<HealthEntity> entities, DateTimeRange dateRange) async {
-  for (var widget in entities) {
-    widget.queryDateRange = dateRange;
-  }
-
-  for (var widget in entities) {
-    await widget.updateData();
-  }
-}

@@ -5,10 +5,12 @@ import 'package:healthxp/services/error_logger.service.dart';
 import 'package:healthxp/services/health_data_cache_service.dart';
 import 'package:healthxp/services/preferences_service.dart';
 import 'package:healthxp/services/goals_service.dart';
+import 'package:healthxp/services/xp_service.dart';
 
 class SettingsController with ChangeNotifier {
   late final GoalsService _goalsService;
   late final HealthDataCache _healthDataCache;
+  late final XpService _xpService;
   UnitSystem _unitSystem = UnitSystem.metric;
 
   UnitSystem get unitSystem => _unitSystem;
@@ -22,6 +24,7 @@ class SettingsController with ChangeNotifier {
   Future<void> _initialize() async {
     _goalsService = await GoalsService.getInstance();
     _healthDataCache = await HealthDataCache.getInstance();
+    _xpService = await XpService.getInstance();
     await _loadPreferences();
   }
 
@@ -46,6 +49,7 @@ class SettingsController with ChangeNotifier {
     try {
       await _goalsService.clearCache();
       await _healthDataCache.clearCache();
+      await _xpService.clearCache();
     } catch (e) {
       await ErrorLogger.logError('Error clearing cache: $e');
     }
@@ -58,6 +62,7 @@ class SettingsController with ChangeNotifier {
       await clearPreferences();
       await _goalsService.dispose();
       await _healthDataCache.dispose();
+      await _xpService.dispose();
       await FirebaseAuth.instance.signOut();
 
       navigator.pushNamedAndRemoveUntil('/', (route) => false);
@@ -70,6 +75,7 @@ class SettingsController with ChangeNotifier {
   void dispose() {
     _goalsService.dispose();
     _healthDataCache.dispose();
+    _xpService.dispose();
     super.dispose();
   }
 }

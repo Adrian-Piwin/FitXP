@@ -1,51 +1,68 @@
-import 'package:flutter/material.dart';
 import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/constants/xp.constants.dart';
+import 'package:healthxp/enums/health_item_type.enum.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
 import 'package:healthxp/models/health_item.model.dart';
+import 'package:healthxp/models/monthly_medal.model.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
 import 'package:healthxp/utility/health.utility.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:healthxp/models/entity_xp.model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:healthxp/constants/medal_definitions.constants.dart';
+import 'package:healthxp/services/db_service.dart';
 
 class XpService {
+  static const String _xpBoxName = 'monthly_xp_cache';
+  static const String _medalsBoxName = 'earned_medals_cache';
   final HealthFetcherService _healthFetcherService = HealthFetcherService();
+  final DBService _dbService = DBService();
+  late Box<List<dynamic>> _xpBox;
+  late Box<List<String>> _medalsBox;
+  bool _isInitialized = false;
+  List<EntityXP>? _cachedAllTimeXP;
+  List<EntityXP> xpEntities = []; // Xp entities for the current month
 
-  late Box _xpBox;
-  static const String _boxName = 'xp_cache';
-  static const String _allTimeXPKey = 'all_time_xp';
-  static const String _rankXPKey = 'rank_xp';
-  static const String _allTimeXPLastFetchedKey = 'all_time_xp_last_fetched';
-  static const String _rankXPLastFetchedKey = 'rank_xp_last_fetched';
+  // Private constructor
+  XpService._();
 
-  static final DateTimeRange _defaultDateRange = DateTimeRange(
-    start: DateTime.now().subtract(const Duration(days: 365)),
-    end: DateTime.now(),
-  );
+  // Static instance
+  static XpService? _instance;
 
-  static List<HealthItem> goalEntities = [
-    HealthItemDefinitions.sleepDuration,
-    HealthItemDefinitions.netCalories,
-    HealthItemDefinitions.proteinIntake,
-  ];
+  // Factory constructor
+  static Future<XpService> getInstance() async {
+    if (_instance == null) {
+      _instance = XpService._();
+      await _instance!._initHive();
+    }
+    return _instance!;
+  }
+
+  Future<void> _initHive() async {
+    if (!_isInitialized) {
+      _xpBox = await Hive.openBox<List>(_xpBoxName);
+      _medalsBox = await Hive.openBox<List<String>>(_medalsBoxName);
+      _isInitialized = true;
+    }
+  }
+
+  Future<void> _ensureInitialized() async {
+    if (!_isInitialized) {
+      await _initHive();
+    }
+  }
 
   List<HealthItem> valueEntities = [
-    HealthItemDefinitions.exerciseTime,
+    HealthItemDefinitions.workoutTime,
     HealthItemDefinitions.steps,
     HealthItemDefinitions.proteinIntake,
+    HealthItemDefinitions.sleepDuration,
   ];
 
-  int? _xp = 0;
-  int? _rankXP = 0;
-
-  int get level => (_xp! / levelUpXPAmt).floor() + 1;
-  int get xp => _xp!;
-  int get xpToNextLevel => _xp! - ((level-1) * levelUpXPAmt);
-
-  int get rank => (_rankXP! / rankUpXPAmt).floor();
-  int get rankXP => _rankXP!;
-  int get rankXpToNextRank => _rankXP! - (rank * rankUpXPAmt);
+  int _rankXP = 0;
+  int get rank => (_rankXP / rankUpXPAmt).floor();
+  int get rankXP => _rankXP;
+  int get rankXpToNextRank => _rankXP - (rank * rankUpXPAmt);
   String get rankName => switch (rank) {
     < 1 => 'Bronze',
     < 2 => 'Silver',
@@ -56,94 +73,316 @@ class XpService {
   };
 
   Future<void> initialize() async {
-    await _healthFetcherService.initialize();
-    await Hive.initFlutter();
-    _xpBox = await Hive.openBox(_boxName);
-    
-    final cachedAllTimeXP = _xpBox.get(_allTimeXPKey);
-    final cachedRankXP = _xpBox.get(_rankXPKey);
-    // final lastAllTimeFetched = _xpBox.get(_allTimeXPLastFetchedKey);
-    // final lastRankFetched = _xpBox.get(_rankXPLastFetchedKey);
-
-    // final now = DateTime.now();
-    const cacheValid = true;
-
-    if (cachedAllTimeXP != null && cachedRankXP != null && cacheValid) {
-      _xp = cachedAllTimeXP;
-      _rankXP = cachedRankXP;
-    } else {
-      var allXPs = await _getXPForValue(valueEntities, TimeFrame.year);
-      _xp = await getAllTimeXP(allXPs);
-      _rankXP = await getRankXP(allXPs);
+    try {
+      await _ensureInitialized();
+      await _healthFetcherService.initialize();
+      xpEntities = await _getXPForValue(valueEntities, TimeFrame.month, 0);
+      
+      await _cacheLastMonth();
+      await _syncEarnedMedals();
+      
+      _rankXP = await getRankXP(getAllTimeXP());
+    } catch (e) {
+      print('Error initializing XP Service: $e');
     }
   }
 
-  Future<void> reset() async {
-    await _xpBox.clear();
-    var allXPs = await _getXPForValue(valueEntities, TimeFrame.year);
-    _xp = await getAllTimeXP(allXPs);
-    _rankXP = await getRankXP(allXPs);
+  Future<void> clearCache() async {
+    try {
+      await _ensureInitialized();
+      await _xpBox.clear();
+      await _medalsBox.clear();
+      xpEntities.clear();
+      _rankXP = 0;
+    } catch (e) {
+      print('Error clearing XP cache: $e');
+      rethrow;
+    }
   }
 
-  Future<int> getAllTimeXP(List<EntityXP> entityXPs) async {
-    final totalXP = entityXPs.fold<double>(0, (sum, xp) => sum + xp.value).toInt();
+  Future<void> dispose() async {
+    if (_isInitialized) {
+      if (_xpBox.isOpen) await _xpBox.close();
+      if (_medalsBox.isOpen) await _medalsBox.close();
+      _isInitialized = false;
+    }
+  }
+
+  String _getMonthKey(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _cacheLastMonth() async {
+    final String monthKey = _getMonthKey(DateTime.now().subtract(const Duration(days: 30)));
     
-    // Cache the results
-    await _xpBox.put(_allTimeXPKey, totalXP);
-    await _xpBox.put(_allTimeXPLastFetchedKey, DateTime.now().toIso8601String());
+    // Check if last month is already cached
+    if (!_xpBox.containsKey(monthKey)) {
+      List<EntityXP> xpEntities = await _getXPForValue(valueEntities, TimeFrame.month, -1);
+
+      final List<Map<String, dynamic>> serializedXP = xpEntities.map((xp) => {
+        'type': xp.entityName,
+        'rawTotal': xp.rawTotal,
+        'rawAverage': xp.rawAverage,
+        'date': xp.date.toIso8601String(),
+      }).toList();
+      
+      await _xpBox.put(monthKey, serializedXP);
+    }
+  }
+
+  List<EntityXP> getAllTimeXP() {
+    if (_cachedAllTimeXP != null) {
+      return _cachedAllTimeXP!;
+    }
+
+    List<EntityXP> allXP = [...xpEntities];  // Current month's XP
     
-    return totalXP;
+    // Add cached months' XP
+    for (var monthlyData in _xpBox.values) {
+      try {
+        // Fix type casting
+        final List<dynamic> monthlyXP = monthlyData;
+        
+        for (var data in monthlyXP) {
+          // Ensure proper type casting of Map
+          final Map<String, dynamic> entityData = Map<String, dynamic>.from(data);
+          
+          // Safely handle potential null values
+          final rawTotal = entityData['rawTotal'];
+          final rawAverage = entityData['rawAverage'];
+          final type = entityData['type'];
+          final date = entityData['date'];
+          
+          // Skip invalid entries
+          if (rawTotal == null || rawAverage == null || type == null || date == null) {
+            continue;
+          }
+          
+          allXP.add(EntityXP(
+            entityName: type.toString(),
+            value: (rawTotal as num).toDouble(),
+            rawTotal: (rawTotal).toDouble(),
+            rawAverage: (rawAverage as num).toDouble(),
+            date: DateTime.parse(date.toString()),
+          ));
+        }
+      } catch (e) {
+        print('Error processing cached XP data: $e');
+        continue;  // Skip problematic entries
+      }
+    }
+    
+    _cachedAllTimeXP = allXP;
+    return allXP;
   }
 
   Future<int> getRankXP(List<EntityXP> entityXPs) async {
-    var now = DateTime.now();
-    var oneMonthAgo = DateTime(now.year, now.month - 1, now.day);
-    
-    final totalXP = entityXPs
-        .where((xp) => xp.date.isAfter(oneMonthAgo))
+    return entityXPs
         .fold<double>(0, (sum, xp) => sum + xp.value)
         .toInt();
-    
-    // Cache the results
-    await _xpBox.put(_rankXPKey, totalXP);
-    await _xpBox.put(_rankXPLastFetchedKey, DateTime.now().toIso8601String());
-    
-    return totalXP;
   }
 
-  Future<List<EntityXP>> _getXPForValue(List<HealthItem> healthItems, TimeFrame timeframe) async {
+  Future<List<EntityXP>> _getXPForValue(List<HealthItem> healthItems, TimeFrame timeframe, int offset) async {
     List<HealthEntity> entities = await initializeWidgets(healthItems, _healthFetcherService);
-    await setDataPerWidgetWithDateRange(entities, _defaultDateRange);
+    await setDataPerWidgetWithTimeframe(entities, timeframe, offset);
 
     List<EntityXP> entityXPs = [];
     for (var entity in entities) {
+      final xpMultiplier = xpMapping[entity.healthItem.itemType] ?? 1.0;
       entityXPs.add(EntityXP(
-          entity: entity,
-          value: xpMapping[entity.healthItem.xpType]! * entity.total,
-          date: DateTime.now(),
+          entityName: entity.healthItem.itemType.toString(),
+          value: xpMultiplier * entity.total,
+          rawTotal: entity.total,
+          rawAverage: entity.average,
+          date: entity.queryDateRange!.start,
         ));
     }
     return entityXPs;
   }
 
-  Future<List<EntityXP>> _getXPForReachedGoal(List<HealthItem> healthItems, TimeFrame timeframe) async {
-    List<HealthEntity> entities = await initializeWidgets(healthItems, _healthFetcherService);
-    await setDataPerWidgetWithDateRange(entities, _defaultDateRange);
+  Map<HealthItemType, double> getMonthlyTotals() {
+    Map<HealthItemType, double> totals = {};
+    List<EntityXP> allXP = getAllTimeXP();
+    
+    // Group and sum by HealthItemType
+    for (var entityXP in allXP) {
+      final type = HealthItemType.values.firstWhere((e) => e.toString() == entityXP.entityName);
+      totals[type] = (totals[type] ?? 0) + entityXP.rawTotal;
+    }
+    
+    return totals;
+  }
 
-    List<EntityXP> entityXPs = [];
-    for (var entity in entities) {
-      Map<DateTime, double> dailyData = getDailyData(entity.getCurrentData);
-      for (MapEntry<DateTime, double> data in dailyData.entries) {
-        if (data.value.abs() >= entity.goal.abs()) {
-          entityXPs.add(EntityXP(
-            entity: entity,
-            value: xpGoalMapping[entity.healthItem.xpType]!,
-            date: data.key,
-          ));
-        }
+  Future<void> _syncEarnedMedals() async {
+    final userId = _dbService.getUserId();
+    if (userId == null) return;
+
+    try {
+      // Create the document if it doesn't exist
+      await _dbService.createDocument(
+        collectionPath: 'users',
+        documentId: userId,
+        data: {
+          'medals': {
+            'earned': {
+              'medalIds': [],
+            }
+          }
+        },
+      );
+
+      // Then read the document
+      final doc = await _dbService.readDocument(
+        collectionPath: 'users',
+        documentId: userId,
+      );
+
+      final medalData = doc.data()?['medals']?['earned']?['medalIds'] as List<dynamic>? ?? [];
+      final earnedMedalIds = medalData.map((e) => e.toString()).toList();
+      await _medalsBox.put('earned', earnedMedalIds);
+    } catch (e) {
+      print('Error syncing medals: $e');
+      // Initialize with empty list if there's an error
+      await _medalsBox.put('earned', <String>[]);
+    }
+  }
+
+  Future<void> _saveEarnedMedal(String medalId) async {
+    final userId = _dbService.getUserId();
+    if (userId == null) return;
+
+    try {
+      final earnedMedalIds = _medalsBox.get('earned', defaultValue: <String>[])!;
+      if (!earnedMedalIds.contains(medalId)) {
+        earnedMedalIds.add(medalId);
+        await _medalsBox.put('earned', earnedMedalIds);
+        
+        // Save to Firebase with proper document structure
+        await _dbService.updateDocument(
+          collectionPath: 'users',
+          documentId: userId,
+          data: {
+            'medals': {
+              'earned': {
+                'medalIds': earnedMedalIds,
+              }
+            }
+          },
+        );
+      }
+    } catch (e) {
+      print('Error saving medal: $e');
+    }
+  }
+
+  List<Medal> getEarnedMedals() {
+    final allTimeTotals = getAllTimeTotals();
+    final monthlyTotals = getMonthlyTotals();
+    final monthlyAverages = getMonthlyAverages();
+    final earnedMedalIds = _medalsBox.get('earned', defaultValue: <String>[])!;
+
+    List<Medal> allMedals = [
+      ...MedalDefinitions.getAllTimeMedals(allTimeTotals),
+      ...getAllMonthlyMedals(monthlyTotals, monthlyAverages),
+    ];
+
+    // Check for newly earned medals
+    for (var medal in allMedals) {
+      if (medal.isEarned && !earnedMedalIds.contains(medal.id)) {
+        _saveEarnedMedal(medal.id);
       }
     }
 
-    return entityXPs;
+    return allMedals
+        .where((medal) => earnedMedalIds.contains(medal.id))
+        .toList()
+        ..sort((a, b) => b.tier.compareTo(a.tier));
+  }
+
+  List<Medal> getAllMonthlyMedals(
+    Map<HealthItemType, double> monthlyTotals,
+    Map<HealthItemType, double> monthlyAverages,
+  ) {
+    List<Medal> medals = [];
+    
+    // Get all month keys from cached data
+    final monthKeys = _xpBox.keys.toList();
+    
+    for (String monthKey in monthKeys) {
+      medals.addAll([
+        ...MedalDefinitions.getMonthlyAverageMedals(monthKey, monthlyAverages),
+        ...MedalDefinitions.getMonthlyTotalMedals(monthKey, monthlyTotals),
+      ]);
+    }
+    
+    return medals;
+  }
+
+  Map<HealthItemType, double> getAllTimeTotals() {
+    Map<HealthItemType, double> totals = {};
+    List<EntityXP> allXP = getAllTimeXP();
+    
+    // Group and sum by HealthItemType
+    for (var entityXP in allXP) {
+      final type = HealthItemType.values.firstWhere(
+        (e) => e.toString() == entityXP.entityName
+      );
+      totals[type] = (totals[type] ?? 0) + entityXP.rawTotal;
+    }
+    
+    return totals;
+  }
+
+  Map<HealthItemType, double> getMonthlyAverages() {
+    Map<HealthItemType, double> averages = {};
+    Map<HealthItemType, int> monthCounts = {};
+    
+    // Process current month's data
+    for (var entityXP in xpEntities) {
+      final type = HealthItemType.values.firstWhere(
+        (e) => e.toString() == entityXP.entityName
+      );
+      averages[type] = (averages[type] ?? 0) + entityXP.rawAverage;
+      monthCounts[type] = (monthCounts[type] ?? 0) + 1;
+    }
+    
+    // Process cached months' data
+    for (var monthlyData in _xpBox.values) {
+      try {
+        // Fix type casting
+        final List<dynamic> monthlyXP = monthlyData;
+        
+        for (var data in monthlyXP) {
+          // Ensure proper type casting of Map
+          final Map<String, dynamic> entityData = Map<String, dynamic>.from(data);
+          
+          // Safely handle potential null values
+          final rawAverage = entityData['rawAverage'];
+          final type = entityData['type'];
+          
+          // Skip invalid entries
+          if (rawAverage == null || type == null) {
+            continue;
+          }
+
+          final healthType = HealthItemType.values.firstWhere(
+            (e) => e.toString() == type.toString()
+          );
+          
+          averages[healthType] = (averages[healthType] ?? 0) + (rawAverage as num).toDouble();
+          monthCounts[healthType] = (monthCounts[healthType] ?? 0) + 1;
+        }
+      } catch (e) {
+        print('Error processing monthly averages: $e');
+        continue;  // Skip problematic entries
+      }
+    }
+    
+    // Calculate final averages
+    for (var type in averages.keys) {
+      averages[type] = averages[type]! / monthCounts[type]!;
+    }
+    
+    return averages;
   }
 }

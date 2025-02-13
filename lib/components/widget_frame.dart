@@ -8,6 +8,7 @@ abstract class WidgetFrame extends StatelessWidget {
   final Color? color;
   final double? borderRadius;
   final double? padding;
+  final bool showShadow;
 
   const WidgetFrame({
     super.key,
@@ -16,6 +17,7 @@ abstract class WidgetFrame extends StatelessWidget {
     this.color,
     this.borderRadius,
     this.padding,
+    this.showShadow = true,
   });
 
   // Abstract child widget to be implemented by subclasses
@@ -32,16 +34,16 @@ abstract class WidgetFrame extends StatelessWidget {
           borderRadius: BorderRadius.circular(
             borderRadius ?? BorderRadiusSizes.medium
           ),
-          boxShadow: [
+          boxShadow: showShadow ? [
             BoxShadow(
               offset: const Offset(2, 2),  // x:2, y:2
               blurRadius: 4,               // blur: 4
               spreadRadius: 0,             // spread: 0
               color: Colors.black.withOpacity(0.1),  // black at 10% opacity
             ),
-          ],
+          ] : null,
         ),
-        padding: EdgeInsets.all(padding ?? PaddingSizes.large),
+        padding: EdgeInsets.all(padding ?? PaddingSizes.xlarge),
         child: buildContent(context), // Render content from subclasses
       ),
     );

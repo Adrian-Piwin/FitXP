@@ -46,7 +46,7 @@ class _PermissionsViewState extends State<PermissionsView> {
         appBar: AppBar(title: const Text('Permissions Required')),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(PaddingSizes.large),
+            padding: const EdgeInsets.all(PaddingSizes.xlarge),
             child: Column(
               children: [
                 Text(

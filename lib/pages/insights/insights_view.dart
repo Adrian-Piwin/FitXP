@@ -25,7 +25,7 @@ class _InsightsViewState extends State<InsightsView> with AutomaticKeepAliveClie
       create: (context) => InsightsController(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Weekly Insights'),
+          title: const Text('Insights'),
         ),
         body: Consumer<InsightsController>(
           builder: (context, controller, _) {
