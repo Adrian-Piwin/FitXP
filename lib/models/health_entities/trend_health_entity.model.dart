@@ -97,6 +97,7 @@ class TrendHealthEntity extends HealthEntity {
       getXAxisLabel: getXAxisLabel,
       targetValue: goal,
       targetValueText: getDisplayGoalWithUnit,
+      unit: healthItem.unit,
     );
   }
 

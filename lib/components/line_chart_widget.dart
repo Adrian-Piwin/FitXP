@@ -13,6 +13,7 @@ class LineChartWidget extends WidgetFrame {
   final Function(double) getXAxisLabel;
   final double? targetValue;
   final String? targetValueText;
+  final String? unit;
 
   const LineChartWidget({
     super.key,
@@ -21,6 +22,7 @@ class LineChartWidget extends WidgetFrame {
     required this.getXAxisLabel,
     this.targetValue,
     this.targetValueText,
+    this.unit,
   }) : super(
           size: 6,
           height: WidgetSizes.largeHeight,
@@ -232,7 +234,7 @@ class LineChartWidget extends WidgetFrame {
                             ),
                             children: [
                               TextSpan(
-                                text: touchedSpot.y.toStringAsFixed(1),
+                                text: '${touchedSpot.y.toStringAsFixed(1)}${unit ?? ''}',
                                 style: const TextStyle(
                                   color: CoreColors.textColor,
                                   fontSize: FontSizes.large,

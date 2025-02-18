@@ -236,6 +236,7 @@ class HealthEntity extends ChangeNotifier {
       barColor: healthItem.color,
       getXAxisLabel: getXAxisLabel,
       getBarchartValue: getBarchartValue,
+      unit: healthItem.unit,
     );
   }
 

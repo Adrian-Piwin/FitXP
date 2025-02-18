@@ -10,6 +10,7 @@ class BarChartWidget extends WidgetFrame {
   final Color barColor;
   final Function(double) getXAxisLabel;
   final Function(double) getBarchartValue;
+  final String? unit;
 
   const BarChartWidget({
     super.key,
@@ -17,6 +18,7 @@ class BarChartWidget extends WidgetFrame {
     required this.barColor,
     required this.getXAxisLabel,
     required this.getBarchartValue,
+    this.unit,
   }) : super(
           size: 6,
           height: WidgetSizes.largeHeight,
@@ -76,7 +78,7 @@ class BarChartWidget extends WidgetFrame {
                         ),
                         children: [
                           TextSpan(
-                            text: value,
+                            text: '$value${unit ?? ''}',
                             style: const TextStyle(
                               color: CoreColors.textColor,
                               fontSize: FontSizes.large,
