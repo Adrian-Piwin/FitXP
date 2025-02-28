@@ -6,6 +6,7 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'rank_widget_controller.dart';
+import 'package:healthxp/pages/insights/components/rank_popup_widget.dart';
 
 class RankWidget extends WidgetFrame {
   const RankWidget({super.key}) : super(
@@ -28,48 +29,53 @@ class RankWidget extends WidgetFrame {
 
           return Column(
             children: [
-              Row(
-                children: [
-                  // Rank Icon Container
-                  Container(
-                    width: 50,
-                    height: 53,
-                    decoration: BoxDecoration(
-                      color: CoreColors.foregroundColor,
-                      borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-                    ),
-                    child: const Center(
-                      child: FaIcon(
-                        FontAwesomeIcons.medal,
-                        size: IconSizes.large,
-                        color: CoreColors.coreGold,
+              // Rank Progress Section
+              GestureDetector(
+                onTap: () => controller.showRankDetails(context),
+                child: Row(
+                  children: [
+                    // Rank Icon Container
+                    Container(
+                      width: 50,
+                      height: 53,
+                      decoration: BoxDecoration(
+                        color: CoreColors.foregroundColor,
+                        borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                      ),
+                      child: Center(
+                        child: FaIcon(
+                          controller.rankIcon,
+                          size: IconSizes.large,
+                          color: controller.rankColor,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: GapSizes.medium),
-                  // XP Progress
-                  Expanded(
-                    child: InfoBar(
-                      title: controller.rankName,
-                      value: controller.currentXP.toString(),
-                      goal: controller.requiredXP.toString(),
-                      percent: controller.rankProgress,
-                      color: CoreColors.coreGold,
-                      textColor: CoreColors.textColor,
+                    const SizedBox(width: GapSizes.medium),
+                    // XP Progress
+                    Expanded(
+                      child: InfoBar(
+                        title: controller.rankName,
+                        value: controller.currentXP.toString(),
+                        goal: controller.requiredXP.toString(),
+                        percent: controller.rankProgress,
+                        color: controller.rankColor,
+                        textColor: CoreColors.textColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: GapSizes.large),
               // Medals Row
-              Container(
-                padding: const EdgeInsets.fromLTRB(0, PaddingSizes.large, 0, PaddingSizes.large),
-                decoration: BoxDecoration(
-                  color: CoreColors.foregroundColor,
-                  borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-                ),
-                child: GestureDetector(
-                  onTap: () => controller.showAllMedals(context),
+              GestureDetector(
+                onTap: () => controller.showAllMedals(context),
+                behavior: HitTestBehavior.opaque, // Ensures the gesture is captured
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(0, PaddingSizes.large, 0, PaddingSizes.large),
+                  decoration: BoxDecoration(
+                    color: CoreColors.foregroundColor,
+                    borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(5, (index) {

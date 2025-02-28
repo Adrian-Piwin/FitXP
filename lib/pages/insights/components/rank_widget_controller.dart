@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:healthxp/constants/colors.constants.dart';
+import 'package:healthxp/constants/rank_definitions.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/constants/xp.constants.dart';
 import 'package:healthxp/models/monthly_medal.model.dart';
+import 'package:healthxp/pages/insights/components/rank_popup_widget.dart';
 import 'package:healthxp/services/xp_service.dart';
 
 class RankWidgetController extends ChangeNotifier {
@@ -16,6 +18,10 @@ class RankWidgetController extends ChangeNotifier {
   int get currentXP => _xpService.rankXpToNextRank;
   int get requiredXP => rankUpXPAmt;
   double get rankProgress => currentXP / requiredXP;
+
+  // New getters for rank styling
+  IconData get rankIcon => RankDefinitions.ranks[_xpService.currentRank]!.icon;
+  Color get rankColor => RankDefinitions.ranks[_xpService.currentRank]!.color;
 
   List<Medal> get topFiveMedals => _earnedMedals
     .where((medal) => medal.isEarned)
@@ -34,17 +40,32 @@ class RankWidgetController extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _xpService = await XpService.getInstance();
-    await _xpService.initialize();
+    try {
+      _xpService = await XpService.getInstance();
+      await _xpService.initialize();
 
-    // Get all medals and filter earned ones
-    _earnedMedals = _xpService.getEarnedMedals()
-        .where((medal) => medal.isEarned)
-        .toList()
-        ..sort((a, b) => b.tier.compareTo(a.tier));  // Sort by tier descending
+      // Get all medals and filter earned ones
+      _earnedMedals = _xpService.getEarnedMedals()
+          .where((medal) => medal.isEarned)
+          .toList()
+          ..sort((a, b) => b.tier.compareTo(a.tier));
 
-    _isLoading = false;
-    notifyListeners();
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      print('Error initializing RankWidgetController: $e');
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void showRankDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => RankPopupWidget(
+        currentRank: _xpService.currentRank,
+      ),
+    );
   }
 
   void showAllMedals(BuildContext context) {

@@ -11,6 +11,7 @@ import 'package:healthxp/models/entity_xp.model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:healthxp/constants/medal_definitions.constants.dart';
 import 'package:healthxp/services/db_service.dart';
+import 'package:healthxp/enums/rank.enum.dart';
 
 class XpService {
   static const String _xpBoxName = 'monthly_xp_cache';
@@ -64,12 +65,19 @@ class XpService {
   int get rankXP => _rankXP;
   int get rankXpToNextRank => _rankXP - (rank * rankUpXPAmt);
   String get rankName => switch (rank) {
-    < 1 => 'Bronze',
-    < 2 => 'Silver',
-    < 3 => 'Gold',
-    < 4 => 'Platinum',
-    < 5 => 'Diamond',
-    _ => 'Legend',
+    < 1 => Rank.bronze.displayName,
+    < 2 => Rank.silver.displayName,
+    < 3 => Rank.gold.displayName,
+    < 4 => Rank.platinum.displayName,
+    _ => Rank.diamond.displayName,
+  };
+
+  Rank get currentRank => switch (rank) {
+    < 1 => Rank.bronze,
+    < 2 => Rank.silver,
+    < 3 => Rank.gold,
+    < 4 => Rank.platinum,
+    _ => Rank.diamond,
   };
 
   Future<void> initialize() async {
