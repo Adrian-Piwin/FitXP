@@ -63,10 +63,13 @@ class HealthEntity extends ChangeNotifier {
   Future<void> initialize() async {
     _goalsService = await GoalsService.getInstance();
     await _loadGoal();
-
     if (healthItem.doesGoalSupportStreaks) {
-      var streakService = StreakService();
-      cachedStreak = await streakService.getStreak(this, goal);
+      if (goal == 0){
+        cachedStreak = 0;
+      } else {
+        var streakService = StreakService();
+        cachedStreak = await streakService.getStreak(this, goal);
+      }
     }
   }
 
