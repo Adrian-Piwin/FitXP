@@ -217,6 +217,7 @@ class LineChartWidget extends WidgetFrame {
                   minX: -0.5,
                   maxX: groupedData.length - 0.5,
                   lineTouchData: LineTouchData(
+                    enabled: true,
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (value) => CoreColors.backgroundColor,
                       tooltipPadding: const EdgeInsets.all(8),
@@ -225,6 +226,11 @@ class LineChartWidget extends WidgetFrame {
                       fitInsideHorizontally: true,
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((LineBarSpot touchedSpot) {
+                          // Ignore edge points (extended spots)
+                          if (touchedSpot.x < 0 || touchedSpot.x >= groupedData.length) {
+                            return null;
+                          }
+                          
                           final index = touchedSpot.x.toInt();
                           return LineTooltipItem(
                             '${groupedData[index].label}\n',
@@ -246,6 +252,32 @@ class LineChartWidget extends WidgetFrame {
                         }).toList();
                       },
                     ),
+                    // Add touch callback to handle edge cases
+                    handleBuiltInTouches: true,
+                    getTouchedSpotIndicator: (barData, spotIndexes) {
+                      return spotIndexes.map((spotIndex) {
+                        // Don't show indicator for edge points
+                        if (spotIndex < 1 || spotIndex >= groupedData.length + 1) {
+                          return null;
+                        }
+                        return TouchedSpotIndicatorData(
+                          FlLine(
+                            color: lineColor.withOpacity(0.2),
+                            strokeWidth: 2,
+                          ),
+                          FlDotData(
+                            getDotPainter: (spot, percent, barData, index) {
+                              return FlDotCirclePainter(
+                                radius: 4,
+                                color: Colors.white,
+                                strokeWidth: 2,
+                                strokeColor: lineColor,
+                              );
+                            },
+                          ),
+                        );
+                      }).toList();
+                    },
                   ),
                 ),
               ),
