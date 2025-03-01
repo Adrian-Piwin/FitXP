@@ -1,5 +1,4 @@
 import 'package:health/health.dart';
-import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';
 import 'package:healthxp/models/data_points/workout_data_point.model.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
@@ -33,7 +32,7 @@ class WorkoutHealthEntity extends HealthEntity {
 
   @override
   List<DataPoint> aggregateData(Map<HealthDataType, List<DataPoint>> data) {
-    return workoutDataPoints(data).where((point) => strengthTrainingTypes.contains(point.workoutType)).toList() as List<DataPoint>;
+    return workoutDataPoints(data);
   }
 
   @override

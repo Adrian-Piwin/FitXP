@@ -35,7 +35,6 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
         HealthItemDefinitions.proteinIntake,
         HealthItemDefinitions.sleepDuration,
         HealthItemDefinitions.exerciseTime,
-        HealthItemDefinitions.workoutTime,
         HealthItemDefinitions.weight,
         HealthItemDefinitions.bodyFat,
       ];

@@ -43,9 +43,9 @@ class BottomNavBar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Material(
               type: MaterialType.transparency,
-              child: Icon(IconTypes.insightsIcon),
+              child: Icon(IconTypes.workoutIcon),
             ),
-            label: "Insights",
+            label: "Workouts",
           ),
           BottomNavigationBarItem(
             icon: Material(

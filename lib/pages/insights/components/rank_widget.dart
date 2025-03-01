@@ -6,7 +6,6 @@ import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'rank_widget_controller.dart';
-import 'package:healthxp/pages/insights/components/rank_popup_widget.dart';
 
 class RankWidget extends WidgetFrame {
   const RankWidget({super.key}) : super(

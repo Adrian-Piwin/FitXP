@@ -2,7 +2,7 @@ import 'package:healthxp/components/bottom_nav_bar.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/pages/auth/auth_gate.dart';
 import 'package:healthxp/pages/home/home_view.dart';
-import 'package:healthxp/pages/insights/insights_view.dart';
+import 'package:healthxp/pages/workouts/workouts_view.dart';
 import 'package:healthxp/pages/permissions/permissions_view.dart';
 import 'package:healthxp/pages/settings/settings_view.dart';
 import 'package:flutter/material.dart';
@@ -186,7 +186,7 @@ class _MainViewState extends State<MainView> {
   
   final List<Widget> _pages = [
     const HomeView(),
-    InsightsView(),
+    WorkoutsView(),
     SettingsView(),
   ];
 

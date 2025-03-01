@@ -31,3 +31,15 @@ SleepStage mapSleepStage(HealthDataType type) {
       return SleepStage.unknown;
   }
 }
+
+  String formatDuration(double minutes) {
+    final int totalMinutes = minutes.round();
+    final int hours = totalMinutes ~/ 60;
+    final int remainingMinutes = totalMinutes % 60;
+    
+    if (hours > 0) {
+      return '${hours}h ${remainingMinutes}m';
+    } else {
+      return '${remainingMinutes}m';
+    }
+  }

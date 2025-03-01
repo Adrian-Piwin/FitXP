@@ -72,11 +72,20 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                 onOffsetChanged: controller.updateOffset,
                 child: RefreshIndicator(
                   onRefresh: () => controller.refresh(true),
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: GridLayout(
-                      widgets: controller.displayWidgets,
-                    ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                          ),
+                          child: GridLayout(
+                            widgets: controller.displayWidgets,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               );

@@ -12,6 +12,8 @@ class CoreColors{
   static const Color coreOffLightGrey = Color(0xFFbdbdbd);
   static const Color coreBlue = Color(0xFF26a7e3);
   static const Color coreOffBlue = Color(0xFF9ddefc);
+  static const Color coreGreen = Color(0xFF4CAF50);
+  static const Color coreOffGreen = Color(0xFFb2dfdb);
   static const Color coreOrange = Color(0xFFf96e2a);
   static const Color coreOffOrange = Color(0xFFfdd2bd);
   static const Color coreGold = Color(0xFFf1cc07);
