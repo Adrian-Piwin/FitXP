@@ -3,6 +3,7 @@ import 'package:healthxp/components/timeframe_tabbar.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/pages/workouts/components/workout_list_item.dart';
 import 'package:healthxp/pages/workouts/components/workout_summary.dart';
+import 'package:healthxp/pages/workouts/components/workout_type_filter.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/components/date_selector.dart';
 import 'workouts_controller.dart';
@@ -63,22 +64,37 @@ class _WorkoutsViewState extends State<WorkoutsView> with AutomaticKeepAliveClie
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(PaddingSizes.medium),
-                          child: Column(
-                            children: [
-                              WorkoutSummary(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(PaddingSizes.medium),
+                              child: WorkoutSummary(
                                 workoutCount: controller.workoutCount,
                                 totalDuration: controller.totalDuration,
                                 totalCalories: controller.totalCalories,
                               ),
-                              const SizedBox(height: GapSizes.medium),
-                              ...controller.workouts.map((workout) => Padding(
-                                padding: const EdgeInsets.only(bottom: GapSizes.medium),
-                                child: WorkoutListItem(workout: workout),
-                              )),
-                            ],
-                          ),
+                            ),
+                            if (controller.availableWorkoutTypes.length > 1)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: PaddingSizes.medium,
+                                  vertical: 0,
+                                ),
+                                child: WorkoutTypeFilter(
+                                  availableTypes: controller.availableWorkoutTypes,
+                                  selectedTypes: controller.selectedWorkoutTypes,
+                                  onToggleType: controller.toggleWorkoutType,
+                                ),
+                              ),
+                            const SizedBox(height: GapSizes.small),
+                            ...controller.workouts.map((workout) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: PaddingSizes.medium,
+                                vertical: GapSizes.small,
+                              ),
+                              child: WorkoutListItem(workout: workout),
+                            )),
+                          ],
                         ),
                       ),
                     );

@@ -15,17 +15,23 @@ class WorkoutsController extends ChangeNotifier {
   TimeFrame _selectedTimeFrame = TimeFrame.week;
   int _offset = 0;
   List<WorkoutDataPoint> _workouts = [];
+  Set<String> _selectedWorkoutTypes = {};
+  Set<String> _availableWorkoutTypes = {};
 
   bool get isLoading => _isLoading;
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
-  List<WorkoutDataPoint> get workouts => _workouts;
+  List<WorkoutDataPoint> get workouts => _selectedWorkoutTypes.isEmpty 
+    ? _workouts 
+    : _workouts.where((w) => _selectedWorkoutTypes.contains(w.workoutType)).toList();
   List<TimeFrame> get timeFrameOptions => const [TimeFrame.week, TimeFrame.month, TimeFrame.year];
+  Set<String> get selectedWorkoutTypes => _selectedWorkoutTypes;
+  Set<String> get availableWorkoutTypes => _availableWorkoutTypes;
 
   // Workout Summary Getters
-  int get workoutCount => _workouts.length;
-  double get totalDuration => _workouts.fold(0, (sum, w) => sum + w.value);
-  double get totalCalories => _workouts.fold(0, (sum, w) => sum + (w.energyBurned ?? 0));
+  int get workoutCount => workouts.length;
+  double get totalDuration => workouts.fold(0, (sum, w) => sum + w.value);
+  double get totalCalories => workouts.fold(0, (sum, w) => sum + (w.energyBurned ?? 0));
 
   WorkoutsController() {
     _workoutEntity = WorkoutHealthEntity(
@@ -62,9 +68,39 @@ class WorkoutsController extends ChangeNotifier {
       await _workoutEntity.updateData();
       _workouts = _workoutEntity.workoutDataPoints(_workoutEntity.data)
         ..sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
+      
+      // Update available workout types
+      _availableWorkoutTypes = _workouts
+        .where((w) => w.workoutType != null)
+        .map((w) => w.workoutType!)
+        .toSet();
+      
+      // Remove selected types that are no longer available
+      _selectedWorkoutTypes.removeWhere(
+        (type) => !_availableWorkoutTypes.contains(type)
+      );
     } catch (e) {
       await ErrorLogger.logError('Error fetching workouts: $e');
     }
+    notifyListeners();
+  }
+
+  void toggleWorkoutType(String type) {
+    if (_selectedWorkoutTypes.contains(type)) {
+      _selectedWorkoutTypes.remove(type);
+    } else {
+      _selectedWorkoutTypes.add(type);
+    }
+    notifyListeners();
+  }
+
+  void selectAllWorkoutTypes() {
+    _selectedWorkoutTypes = Set.from(_availableWorkoutTypes);
+    notifyListeners();
+  }
+
+  void clearWorkoutTypes() {
+    _selectedWorkoutTypes.clear();
     notifyListeners();
   }
 

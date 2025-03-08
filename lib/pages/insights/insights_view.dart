@@ -47,15 +47,7 @@ class _InsightsViewState extends State<InsightsView> with AutomaticKeepAliveClie
             child: Scaffold(
               appBar: AppBar(
                 titleSpacing: 0,
-                title: Consumer<InsightsController>(
-                  builder: (context, controller, _) {
-                    return TimeFrameTabBar(
-                      selectedTimeFrame: TimeFrame.month,
-                      onChanged: (_) {}, // Month only
-                      timeFrameOptions: const [TimeFrame.month],
-                    );
-                  },
-                ),
+                title: const Text('Your Achievements'),
               ),
               body: Consumer<InsightsController>(
                 builder: (context, controller, _) {
