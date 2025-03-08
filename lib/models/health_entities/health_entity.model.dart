@@ -149,29 +149,29 @@ class HealthEntity extends ChangeNotifier {
   // The main value displayed on the home page widget
   String get getDisplayValueWithUnit {
     if (showLoading) return "--";
-    return formatNumber(total) + healthItem.unit;
+    return formatNumber(total, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0) + healthItem.unit;
   }
 
   String get getDisplayValue {
     if (showLoading) return "--";
-    return formatNumber(total);
+    return formatNumber(total, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
   }
 
   // The daily average displayed on the details page widget
   String get getDisplayAverage {
     if (showLoading) return "--";
-    return formatNumber(average) + healthItem.unit;
+    return formatNumber(average, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0) + healthItem.unit;
   }
 
   // The goal value displayed on the details page widget
   String get getDisplayGoalWithUnit {
     if (showLoading) return "--";
-    return formatNumber(goal) + healthItem.unit;
+    return formatNumber(goal, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0) + healthItem.unit;
   }
 
   String get getDisplayGoal {
     if (showLoading) return "--";
-    return formatNumber(goal);
+    return formatNumber(goal, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
   }
 
   // The percentage of the goal for this health entity against our daily average

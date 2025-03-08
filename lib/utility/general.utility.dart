@@ -9,8 +9,8 @@ String formatMinutes(int totalMinutes) {
     : "${minutes}min";
 }
 
-String formatNumber(num number) {
-  return number.toStringAsFixed(0).replaceAllMapped(
+String formatNumber(num number, {int decimalPlaces = 0}) {
+  return number.toStringAsFixed(decimalPlaces).replaceAllMapped(
     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
     (Match m) => '${m[1]},'
   );

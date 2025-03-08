@@ -118,9 +118,15 @@ class WorkoutsController extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
-    _offset = 0;
-    await _healthDataCache.clearTodaysCache();
-    await _fetchData();
+    try {
+      _offset = 0;
+      // Ensure cache is initialized before using it
+      _healthDataCache = await HealthDataCache.getInstance();
+      await _healthDataCache.clearTodaysCache();
+      await _fetchData();
+    } catch (e) {
+      await ErrorLogger.logError('Error refreshing workouts: $e');
+    }
   }
 
   @override

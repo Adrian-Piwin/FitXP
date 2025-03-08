@@ -23,7 +23,8 @@ class TrendHealthEntity extends HealthEntity {
 
   String get getDisplayGoalWithUnitProgress {
     if (mostRecentDataPoint == null) return "--";
-    return "${(mostRecentDataPoint!.value - goal).abs().toStringAsFixed(0)}${healthItem.unit} away";
+    final value = (mostRecentDataPoint!.value - goal).abs();
+    return "${healthItem.doesGoalSupportDecimals ? value.toStringAsFixed(1) : value.toStringAsFixed(0)}${healthItem.unit} away";
   }
 
   @override
@@ -61,7 +62,8 @@ class TrendHealthEntity extends HealthEntity {
     if (showLoading) return "--";
     if (mostRecentDataPoint == null) return "--";
     
-    return mostRecentDataPoint!.value.toStringAsFixed(1) + healthItem.unit;
+    final value = mostRecentDataPoint!.value;
+    return "${healthItem.doesGoalSupportDecimals ? value.toStringAsFixed(1) : value.toStringAsFixed(0)}${healthItem.unit}";
   }
 
   @override
@@ -69,7 +71,7 @@ class TrendHealthEntity extends HealthEntity {
     if (showLoading) return "--";
     if (getCurrentData.isEmpty) return "No data";
 
-    return "${average.toStringAsFixed(1)}${healthItem.unit} avg";
+    return "${healthItem.doesGoalSupportDecimals ? average.toStringAsFixed(1) : average.toStringAsFixed(0)}${healthItem.unit} avg";
   }
 
   @override
@@ -112,13 +114,13 @@ class TrendHealthEntity extends HealthEntity {
       ),
       IconInfoWidget(
         title: "Minimum",
-        displayValue: minimum.toStringAsFixed(1) + healthItem.unit,
+        displayValue: "${healthItem.doesGoalSupportDecimals ? minimum.toStringAsFixed(1) : minimum.toStringAsFixed(0)}${healthItem.unit}",
         icon: IconTypes.minimumIcon,
         iconColor: healthItem.color,
       ),
       IconInfoWidget(
         title: "Maximum",
-        displayValue: maximum.toStringAsFixed(1) + healthItem.unit,
+        displayValue: "${healthItem.doesGoalSupportDecimals ? maximum.toStringAsFixed(1) : maximum.toStringAsFixed(0)}${healthItem.unit}",
         icon: IconTypes.maximumIcon,
         iconColor: healthItem.color,
       ),
