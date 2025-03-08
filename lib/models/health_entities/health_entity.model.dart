@@ -332,10 +332,6 @@ class HealthEntity extends ChangeNotifier {
   }
   // #endregion
 
-  double getIconSize(double size) {
-    return size * healthItem.iconSizeMultiplier;
-  }
-
   // #region Goal
 
   double get goal {

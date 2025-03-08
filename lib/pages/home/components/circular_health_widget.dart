@@ -35,7 +35,7 @@ class CircularHealthWidget extends StatelessWidget {
           center: Transform.rotate(
             angle: widget.healthItem.iconRotation,
             child: FaIcon(widget.healthItem.icon,
-                        size: widget.getIconSize(IconSizes.small),
+                        size: IconSizes.small,
                         color: widget.healthItem.color),
           ),
           progressColor: widget.healthItem.color,
