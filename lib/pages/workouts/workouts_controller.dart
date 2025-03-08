@@ -12,7 +12,7 @@ class WorkoutsController extends ChangeNotifier {
   late final WorkoutHealthEntity _workoutEntity;
   late final HealthDataCache _healthDataCache;
   bool _isLoading = false;
-  TimeFrame _selectedTimeFrame = TimeFrame.month;
+  TimeFrame _selectedTimeFrame = TimeFrame.week;
   int _offset = 0;
   List<WorkoutDataPoint> _workouts = [];
 
@@ -20,7 +20,7 @@ class WorkoutsController extends ChangeNotifier {
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
   List<WorkoutDataPoint> get workouts => _workouts;
-  List<TimeFrame> get timeFrameOptions => const [TimeFrame.month, TimeFrame.year];
+  List<TimeFrame> get timeFrameOptions => const [TimeFrame.week, TimeFrame.month, TimeFrame.year];
 
   // Workout Summary Getters
   int get workoutCount => _workouts.length;

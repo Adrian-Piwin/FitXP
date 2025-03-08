@@ -12,8 +12,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:healthxp/constants/medal_definitions.constants.dart';
 import 'package:healthxp/services/db_service.dart';
 import 'package:healthxp/enums/rank.enum.dart';
+import 'package:flutter/foundation.dart';
 
-class XpService {
+class XpService extends ChangeNotifier {
   static const String _xpBoxName = 'monthly_xp_cache';
   static const String _medalsBoxName = 'earned_medals_cache';
   final HealthFetcherService _healthFetcherService = HealthFetcherService();
@@ -129,6 +130,7 @@ class XpService {
 
       // Calculate rank XP from current month's data
       _rankXP = await getRankXP(xpEntities);
+      notifyListeners();
     } catch (e) {
       print('Error fetching month data: $e');
     }

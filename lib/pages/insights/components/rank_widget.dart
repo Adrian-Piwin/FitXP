@@ -5,6 +5,7 @@ import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:healthxp/services/xp_service.dart';
 import 'rank_widget_controller.dart';
 
 class RankWidget extends WidgetFrame {
@@ -20,8 +21,8 @@ class RankWidget extends WidgetFrame {
   Widget buildContent(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => RankWidgetController(context),
-      child: Consumer<RankWidgetController>(
-        builder: (context, controller, _) {
+      child: Consumer2<RankWidgetController, XpService>(
+        builder: (context, controller, xpService, _) {
           if (controller.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
