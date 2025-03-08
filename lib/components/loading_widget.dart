@@ -6,6 +6,8 @@ class LoadingWidget extends WidgetFrame {
     super.key,
     required super.size,
     required super.height,
+    super.color,
+    super.showShadow
   });
 
   @override

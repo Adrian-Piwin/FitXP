@@ -4,35 +4,28 @@ import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/rank_definitions.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/constants/xp.constants.dart';
-import 'package:healthxp/models/monthly_medal.model.dart';
-import 'package:healthxp/pages/insights/components/rank_popup_widget.dart';
+import 'package:healthxp/enums/rank.enum.dart';
 import 'package:healthxp/services/xp_service.dart';
+import 'package:provider/provider.dart';
+import '../insights_controller.dart';
 
 class RankWidgetController extends ChangeNotifier {
+  late final InsightsController _insightsController;
   late final XpService _xpService;
-  List<Medal> _earnedMedals = [];
   bool _isLoading = true;
 
   bool get isLoading => _isLoading;
-  String get rankName => _xpService.rankName;
-  int get currentXP => _xpService.rankXpToNextRank;
+  String get rankName => _insightsController.rankName;
+  int get currentXP => _insightsController.currentXP;
   int get requiredXP => rankUpXPAmt;
   double get rankProgress => currentXP / requiredXP;
 
-  // New getters for rank styling
+  // Getters for rank styling
   IconData get rankIcon => RankDefinitions.ranks[_xpService.currentRank]!.icon;
   Color get rankColor => RankDefinitions.ranks[_xpService.currentRank]!.color;
 
-  List<Medal> get topFiveMedals => _earnedMedals
-    .where((medal) => medal.isEarned)
-    .take(5)
-    .toList();
-    
-  List<Medal> get allMedals => _earnedMedals
-    .where((medal) => medal.isEarned)
-    .toList();
-
-  RankWidgetController() {
+  RankWidgetController(BuildContext context) {
+    _insightsController = Provider.of<InsightsController>(context, listen: false);
     _initialize();
   }
 
@@ -42,76 +35,152 @@ class RankWidgetController extends ChangeNotifier {
 
     try {
       _xpService = await XpService.getInstance();
-      await _xpService.initialize();
-
-      // Get all medals and filter earned ones
-      _earnedMedals = _xpService.getEarnedMedals()
-          .where((medal) => medal.isEarned)
-          .toList()
-          ..sort((a, b) => b.tier.compareTo(a.tier));
-
       _isLoading = false;
-      notifyListeners();
     } catch (e) {
       print('Error initializing RankWidgetController: $e');
       _isLoading = false;
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void showRankDetails(BuildContext context) {
+    // Initialize selected rank outside the builder
+    late Rank selectedRank;
+
     showDialog(
       context: context,
-      builder: (context) => RankPopupWidget(
-        currentRank: _xpService.currentRank,
-      ),
-    );
-  }
+      builder: (context) {
+        // Initialize on first build
+        selectedRank = _xpService.currentRank;
 
-  void showAllMedals(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Earned Medals', style: TextStyle(fontSize: FontSizes.xlarge, fontWeight: FontWeight.bold)),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: allMedals.map((medal) => _buildMedalTile(medal)).toList(),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final selectedRankModel = RankDefinitions.ranks[selectedRank]!;
 
-  Widget _buildMedalTile(Medal medal) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: CoreColors.foregroundColor,
-          borderRadius: BorderRadius.circular(BorderRadiusSizes.small),
-        ),
-        child: Center(
-          child: FaIcon(
-            medal.icon,
-            color: medal.color,
-            size: IconSizes.medium,
-          ),
-        ),
-      ),
-      title: Text(medal.title),
-      subtitle: Text(medal.description),
+            return AlertDialog(
+              title: const Text('Rank Details', style: TextStyle(fontSize: FontSizes.xlarge, fontWeight: FontWeight.bold)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Selected Rank Info
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Rank Icon and Name
+                      Column(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: CoreColors.foregroundColor,
+                              borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                            ),
+                            child: Center(
+                              child: FaIcon(
+                                selectedRankModel.icon,
+                                size: IconSizes.xlarge,
+                                color: selectedRankModel.color,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: GapSizes.small),
+                          Text(
+                            selectedRank.displayName,
+                            style: const TextStyle(
+                              fontSize: FontSizes.medium,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: GapSizes.large),
+                      // Rank Fact
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(PaddingSizes.medium),
+                          decoration: BoxDecoration(
+                            color: CoreColors.foregroundColor,
+                            borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                          ),
+                          child: Text(
+                            selectedRankModel.fact,
+                            style: const TextStyle(fontSize: FontSizes.medium),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: GapSizes.xxxlarge),
+                  // All Ranks Display
+                  const Text(
+                    'Available Ranks',
+                    style: TextStyle(
+                      fontSize: FontSizes.large,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: GapSizes.xlarge),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: Rank.values.map((rank) {
+                      final rankModel = RankDefinitions.ranks[rank]!;
+                      final isCurrentRank = rank == _xpService.currentRank;
+                      final isSelected = rank == selectedRank;
+                      
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedRank = rank;
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: CoreColors.foregroundColor,
+                                borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                                border: isSelected ? Border.all(
+                                  color: rankModel.color,
+                                  width: 2,
+                                ) : null,
+                              ),
+                              child: Center(
+                                child: FaIcon(
+                                  rankModel.icon,
+                                  size: IconSizes.medium,
+                                  color: rankModel.color,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: GapSizes.small),
+                            Text(
+                              rank.displayName,
+                              style: TextStyle(
+                                fontSize: FontSizes.small,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                color: isSelected ? rankModel.color : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 } 

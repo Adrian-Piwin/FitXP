@@ -50,6 +50,13 @@ class BottomNavBar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Material(
               type: MaterialType.transparency,
+              child: Icon(IconTypes.medalIcon),
+            ),
+            label: "Insights",
+          ),
+          BottomNavigationBarItem(
+            icon: Material(
+              type: MaterialType.transparency,
               child: Icon(IconTypes.settingsIcon),
             ),
             label: localizations.navBarSettings,

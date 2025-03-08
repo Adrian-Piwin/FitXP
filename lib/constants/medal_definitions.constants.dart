@@ -5,216 +5,11 @@ import 'package:healthxp/enums/health_item_type.enum.dart';
 import 'package:healthxp/models/monthly_medal.model.dart';
 
 enum MedalType {
-  allTime,    // Based on total across all months
   monthlyAverage,  // Based on average for a specific month
   monthlyTotal,    // Based on total for a specific month
 }
 
 class MedalDefinitions {
-  static List<Medal> getAllTimeMedals(Map<HealthItemType, double> allTimeTotals) {
-    return [
-      // STEPS ALL-TIME
-      Medal(
-        id: 'steps_2m',
-        title: 'World Trekker',
-        description: 'Incredible! 2 million steps - equivalent to walking from New York to Miami!',
-        icon: FontAwesomeIcons.earthAmericas,
-        color: CoreColors.coreDiamond,
-        type: HealthItemType.steps,
-        requirement: 2000000,
-        tier: 4,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.steps] ?? 0) >= 2000000,
-      ),
-      Medal(
-        id: 'steps_1m',
-        title: 'Continental Explorer',
-        description: 'Reached 1 million steps - you could have walked across the Grand Canyon 12 times!',
-        icon: FontAwesomeIcons.mountain,
-        color: CoreColors.coreGold,
-        type: HealthItemType.steps,
-        requirement: 1000000,
-        tier: 3,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.steps] ?? 0) >= 1000000,
-      ),
-      Medal(
-        id: 'steps_500k',
-        title: 'Urban Explorer',
-        description: 'Hit 500,000 steps - equivalent to climbing the CN Tower 250 times!',
-        icon: FontAwesomeIcons.personRunning,
-        color: CoreColors.coreSilver,
-        type: HealthItemType.steps,
-        requirement: 500000,
-        tier: 2,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.steps] ?? 0) >= 500000,
-      ),
-      Medal(
-        id: 'steps_100k',
-        title: 'Path Pioneer',
-        description: 'Completed 100,000 steps - you\'ve walked the entire Las Vegas Strip 8 times!',
-        icon: FontAwesomeIcons.personWalking,
-        color: CoreColors.coreBronze,
-        type: HealthItemType.steps,
-        requirement: 100000,
-        tier: 1,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.steps] ?? 0) >= 100000,
-      ),
-
-      // WORKOUT TIME ALL-TIME
-      Medal(
-        id: 'workout_20k',
-        title: 'Legendary Athlete',
-        description: 'Completed 20,000 minutes (333 hours) of workouts - equivalent to 14 straight days of training!',
-        icon: FontAwesomeIcons.crown,
-        color: CoreColors.coreDiamond,
-        type: HealthItemType.workoutTime,
-        requirement: 20000,
-        tier: 4,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.workoutTime] ?? 0) >= 20000,
-      ),
-      Medal(
-        id: 'workout_10k',
-        title: 'Elite Trainer',
-        description: 'Achieved 10,000 minutes (167 hours) of workouts - that\'s like completing 40 marathons!',
-        icon: FontAwesomeIcons.dumbbell,
-        color: CoreColors.coreGold,
-        type: HealthItemType.workoutTime,
-        requirement: 10000,
-        tier: 3,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.workoutTime] ?? 0) >= 10000,
-      ),
-      Medal(
-        id: 'workout_5k',
-        title: 'Fitness Enthusiast',
-        description: 'Reached 5,000 minutes (83 hours) - you\'ve worked out longer than an astronaut\'s basic training!',
-        icon: FontAwesomeIcons.heartPulse,
-        color: CoreColors.coreSilver,
-        type: HealthItemType.workoutTime,
-        requirement: 5000,
-        tier: 2,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.workoutTime] ?? 0) >= 5000,
-      ),
-      Medal(
-        id: 'workout_1k',
-        title: 'Workout Warrior',
-        description: 'Completed 1,000 minutes (16.7 hours) of exercise - equivalent to running 6 marathons!',
-        icon: FontAwesomeIcons.personRunning,
-        color: CoreColors.coreBronze,
-        type: HealthItemType.workoutTime,
-        requirement: 1000,
-        tier: 1,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.workoutTime] ?? 0) >= 1000,
-      ),
-
-      // SLEEP ALL-TIME
-      Medal(
-        id: 'sleep_4k',
-        title: 'Sleep Master',
-        description: '4,000 hours of tracked sleep - you\'ve slept longer than a space mission to Mars!',
-        icon: FontAwesomeIcons.moon,
-        color: CoreColors.coreDiamond,
-        type: HealthItemType.sleep,
-        requirement: 240000, // minutes
-        tier: 4,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.sleep] ?? 0) >= 240000,
-      ),
-      Medal(
-        id: 'sleep_3k',
-        title: 'Dream Weaver',
-        description: '3,000 hours of quality sleep - equivalent to hibernating like a bear!',
-        icon: FontAwesomeIcons.bed,
-        color: CoreColors.coreGold,
-        type: HealthItemType.sleep,
-        requirement: 180000,
-        tier: 3,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.sleep] ?? 0) >= 180000,
-      ),
-      Medal(
-        id: 'sleep_2k',
-        title: 'Rest Champion',
-        description: '2,000 hours of tracked sleep - you\'ve outslept a koala\'s monthly nap time!',
-        icon: FontAwesomeIcons.cloudMoon,
-        color: CoreColors.coreSilver,
-        type: HealthItemType.sleep,
-        requirement: 120000,
-        tier: 2,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.sleep] ?? 0) >= 120000,
-      ),
-      Medal(
-        id: 'sleep_1k',
-        title: 'Sleep Tracker',
-        description: '1,000 hours of tracked sleep - that\'s more than a sloth sleeps in 2 months!',
-        icon: FontAwesomeIcons.clock,
-        color: CoreColors.coreBronze,
-        type: HealthItemType.sleep,
-        requirement: 60000,
-        tier: 1,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.sleep] ?? 0) >= 60000,
-      ),
-
-      // PROTEIN ALL-TIME
-      Medal(
-        id: 'protein_100k',
-        title: 'Protein Legend',
-        description: '100,000g of protein consumed - equivalent to eating 400 whole chickens!',
-        icon: FontAwesomeIcons.drumstickBite,
-        color: CoreColors.coreDiamond,
-        type: HealthItemType.proteinIntake,
-        requirement: 100000,
-        tier: 4,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.proteinIntake] ?? 0) >= 100000,
-      ),
-      Medal(
-        id: 'protein_50k',
-        title: 'Muscle Maven',
-        description: '50,000g of protein tracked - that\'s like eating 2,000 eggs!',
-        icon: FontAwesomeIcons.egg,
-        color: CoreColors.coreGold,
-        type: HealthItemType.proteinIntake,
-        requirement: 50000,
-        tier: 3,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.proteinIntake] ?? 0) >= 50000,
-      ),
-      Medal(
-        id: 'protein_25k',
-        title: 'Protein Pro',
-        description: '25,000g of protein consumed - equivalent to 100 steaks!',
-        icon: FontAwesomeIcons.burger,
-        color: CoreColors.coreSilver,
-        type: HealthItemType.proteinIntake,
-        requirement: 25000,
-        tier: 2,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.proteinIntake] ?? 0) >= 25000,
-      ),
-      Medal(
-        id: 'protein_10k',
-        title: 'Protein Tracker',
-        description: '10,000g of protein logged - that\'s 400 protein shakes!',
-        icon: FontAwesomeIcons.blender,
-        color: CoreColors.coreBronze,
-        type: HealthItemType.proteinIntake,
-        requirement: 10000,
-        tier: 1,
-        medalType: MedalType.allTime,
-        isEarned: (allTimeTotals[HealthItemType.proteinIntake] ?? 0) >= 10000,
-      ),
-    ];
-  }
-
   static List<Medal> getMonthlyAverageMedals(String monthKey, Map<HealthItemType, double> monthlyAverages) {
     return [
       // STEPS MONTHLY AVERAGE
@@ -244,8 +39,6 @@ class MedalDefinitions {
         medalType: MedalType.monthlyAverage,
         value: monthlyAverages[HealthItemType.steps] ?? 0,
       ),
-
-      // STEPS MONTHLY AVERAGE (continued)
       _createMonthlyMedal(
         baseId: 'steps_7500_avg',
         monthKey: monthKey,
@@ -672,7 +465,7 @@ class MedalDefinitions {
   }) {
     return Medal(
       id: '${baseId}_$monthKey',
-      title: '$title ($monthKey)',
+      title: title,
       description: description,
       icon: icon,
       color: color,

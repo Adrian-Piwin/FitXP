@@ -23,12 +23,6 @@ class RankDefinitions {
       icon: FontAwesomeIcons.trophy,
       color: CoreColors.coreGold,
     ),
-    Rank.platinum: RankModel(
-      rank: Rank.platinum,
-      fact: 'Your commitment to health is exceptional! Studies show that people at your fitness level have a 40% lower risk of cardiovascular disease.',
-      icon: FontAwesomeIcons.crown,
-      color: CoreColors.corePlatinum,
-    ),
     Rank.diamond: RankModel(
       rank: Rank.diamond,
       fact: 'You\'re among the top 1% of health enthusiasts! Your level of activity is associated with improved cognitive function and a 30% lower risk of depression.',

@@ -19,7 +19,7 @@ class RankWidget extends WidgetFrame {
   @override
   Widget buildContent(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RankWidgetController(),
+      create: (_) => RankWidgetController(context),
       child: Consumer<RankWidgetController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {
@@ -62,49 +62,6 @@ class RankWidget extends WidgetFrame {
                       ),
                     ),
                   ],
-                ),
-              ),
-              const SizedBox(height: GapSizes.large),
-              // Medals Row
-              GestureDetector(
-                onTap: () => controller.showAllMedals(context),
-                behavior: HitTestBehavior.opaque, // Ensures the gesture is captured
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(0, PaddingSizes.large, 0, PaddingSizes.large),
-                  decoration: BoxDecoration(
-                    color: CoreColors.foregroundColor,
-                    borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(5, (index) {
-                      final medal = index < controller.topFiveMedals.length 
-                        ? controller.topFiveMedals[index] 
-                        : null;
-                      
-                      return Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: CoreColors.coreGrey, 
-                          borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-                        ),
-                        child: Center(
-                          child: medal != null
-                            ? FaIcon(
-                                medal.icon,
-                                color: medal.color,
-                                size: IconSizes.medium,
-                              )
-                            : FaIcon(
-                                FontAwesomeIcons.medal,
-                                color: Colors.grey.withOpacity(0.3),
-                                size: IconSizes.large,
-                              ),
-                        ),
-                      );
-                    }),
-                  ),
                 ),
               ),
             ],
