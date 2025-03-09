@@ -162,7 +162,7 @@ class XpService extends ChangeNotifier {
   }
 
   Future<void> _syncEarnedMedals() async {
-    final userId = _dbService.getUserId();
+    final userId = _dbService.userId;
     if (userId == null) return;
 
     try {
@@ -196,7 +196,7 @@ class XpService extends ChangeNotifier {
   }
 
   Future<void> _saveEarnedMedal(String medalId) async {
-    final userId = _dbService.getUserId();
+    final userId = _dbService.userId;
     if (userId == null) return;
 
     try {

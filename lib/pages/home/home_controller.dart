@@ -8,9 +8,10 @@ import '../../constants/health_item_definitions.constants.dart';
 import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
+import 'package:provider/provider.dart';
 
 class HomeController extends ChangeNotifier with WidgetsBindingObserver {
-  HealthFetcherService _healthFetcherService = HealthFetcherService();
+  final HealthFetcherService _healthFetcherService = HealthFetcherService();
   late final HealthDataCache _healthDataCache;
   late WidgetConfigurationService _widgetConfigurationService;
 
@@ -22,11 +23,10 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
-
   bool get isLoading => _isLoading;
 
-  // Widgets
-  List<HealthItem> get healthItems => [
+  // Default widget order
+  List<HealthItem> get defaultHealthItems => [
         HealthItemDefinitions.expendedEnergy,
         HealthItemDefinitions.dietaryCalories,
         HealthItemDefinitions.netCalories,
@@ -44,7 +44,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
 
   HomeController(BuildContext context) {
     WidgetsBinding.instance.addObserver(this);
-    _initialize();
+    _initialize(context);
   }
 
   void updateTimeFrame(TimeFrame newTimeFrame) {
@@ -58,15 +58,16 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     fetchHealthData();
   }
 
-  Future<void> _initialize() async {
+  Future<void> _initialize(BuildContext context) async {
     await _healthFetcherService.initialize();
     _healthDataCache = await HealthDataCache.getInstance();
     _isLoading = true;
     notifyListeners();
 
     try {
-      healthItemEntities = await initializeWidgets(healthItems, _healthFetcherService);
-      _widgetConfigurationService = WidgetConfigurationService(healthItemEntities);
+      healthItemEntities = await initializeWidgets(defaultHealthItems, _healthFetcherService);
+      _widgetConfigurationService = Provider.of<WidgetConfigurationService>(context, listen: false);
+      _widgetConfigurationService.healthEntities = healthItemEntities;
 
       // Add listeners to each entity
       for (var entity in healthItemEntities) {

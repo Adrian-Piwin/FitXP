@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
+import 'package:healthxp/pages/widget_configuration/widget_configuration_page.dart';
 
 class HomeView extends StatefulWidget {
   static const routeName = '/home';
@@ -66,28 +67,47 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                 );
               }
 
-              return DateSelector(
-                selectedTimeFrame: controller.selectedTimeFrame,
-                offset: controller.offset,
-                onOffsetChanged: controller.updateOffset,
-                child: RefreshIndicator(
-                  onRefresh: () => controller.refresh(true),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Container(
-                          constraints: BoxConstraints(
-                            minHeight: constraints.maxHeight,
-                          ),
-                          child: GridLayout(
-                            widgets: controller.displayWidgets,
-                          ),
-                        ),
-                      );
-                    },
+              return Stack(
+                children: [
+                  DateSelector(
+                    selectedTimeFrame: controller.selectedTimeFrame,
+                    offset: controller.offset,
+                    onOffsetChanged: controller.updateOffset,
+                    child: RefreshIndicator(
+                      onRefresh: () => controller.refresh(true),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Container(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: GridLayout(
+                                widgets: controller.displayWidgets,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const WidgetConfigurationPage(),
+                          ),
+                        );
+                      },
+                      child: const Icon(Icons.edit),
+                    ),
+                  ),
+                ],
               );
             },
           ),

@@ -45,14 +45,13 @@ class GoalsService extends DBService {
 
   Future<double> getGoal(String goalKey) async {
     await _ensureInitialized();
-    String? userId = getUserId();
     if (userId == null) throw Exception('User not logged in');
 
     final normalizedKey = _normalizeGoalKey(goalKey);
 
     if (_cachedGoals.containsKey(goalKey)) return _cachedGoals[goalKey]!;
 
-    final localGoal = _getGoalFromCache(userId, goalKey);
+    final localGoal = _getGoalFromCache(userId!, goalKey);
     if (localGoal != null) {
       _cachedGoals[goalKey] = localGoal;
       return localGoal;
@@ -61,14 +60,14 @@ class GoalsService extends DBService {
     try {
       final snapshot = await readDocument(
         collectionPath: collectionName,
-        documentId: userId,
+        documentId: userId!,
       );
 
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data()!;
         if (data.containsKey(normalizedKey)) {
           final goalValue = _parseFirestoreValue(data[normalizedKey]);
-          await _saveGoalToCache(userId, goalKey, goalValue);
+          await _saveGoalToCache(userId!, goalKey, goalValue);
           _cachedGoals[goalKey] = goalValue;
           return goalValue;
         }
@@ -82,17 +81,16 @@ class GoalsService extends DBService {
 
   Future<void> saveGoal(String goalKey, double value) async {
     await _ensureInitialized();
-    String? userId = getUserId();
     if (userId == null) throw Exception('User not logged in');
 
     final normalizedKey = _normalizeGoalKey(goalKey);
     try {
       await updateDocument(
         collectionPath: collectionName,
-        documentId: userId,
+        documentId: userId!,
         data: {normalizedKey: value},
       );
-      await _saveGoalToCache(userId, goalKey, value);
+      await _saveGoalToCache(userId!, goalKey, value);
       _cachedGoals[goalKey] = value;
     } catch (e) {
       await ErrorLogger.logError('Error saving goal for $goalKey: $e');
@@ -111,7 +109,6 @@ class GoalsService extends DBService {
   Future<void> clearCache() async {
     try {
       await _ensureInitialized();
-      String? userId = getUserId();
       if (userId == null) return;
 
       _cachedGoals.clear();
@@ -119,14 +116,14 @@ class GoalsService extends DBService {
       
       final snapshot = await readDocument(
         collectionPath: collectionName,
-        documentId: userId,
+        documentId: userId!,
       );
 
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data()!;
         for (var entry in data.entries) {
           final value = _parseFirestoreValue(entry.value);
-          await _saveGoalToCache(userId, entry.key, value);
+          await _saveGoalToCache(userId!, entry.key, value);
           _cachedGoals['HealthItemType.${entry.key}'.toLowerCase()] = value;
         }
       }

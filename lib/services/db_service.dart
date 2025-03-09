@@ -4,14 +4,12 @@ import 'package:healthxp/services/error_logger.service.dart';
 
 class DBService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   DBService();
 
   // Get current user ID
-  String? getUserId() {
-    User? user = FirebaseAuth.instance.currentUser;
-    return user?.uid;
-  }
+  String? get userId => _auth.currentUser?.uid;
 
   // Create or set a document
   Future<void> createDocument({
@@ -87,5 +85,29 @@ class DBService {
       await ErrorLogger.logError('Error querying collection: $e');
       rethrow;
     }
+  }
+
+  Future<Map<String, dynamic>?> getDocument(String collection, String documentId) async {
+    if (userId == null) return null;
+    
+    final docRef = _firestore
+        .collection('users')
+        .doc(userId)
+        .collection(collection)
+        .doc(documentId);
+    
+    final doc = await docRef.get();
+    return doc.data();
+  }
+
+  Future<void> setDocument(String collection, String documentId, Map<String, dynamic> data) async {
+    if (userId == null) return;
+    
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection(collection)
+        .doc(documentId)
+        .set(data);
   }
 }
