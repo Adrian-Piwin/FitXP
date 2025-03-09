@@ -13,9 +13,15 @@ class WidgetConfigurationService extends ChangeNotifier {
   final DBService _dbService = DBService();
   static const String _configCollectionName = 'widget_configuration';
   static const String _configDocumentId = 'default_config';
+  bool _isInitialized = false;
 
-  WidgetConfigurationService(this.healthEntities) {
-    _loadConfiguration();
+  WidgetConfigurationService(this.healthEntities);
+
+  Future<void> initializeWithEntities(List<HealthEntity> entities) async {
+    if (_isInitialized) return;
+    healthEntities = entities;
+    await _loadConfiguration();
+    _isInitialized = true;
   }
 
   Future<void> _loadConfiguration() async {
@@ -31,16 +37,18 @@ class WidgetConfigurationService extends ChangeNotifier {
         // First add header widgets in order
         for (String itemType in headerOrder) {
           final entity = healthEntities.firstWhere(
-            (e) => e.healthItem.itemType.toString() == itemType,
+            (e) => e.healthItem.itemType.toString().split('.').last == itemType,
             orElse: () => healthEntities[0],
           );
-          reorderedEntities.add(entity);
+          if (!reorderedEntities.contains(entity)) {
+            reorderedEntities.add(entity);
+          }
         }
         
         // Then add body widgets in order
         for (String itemType in order) {
           final entity = healthEntities.firstWhere(
-            (e) => e.healthItem.itemType.toString() == itemType,
+            (e) => e.healthItem.itemType.toString().split('.').last == itemType,
             orElse: () => healthEntities[0],
           );
           if (!reorderedEntities.contains(entity)) {
@@ -72,10 +80,11 @@ class WidgetConfigurationService extends ChangeNotifier {
         _configCollectionName,
         _configDocumentId,
         {
-          'headerOrder': headerEntities.map((e) => e.healthItem.itemType.toString()).toList(),
-          'order': bodyEntities.map((e) => e.healthItem.itemType.toString()).toList(),
+          'headerOrder': headerEntities.map((e) => e.healthItem.itemType.toString().split('.').last).toList(),
+          'order': bodyEntities.map((e) => e.healthItem.itemType.toString().split('.').last).toList(),
         },
       );
+      notifyListeners();
     } catch (e) {
       print('Error saving widget configuration: $e');
     }
@@ -84,10 +93,11 @@ class WidgetConfigurationService extends ChangeNotifier {
   Future<void> updateWidgetOrder(List<HealthEntity> newOrder) async {
     healthEntities = newOrder;
     await saveConfiguration();
-    notifyListeners();
   }
 
   List<Widget> getWidgets() {
+    if (healthEntities.length < 4) return [];
+    
     var bodyWidgets = healthEntities.sublist(4).map((entity) => getWidget(entity)).toList();
     var headerWidgets = healthEntities.sublist(0, 4);
     return [

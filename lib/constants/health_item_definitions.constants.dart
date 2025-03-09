@@ -21,6 +21,7 @@ class HealthItemDefinitions {
     required String title,
     required String unit,
     required Color color,
+    required Color offColor,
     required IconData icon,
     bool isTrendItem = false,
     bool supportStreaks = true,
@@ -36,7 +37,7 @@ class HealthItemDefinitions {
       ..title = title
       ..unit = unit
       ..color = color
-      ..offColor = color.withOpacity(0.3)
+      ..offColor = offColor
       ..icon = icon
       ..iconRotation = iconRotation
       ..doesGoalSupportStreaks = supportStreaks
@@ -60,6 +61,7 @@ class HealthItemDefinitions {
     title: "Expended Energy",
     unit: "cal",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: IconTypes.caloriesIcon
   );
 
@@ -69,6 +71,7 @@ class HealthItemDefinitions {
     title: "Protein",
     unit: "g",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.proteinIcon
   );
 
@@ -78,6 +81,7 @@ class HealthItemDefinitions {
     title: "Excercise time",
     unit: "min",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: IconTypes.exerciseIcon
   );
 
@@ -87,6 +91,7 @@ class HealthItemDefinitions {
     title: "Workout time",
     unit: "min",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: IconTypes.workoutIcon,
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
         WorkoutHealthEntity(item, widgetSize, healthFetcherService))
@@ -98,6 +103,7 @@ class HealthItemDefinitions {
     title: "Sleep",
     unit: "hrs",
     color: CoreColors.coreLightOrange,
+    offColor: CoreColors.coreOffLightOrange,
     icon: IconTypes.sleepDurationIcon,
     supportTimeInput: true,
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
@@ -110,6 +116,7 @@ class HealthItemDefinitions {
     title: "Active Calories",
     unit: "cal",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: IconTypes.activeCaloriesIcon
   );
 
@@ -119,6 +126,7 @@ class HealthItemDefinitions {
     title: "Resting Calories",
     unit: "cal",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: IconTypes.caloriesIcon
   );
 
@@ -128,6 +136,7 @@ class HealthItemDefinitions {
     title: "Dietary Calories",
     unit: "cal",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon
   );
 
@@ -137,6 +146,7 @@ class HealthItemDefinitions {
     title: "Net Calories",
     unit: "cal",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.netCaloriesIcon,
     supportNegative: true,
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
@@ -149,6 +159,7 @@ class HealthItemDefinitions {
     title: "Steps",
     unit: "",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: IconTypes.stepsIcon,
     iconRotation: 4.70
   );
@@ -159,6 +170,7 @@ class HealthItemDefinitions {
     title: "Weight",
     unit: "kg",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.weightIcon,
     supportStreaks: false,
     supportDecimals: true,
@@ -172,6 +184,7 @@ class HealthItemDefinitions {
     title: "Body Fat",
     unit: "%",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.bodyFatIcon,
     supportDecimals: true,
     supportStreaks: false,
@@ -186,6 +199,7 @@ class HealthItemDefinitions {
     title: "Carbohydrates",
     unit: "g",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -195,6 +209,7 @@ class HealthItemDefinitions {
     title: "Fats",
     unit: "g",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -204,6 +219,7 @@ class HealthItemDefinitions {
     title: "Fiber",
     unit: "g",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -213,6 +229,7 @@ class HealthItemDefinitions {
     title: "Sugar",
     unit: "g",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -222,6 +239,7 @@ class HealthItemDefinitions {
     title: "Cholesterol",
     unit: "mg",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -231,6 +249,7 @@ class HealthItemDefinitions {
     title: "Caffeine",
     unit: "mg",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -241,6 +260,7 @@ class HealthItemDefinitions {
     title: "Vitamin A",
     unit: "μg",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -250,6 +270,7 @@ class HealthItemDefinitions {
     title: "Vitamin B6",
     unit: "mg",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -259,6 +280,7 @@ class HealthItemDefinitions {
     title: "Vitamin B12",
     unit: "μg",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -268,6 +290,7 @@ class HealthItemDefinitions {
     title: "Vitamin C",
     unit: "mg",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -277,6 +300,7 @@ class HealthItemDefinitions {
     title: "Vitamin D",
     unit: "μg",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -286,6 +310,7 @@ class HealthItemDefinitions {
     title: "Vitamin E",
     unit: "mg",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -296,6 +321,7 @@ class HealthItemDefinitions {
     title: "Calcium",
     unit: "mg",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -305,6 +331,7 @@ class HealthItemDefinitions {
     title: "Iron",
     unit: "mg",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -314,6 +341,7 @@ class HealthItemDefinitions {
     title: "Magnesium",
     unit: "mg",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -323,6 +351,7 @@ class HealthItemDefinitions {
     title: "Potassium",
     unit: "mg",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -332,6 +361,7 @@ class HealthItemDefinitions {
     title: "Sodium",
     unit: "mg",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -342,6 +372,7 @@ class HealthItemDefinitions {
     title: "Blood Glucose",
     unit: "mg/dL",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: FontAwesomeIcons.droplet,
     isTrendItem: true
   );
@@ -352,6 +383,7 @@ class HealthItemDefinitions {
     title: "Blood Oxygen",
     unit: "%",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: FontAwesomeIcons.lungs,
     isTrendItem: true
   );
@@ -362,6 +394,7 @@ class HealthItemDefinitions {
     title: "Diastolic BP",
     unit: "mmHg",
     color: CoreColors.coreBrown,
+    offColor: CoreColors.coreOffBrown,
     icon: FontAwesomeIcons.heartPulse,
     isTrendItem: true
   );
@@ -372,6 +405,7 @@ class HealthItemDefinitions {
     title: "Systolic BP",
     unit: "mmHg",
     color: CoreColors.coreBrown,
+    offColor: CoreColors.coreOffBrown,
     icon: FontAwesomeIcons.heartPulse,
     isTrendItem: true
   );
@@ -382,6 +416,7 @@ class HealthItemDefinitions {
     title: "Body Temperature",
     unit: "°C",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: FontAwesomeIcons.temperatureHalf,
     isTrendItem: true
   );
@@ -392,6 +427,7 @@ class HealthItemDefinitions {
     title: "Heart Rate",
     unit: "bpm",
     color: CoreColors.coreBrown,
+    offColor: CoreColors.coreOffBrown,
     icon: FontAwesomeIcons.heartPulse,
     isTrendItem: true
   );
@@ -402,6 +438,7 @@ class HealthItemDefinitions {
     title: "Resting HR",
     unit: "bpm",
     color: CoreColors.coreBrown,
+    offColor: CoreColors.coreOffBrown,
     icon: FontAwesomeIcons.bed,
     isTrendItem: true
   );
@@ -412,6 +449,7 @@ class HealthItemDefinitions {
     title: "Walking HR",
     unit: "bpm",
     color: CoreColors.coreBrown,
+    offColor: CoreColors.coreOffBrown,
     icon: FontAwesomeIcons.personWalking,
     isTrendItem: true
   );
@@ -422,6 +460,7 @@ class HealthItemDefinitions {
     title: "Respiratory Rate",
     unit: "br/min",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: FontAwesomeIcons.lungs,
     isTrendItem: true
   );
@@ -433,6 +472,7 @@ class HealthItemDefinitions {
     title: "Height",
     unit: "cm",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: FontAwesomeIcons.rulerVertical,
     isTrendItem: true
   );
@@ -443,6 +483,7 @@ class HealthItemDefinitions {
     title: "Waist",
     unit: "cm",
     color: CoreColors.coreLightGrey,
+    offColor: CoreColors.coreOffLightGrey,
     icon: FontAwesomeIcons.ruler,
     isTrendItem: true
   );
@@ -454,6 +495,7 @@ class HealthItemDefinitions {
     title: "Distance (Walk/Run)",
     unit: "km",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: FontAwesomeIcons.personRunning,
   );
 
@@ -463,6 +505,7 @@ class HealthItemDefinitions {
     title: "Distance (Swim)",
     unit: "m",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: FontAwesomeIcons.personSwimming,
   );
 
@@ -472,6 +515,7 @@ class HealthItemDefinitions {
     title: "Distance (Cycle)",
     unit: "km",
     color: CoreColors.coreGreen,
+    offColor: CoreColors.coreOffGreen,
     icon: FontAwesomeIcons.bicycle,
   );
 
@@ -481,6 +525,7 @@ class HealthItemDefinitions {
     title: "Flights Climbed",
     unit: "floors",
     color: CoreColors.coreOrange,
+    offColor: CoreColors.coreOffOrange,
     icon: FontAwesomeIcons.stairs,
   );
 
@@ -491,6 +536,7 @@ class HealthItemDefinitions {
     title: "Water",
     unit: "ml",
     color: CoreColors.coreBlue,
+    offColor: CoreColors.coreOffBlue,
     icon: FontAwesomeIcons.glassWater,
   );
 
@@ -500,6 +546,7 @@ class HealthItemDefinitions {
     title: "Mindfulness",
     unit: "min",
     color: CoreColors.coreLightOrange,
+    offColor: CoreColors.coreOffLightOrange,
     icon: FontAwesomeIcons.brain,
   );
 }

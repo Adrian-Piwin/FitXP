@@ -13,12 +13,13 @@ import 'package:provider/provider.dart';
 class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   final HealthFetcherService _healthFetcherService = HealthFetcherService();
   late final HealthDataCache _healthDataCache;
-  late WidgetConfigurationService _widgetConfigurationService;
+  late final WidgetConfigurationService _widgetConfigurationService;
+  final BuildContext context;
 
   // State variables
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
@@ -42,9 +43,51 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   List<HealthEntity> healthItemEntities = [];
   List<Widget> displayWidgets = [];
 
-  HomeController(BuildContext context) {
+  HomeController(this.context) {
     WidgetsBinding.instance.addObserver(this);
-    _initialize(context);
+    _widgetConfigurationService = Provider.of<WidgetConfigurationService>(context, listen: false);
+    _initializeAsync();
+  }
+
+  Future<void> _initializeAsync() async {
+    try {
+      await _healthFetcherService.initialize();
+      _healthDataCache = await HealthDataCache.getInstance();
+
+      healthItemEntities = await initializeWidgets(defaultHealthItems, _healthFetcherService);
+      await _widgetConfigurationService.initializeWithEntities(healthItemEntities);
+      
+      // Listen to widget configuration changes
+      _widgetConfigurationService.addListener(_onWidgetConfigurationChanged);
+      
+      displayWidgets = _widgetConfigurationService.getWidgets();
+
+      // Add listeners to each entity
+      for (var entity in healthItemEntities) {
+        entity.addListener(() {
+          _updateDisplayWidgets();
+        });
+      }
+
+      await fetchHealthData();
+    } catch (e, stackTrace) {
+      await ErrorLogger.logError(
+        'Error during initialization: $e', 
+        stackTrace: stackTrace
+      );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void _onWidgetConfigurationChanged() {
+    _updateDisplayWidgets();
+  }
+
+  void _updateDisplayWidgets() {
+    displayWidgets = _widgetConfigurationService.getWidgets();
+    notifyListeners();
   }
 
   void updateTimeFrame(TimeFrame newTimeFrame) {
@@ -58,60 +101,30 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     fetchHealthData();
   }
 
-  Future<void> _initialize(BuildContext context) async {
-    await _healthFetcherService.initialize();
-    _healthDataCache = await HealthDataCache.getInstance();
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      healthItemEntities = await initializeWidgets(defaultHealthItems, _healthFetcherService);
-      _widgetConfigurationService = Provider.of<WidgetConfigurationService>(context, listen: false);
-      _widgetConfigurationService.healthEntities = healthItemEntities;
-
-      // Add listeners to each entity
-      for (var entity in healthItemEntities) {
-        entity.addListener(() {
-          displayWidgets = _widgetConfigurationService.getWidgets();
-          notifyListeners();
-        });
-      }
-
-      await fetchHealthData();
-      _isLoading = false;
-    } catch (e, stackTrace) {
-      await ErrorLogger.logError(
-        'Error during initialization: $e', 
-        stackTrace: stackTrace
-      );
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
   Future<void> fetchHealthData() async {
+    if (_isLoading) return;
+
     for (var widget in healthItemEntities) {
       widget.isLoading = true;
     }
-    displayWidgets = _widgetConfigurationService.getWidgets();
-    notifyListeners();
+    _updateDisplayWidgets();
 
     try {
       await setDataPerWidgetWithTimeframe(healthItemEntities, _selectedTimeFrame, _offset);
-      displayWidgets = _widgetConfigurationService.getWidgets();
+      _updateDisplayWidgets();
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
     } finally {
       for (var widget in healthItemEntities) {
         widget.isLoading = false;
       }
-      displayWidgets = _widgetConfigurationService.getWidgets();
-      notifyListeners();
+      _updateDisplayWidgets();
     }
   }
 
   Future<void> refresh(bool hardRefresh) async {
+    if (_isLoading) return;
+    
     _selectedTimeFrame = TimeFrame.day;
     _offset = 0;
     if (hardRefresh) {
@@ -134,6 +147,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     for (var entity in healthItemEntities) {
       entity.dispose();
     }
+    _widgetConfigurationService.removeListener(_onWidgetConfigurationChanged);
     super.dispose();
   }
 }

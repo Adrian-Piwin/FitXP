@@ -24,6 +24,7 @@ class CoreColors{
   static const Color coreLightOrange = Color(0xFFfaea3f);
   static const Color coreOffLightOrange = Color(0xE9FAEA3F);
   static const Color coreBrown = Color.fromARGB(255, 205, 51, 13);
+  static const Color coreOffBrown = Color(0xFFfdd2bd);
 }
 
 class RepresentationColors{

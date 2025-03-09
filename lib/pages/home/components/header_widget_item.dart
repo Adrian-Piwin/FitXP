@@ -45,7 +45,7 @@ class HeaderWidgetItem extends WidgetFrame {
                   goal: barWidget.getDisplayGoal,
                   percent: barWidget.getGoalPercent,
                   color: barWidget.healthItem.color,
-                  textColor: CoreColors.coreOffOrange,
+                  textColor: barWidget.healthItem.offColor,
                 ),
               ),
               const SizedBox(height: GapSizes.xxlarge),
