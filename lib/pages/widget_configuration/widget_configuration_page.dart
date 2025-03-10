@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthxp/models/health_item.model.dart';
+import 'package:healthxp/pages/home/home_controller.dart';
 import 'package:healthxp/services/widget_configuration_service.dart';
 import 'package:provider/provider.dart';
+import 'package:healthxp/constants/health_item_definitions.constants.dart';
 
 class WidgetConfigurationPage extends StatefulWidget {
-  const WidgetConfigurationPage({super.key});
+  final HomeController homeController;
+  
+  const WidgetConfigurationPage({
+    super.key,
+    required this.homeController,
+  });
 
   @override
   State<WidgetConfigurationPage> createState() => _WidgetConfigurationPageState();
@@ -13,7 +21,7 @@ class WidgetConfigurationPage extends StatefulWidget {
 class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
   late List<HealthEntity> headerWidgets;
   late List<HealthEntity> bodyWidgets;
-  List<HealthEntity> availableWidgets = [];
+  List<HealthItem> availableItems = [];
   bool isLoading = true;
 
   @override
@@ -24,28 +32,29 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
 
   Future<void> _loadWidgets() async {
     final widgetService = context.read<WidgetConfigurationService>();
-    headerWidgets = widgetService.healthEntities.take(4).toList();
-    bodyWidgets = widgetService.healthEntities.skip(4).toList();
-    availableWidgets = await widgetService.getAvailableWidgets();
+    
+    // Get header widgets based on the static list order
+    headerWidgets = HealthItemDefinitions.defaultHeaderItems.map((item) {
+      return widgetService.healthEntities.firstWhere(
+        (entity) => entity.healthItem.itemType == item.itemType
+      );
+    }).toList();
+    
+    // Get body widgets (everything that's not a header widget)
+    bodyWidgets = widgetService.healthEntities.where((entity) => 
+      !HealthItemDefinitions.defaultHeaderItems.any(
+        (item) => item.itemType == entity.healthItem.itemType
+      )
+    ).toList();
+    
+    availableItems = await widget.homeController.getAvailableItems();
+    
     setState(() {
       isLoading = false;
     });
   }
 
-  void _onReorderHeader(int oldIndex, int newIndex) {
-    final widgetService = context.read<WidgetConfigurationService>();
-    setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
-      final item = headerWidgets.removeAt(oldIndex);
-      headerWidgets.insert(newIndex, item);
-    });
-    widgetService.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
-  }
-
   void _onReorderBody(int oldIndex, int newIndex) {
-    final widgetService = context.read<WidgetConfigurationService>();
     setState(() {
       if (newIndex > oldIndex) {
         newIndex -= 1;
@@ -53,50 +62,37 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
       final item = bodyWidgets.removeAt(oldIndex);
       bodyWidgets.insert(newIndex, item);
     });
-    widgetService.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
+    widget.homeController.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
   }
 
   void _saveConfiguration() {
-    final widgetService = context.read<WidgetConfigurationService>();
-    widgetService.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
+    widget.homeController.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
     Navigator.pop(context);
   }
 
   Future<void> _removeWidget(HealthEntity entity) async {
-    final widgetService = context.read<WidgetConfigurationService>();
-    
-    if (headerWidgets.contains(entity)) {
-      if (availableWidgets.isNotEmpty) {
-        final replacement = availableWidgets.removeAt(0);
-        setState(() {
-          headerWidgets[headerWidgets.indexOf(entity)] = replacement;
-          availableWidgets.add(entity);
-        });
-        await widgetService.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
-      }
-    } else if (bodyWidgets.contains(entity)) {
+    if (bodyWidgets.contains(entity)) {
       setState(() {
         bodyWidgets.remove(entity);
-        availableWidgets.add(entity);
+        availableItems.add(entity.healthItem);
       });
-      await widgetService.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
+      await widget.homeController.removeWidget(entity);
     }
   }
 
-  Future<void> _addWidget(HealthEntity entity) async {
-    final widgetService = context.read<WidgetConfigurationService>();
+  Future<void> _addWidget(HealthItem item) async {
+    final entity = await widget.homeController.addWidget(item);
     setState(() {
       bodyWidgets.add(entity);
-      availableWidgets.remove(entity);
+      availableItems.remove(item);
     });
-    await widgetService.updateWidgetOrder([...headerWidgets, ...bodyWidgets]);
   }
 
   Widget _buildDragTarget({
     required List<HealthEntity> list,
     required String title,
     required bool isHeader,
-    required Function(int, int) onReorder,
+    required Function(int, int)? onReorder,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,33 +104,47 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
-        ReorderableListView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            for (int index = 0; index < list.length; index++)
-              ListTile(
-                key: ValueKey(list[index].hashCode),
-                leading: Icon(
-                  list[index].healthItem.icon,
-                  color: list[index].healthItem.color,
+        if (isHeader)
+          ListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              for (int index = 0; index < list.length; index++)
+                ListTile(
+                  key: ValueKey(list[index].hashCode),
+                  leading: Icon(
+                    list[index].healthItem.icon,
+                    color: list[index].healthItem.color,
+                  ),
+                  title: Text(list[index].healthItem.title),
+                  subtitle: Text(index == 0 
+                    ? 'Header Bar Widget'
+                    : 'Header Sub Widget'),
                 ),
-                title: Text(list[index].healthItem.title),
-                subtitle: Text(isHeader && index == 0 
-                  ? 'Header Bar Widget'
-                  : isHeader 
-                    ? 'Header Sub Widget'
-                    : 'Body Widget'),
-                trailing: !isHeader || (isHeader && availableWidgets.isNotEmpty)
-                  ? IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: () => _removeWidget(list[index]),
-                    )
-                  : null,
-              ),
-          ],
-          onReorder: onReorder,
-        ),
+            ],
+          )
+        else
+          ReorderableListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              for (int index = 0; index < list.length; index++)
+                ListTile(
+                  key: ValueKey(list[index].hashCode),
+                  leading: Icon(
+                    list[index].healthItem.icon,
+                    color: list[index].healthItem.color,
+                  ),
+                  title: Text(list[index].healthItem.title),
+                  subtitle: const Text('Body Widget'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.remove_circle_outline),
+                    onPressed: () => _removeWidget(list[index]),
+                  ),
+                ),
+            ],
+            onReorder: onReorder!,
+          ),
       ],
     );
   }
@@ -153,18 +163,18 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: availableWidgets.length,
+          itemCount: availableItems.length,
           itemBuilder: (context, index) {
-            final widget = availableWidgets[index];
+            final item = availableItems[index];
             return ListTile(
               leading: Icon(
-                widget.healthItem.icon,
-                color: widget.healthItem.color,
+                item.icon,
+                color: item.color,
               ),
-              title: Text(widget.healthItem.title),
+              title: Text(item.title),
               trailing: IconButton(
                 icon: const Icon(Icons.add_circle_outline),
-                onPressed: () => _addWidget(widget),
+                onPressed: () => _addWidget(item),
               ),
             );
           },
@@ -200,7 +210,7 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
               list: headerWidgets,
               title: 'Header Widgets',
               isHeader: true,
-              onReorder: _onReorderHeader,
+              onReorder: null,
             ),
             const Divider(height: 32),
             _buildDragTarget(

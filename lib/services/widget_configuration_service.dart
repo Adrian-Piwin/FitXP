@@ -8,13 +8,13 @@ import 'package:healthxp/pages/insights/components/basic_weekly_health_widget.da
 import 'package:healthxp/pages/insights/components/rank_widget.dart';
 import 'package:healthxp/services/db_service.dart';
 import 'package:healthxp/constants/health_item_definitions.constants.dart';
+import 'package:healthxp/models/health_item.model.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
 import 'package:healthxp/utility/health.utility.dart';
 
 class WidgetConfigurationService extends ChangeNotifier {
   List<HealthEntity> healthEntities = [];
   final DBService _dbService = DBService();
-  final HealthFetcherService _healthFetcherService = HealthFetcherService();
   static const String _configCollectionName = 'widget_configuration';
   static const String _configDocumentId = 'default_config';
   bool _isInitialized = false;
@@ -28,54 +28,39 @@ class WidgetConfigurationService extends ChangeNotifier {
     _isInitialized = true;
   }
 
-  Future<List<HealthEntity>> getAvailableWidgets() async {
-    final allHealthItems = [
-      HealthItemDefinitions.expendedEnergy,
-      HealthItemDefinitions.dietaryCalories,
-      HealthItemDefinitions.netCalories,
-      HealthItemDefinitions.activeCalories,
-      HealthItemDefinitions.steps,
-      HealthItemDefinitions.proteinIntake,
-      HealthItemDefinitions.sleepDuration,
-      HealthItemDefinitions.exerciseTime,
-      HealthItemDefinitions.weight,
-      HealthItemDefinitions.bodyFat,
-      HealthItemDefinitions.workoutTime,
-      HealthItemDefinitions.dietaryCarbs,
-      HealthItemDefinitions.dietaryFats,
-      HealthItemDefinitions.dietaryFiber,
-      HealthItemDefinitions.dietarySugar,
-      HealthItemDefinitions.water,
-      HealthItemDefinitions.mindfulness,
-      HealthItemDefinitions.flightsClimbed,
-      HealthItemDefinitions.distanceWalkingRunning,
-      HealthItemDefinitions.distanceCycling,
-    ];
-
-    final List<HealthEntity> allEntities = [];
-    for (var item in allHealthItems) {
-      if (!healthEntities.any((e) => e.healthItem.itemType == item.itemType)) {
-        final entity = await initializeWidgets([item], _healthFetcherService);
-        allEntities.addAll(entity);
-      }
-    }
-    return allEntities;
+  Future<List<HealthItem>> getAvailableItems() async {
+    return HealthItemDefinitions.allHealthItems.where((item) => 
+      !healthEntities.any((e) => e.healthItem.itemType == item.itemType)
+    ).toList();
   }
 
   bool canRemoveWidget(HealthEntity entity) {
-    return healthEntities.length > 4;
+    // Check if the widget is a header widget
+    bool isHeaderWidget = HealthItemDefinitions.defaultHeaderItems
+        .any((item) => item.itemType == entity.healthItem.itemType);
+    
+    // Cannot remove header widgets
+    if (isHeaderWidget) return false;
+    
+    // Must have at least one body widget
+    return healthEntities.length > HealthItemDefinitions.defaultHeaderItems.length + 1;
   }
 
   Future<void> addWidget(HealthEntity entity) async {
     if (!healthEntities.any((e) => e.healthItem.itemType == entity.healthItem.itemType)) {
-      healthEntities.add(entity);
+      // Add new widgets after header widgets
+      final headerWidgets = healthEntities.take(HealthItemDefinitions.defaultHeaderItems.length).toList();
+      final bodyWidgets = healthEntities.skip(HealthItemDefinitions.defaultHeaderItems.length).toList();
+      
+      healthEntities = [...headerWidgets, ...bodyWidgets, entity];
       await saveConfiguration();
       notifyListeners();
     }
   }
 
   Future<void> removeWidget(HealthEntity entity) async {
-    if (healthEntities.length <= 4) return; // Prevent removing if we only have header widgets
+    // Check if widget can be removed
+    if (!canRemoveWidget(entity)) return;
     
     if (healthEntities.contains(entity)) {
       healthEntities.remove(entity);
@@ -87,51 +72,42 @@ class WidgetConfigurationService extends ChangeNotifier {
   Future<void> _loadConfiguration() async {
     try {
       final config = await _dbService.getDocument(_configCollectionName, _configDocumentId);
+      
+      // Create a map of all current entities by type
+      final Map<String, HealthEntity> entityMap = {
+        for (var e in healthEntities)
+          e.healthItem.itemType.toString().split('.').last: e
+      };
+      
+      // Always start with default header widgets in the correct order
+      List<HealthEntity> orderedEntities = [];
+      for (var headerItem in HealthItemDefinitions.defaultHeaderItems) {
+        String itemType = headerItem.itemType.toString().split('.').last;
+        if (entityMap.containsKey(itemType)) {
+          orderedEntities.add(entityMap[itemType]!);
+          entityMap.remove(itemType);
+        }
+      }
+      
       if (config != null) {
         final List<dynamic> order = config['order'] ?? [];
-        final List<dynamic> headerOrder = config['headerOrder'] ?? [];
-        final List<String> enabledTypes = [...headerOrder, ...order];
         
-        // If we have a saved configuration
-        if (enabledTypes.isNotEmpty) {
-          // Create a map of all current entities by type
-          final Map<String, HealthEntity> entityMap = {
-            for (var e in healthEntities)
-              e.healthItem.itemType.toString().split('.').last: e
-          };
-          
-          // Reorder entities based on saved configuration
-          List<HealthEntity> reorderedEntities = [];
-          
-          // First add header widgets in order
-          for (String itemType in headerOrder) {
-            if (entityMap.containsKey(itemType)) {
-              reorderedEntities.add(entityMap[itemType]!);
-            }
-          }
-          
-          // Then add body widgets in order
-          for (String itemType in order) {
-            if (entityMap.containsKey(itemType)) {
-              reorderedEntities.add(entityMap[itemType]!);
-            }
-          }
-          
-          // If we don't have enough header widgets, add from remaining entities
-          while (reorderedEntities.length < 4 && entityMap.isNotEmpty) {
-            for (var entity in entityMap.values) {
-              if (!reorderedEntities.contains(entity)) {
-                reorderedEntities.add(entity);
-                break;
-              }
-            }
-          }
-          
-          if (reorderedEntities.length >= 4) {
-            healthEntities = reorderedEntities;
-            notifyListeners();
+        // Add body widgets in saved order
+        for (String itemType in order) {
+          if (entityMap.containsKey(itemType)) {
+            orderedEntities.add(entityMap[itemType]!);
+            entityMap.remove(itemType);
           }
         }
+      }
+      
+      // Add any remaining entities from the map
+      orderedEntities.addAll(entityMap.values);
+      
+      // Only update if we have all header widgets
+      if (orderedEntities.length >= HealthItemDefinitions.defaultHeaderItems.length) {
+        healthEntities = orderedEntities;
+        notifyListeners();
       }
     } catch (e) {
       print('Error loading widget configuration: $e');
@@ -140,19 +116,18 @@ class WidgetConfigurationService extends ChangeNotifier {
 
   Future<void> saveConfiguration() async {
     try {
-      if (healthEntities.length < 4) {
-        print('Cannot save configuration with less than 4 widgets');
+      if (healthEntities.length < HealthItemDefinitions.defaultHeaderItems.length) {
+        print('Cannot save configuration without all header widgets');
         return;
       }
 
-      final headerEntities = healthEntities.take(4).toList();
-      final bodyEntities = healthEntities.skip(4).toList();
+      // Only save the order of body widgets
+      final bodyEntities = healthEntities.skip(HealthItemDefinitions.defaultHeaderItems.length).toList();
 
       await _dbService.setDocument(
         _configCollectionName,
         _configDocumentId,
         {
-          'headerOrder': headerEntities.map((e) => e.healthItem.itemType.toString().split('.').last).toList(),
           'order': bodyEntities.map((e) => e.healthItem.itemType.toString().split('.').last).toList(),
         },
       );
@@ -163,20 +138,24 @@ class WidgetConfigurationService extends ChangeNotifier {
   }
 
   Future<void> updateWidgetOrder(List<HealthEntity> newOrder) async {
-    if (newOrder.length < 4) {
-      print('Cannot update widget order with less than 4 widgets');
-      return;
-    }
-    healthEntities = newOrder;
+    // Ensure header widgets remain in their fixed positions
+    final headerWidgets = healthEntities.take(HealthItemDefinitions.defaultHeaderItems.length).toList();
+    final newBodyWidgets = newOrder.where((entity) => 
+      !HealthItemDefinitions.defaultHeaderItems.any((item) => item.itemType == entity.healthItem.itemType)
+    ).toList();
+    
+    healthEntities = [...headerWidgets, ...newBodyWidgets];
     await saveConfiguration();
     notifyListeners();
   }
 
   List<Widget> getWidgets() {
-    if (healthEntities.length < 4) return [];
+    if (healthEntities.length < HealthItemDefinitions.defaultHeaderItems.length) return [];
     
-    var bodyWidgets = healthEntities.sublist(4).map((entity) => getWidget(entity)).toList();
-    var headerWidgets = healthEntities.sublist(0, 4);
+    final headerWidgets = healthEntities.take(HealthItemDefinitions.defaultHeaderItems.length).toList();
+    final bodyWidgets = healthEntities.skip(HealthItemDefinitions.defaultHeaderItems.length)
+        .map((entity) => getWidget(entity)).toList();
+    
     return [
       HeaderWidgetItem(
         barWidget: headerWidgets[0],

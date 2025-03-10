@@ -13,6 +13,72 @@ import 'icons.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HealthItemDefinitions {
+  // List of all available health items
+  static final List<HealthItem> allHealthItems = [
+    expendedEnergy,
+    dietaryCalories,
+    netCalories,
+    activeCalories,
+    steps,
+    proteinIntake,
+    sleepDuration,
+    exerciseTime,
+    weight,
+    bodyFat,
+    workoutTime,
+    dietaryCarbs,
+    dietaryFats,
+    dietaryFiber,
+    dietarySugar,
+    dietaryCholesterol,
+    dietaryCaffeine,
+    vitaminA,
+    vitaminB6,
+    vitaminB12,
+    vitaminC,
+    vitaminD,
+    vitaminE,
+    calcium,
+    iron,
+    magnesium,
+    potassium,
+    sodium,
+    bloodGlucose,
+    bloodOxygen,
+    bloodPressureDiastolic,
+    bloodPressureSystolic,
+    bodyTemperature,
+    heartRate,
+    restingHeartRate,
+    walkingHeartRate,
+    respiratoryRate,
+    height,
+    waistCircumference,
+    distanceWalkingRunning,
+    distanceSwimming,
+    distanceCycling,
+    flightsClimbed,
+    water,
+    mindfulness,
+  ];
+
+  // Default header widgets (static, cannot be changed)
+  static final List<HealthItem> defaultHeaderItems = [
+    expendedEnergy,
+    dietaryCalories,
+    netCalories,
+    activeCalories,
+  ];
+
+  // Default body widgets (can be customized)
+  static final List<HealthItem> defaultBodyItems = [
+    steps,
+    proteinIntake,
+    sleepDuration,
+    exerciseTime,
+    weight,
+    bodyFat,
+  ];
 
   // Factory method for creating health items
   static HealthItem _createHealthItem({

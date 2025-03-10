@@ -28,20 +28,6 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   int get offset => _offset;
   bool get isLoading => _isLoading;
 
-  // Default widget order
-  List<HealthItem> get defaultHealthItems => [
-        HealthItemDefinitions.expendedEnergy,
-        HealthItemDefinitions.dietaryCalories,
-        HealthItemDefinitions.netCalories,
-        HealthItemDefinitions.activeCalories,
-        HealthItemDefinitions.steps,
-        HealthItemDefinitions.proteinIntake,
-        HealthItemDefinitions.sleepDuration,
-        HealthItemDefinitions.exerciseTime,
-        HealthItemDefinitions.weight,
-        HealthItemDefinitions.bodyFat,
-      ];
-
   List<HealthEntity> healthItemEntities = [];
   List<Widget> displayWidgets = [];
 
@@ -59,54 +45,32 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
       // Get the saved configuration first
       final config = await _dbService.getDocument('widget_configuration', 'default_config');
       
-      // Create a list of all health items we need to initialize
-      List<HealthItem> itemsToInitialize = [...defaultHealthItems];
+      // Start with default items
+      List<HealthItem> itemsToInitialize = [
+        ...HealthItemDefinitions.defaultHeaderItems,
+        ...HealthItemDefinitions.defaultBodyItems
+      ];
       
       if (config != null) {
-        final List<dynamic> headerOrder = config['headerOrder'] ?? [];
         final List<dynamic> order = config['order'] ?? [];
-        final List<String> savedTypes = [...headerOrder, ...order];
         
-        // Add any additional items from saved configuration
-        final allAvailableItems = [
-          HealthItemDefinitions.expendedEnergy,
-          HealthItemDefinitions.dietaryCalories,
-          HealthItemDefinitions.netCalories,
-          HealthItemDefinitions.activeCalories,
-          HealthItemDefinitions.steps,
-          HealthItemDefinitions.proteinIntake,
-          HealthItemDefinitions.sleepDuration,
-          HealthItemDefinitions.exerciseTime,
-          HealthItemDefinitions.weight,
-          HealthItemDefinitions.bodyFat,
-          HealthItemDefinitions.workoutTime,
-          HealthItemDefinitions.dietaryCarbs,
-          HealthItemDefinitions.dietaryFats,
-          HealthItemDefinitions.dietaryFiber,
-          HealthItemDefinitions.dietarySugar,
-          HealthItemDefinitions.water,
-          HealthItemDefinitions.mindfulness,
-          HealthItemDefinitions.flightsClimbed,
-          HealthItemDefinitions.distanceWalkingRunning,
-          HealthItemDefinitions.distanceCycling,
-        ];
-        
-        // Add any saved items that aren't in our default set
-        for (String type in savedTypes) {
-          final matchingItem = allAvailableItems.firstWhere(
-            (item) => item.itemType.toString().split('.').last == type,
-            orElse: () => defaultHealthItems[0]
+        // Add any additional items from saved configuration that aren't in our defaults
+        for (String itemType in order) {
+          final matchingItem = HealthItemDefinitions.allHealthItems.firstWhere(
+            (item) => item.itemType.toString().split('.').last == itemType,
+            orElse: () => HealthItemDefinitions.defaultBodyItems.first // Fallback to a default item
           );
-          if (!itemsToInitialize.contains(matchingItem)) {
+          
+          if (!itemsToInitialize.any((item) => item.itemType == matchingItem.itemType)) {
             itemsToInitialize.add(matchingItem);
           }
         }
       }
-      
-      // Initialize all entities at once
+
+      // Initialize all health entities
       healthItemEntities = await initializeWidgets(itemsToInitialize, _healthFetcherService);
       
-      // Initialize the widget configuration service with all entities
+      // Initialize widget configuration service with the initialized entities
       await _widgetConfigurationService.initializeWithEntities(healthItemEntities);
       
       // Listen to widget configuration changes
@@ -124,15 +88,37 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
 
       // Fetch initial data
       await fetchHealthData();
-    } catch (e, stackTrace) {
-      await ErrorLogger.logError(
-        'Error during initialization: $e', 
-        stackTrace: stackTrace
-      );
-    } finally {
+      
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      await ErrorLogger.logError('Error during initialization in HomeController: $e');
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<HealthEntity> addWidget(HealthItem item) async {
+    final entity = (await initializeWidgets([item], _healthFetcherService)).first;
+    await _widgetConfigurationService.addWidget(entity);
+    entity.addListener(() {
+      _updateDisplayWidgets();
+    });
+    await fetchHealthData();
+    return entity;
+  }
+
+  Future<void> removeWidget(HealthEntity entity) async {
+    await _widgetConfigurationService.removeWidget(entity);
+    entity.dispose();
+  }
+
+  Future<List<HealthItem>> getAvailableItems() async {
+    return _widgetConfigurationService.getAvailableItems();
+  }
+
+  Future<void> updateWidgetOrder(List<HealthEntity> newOrder) async {
+    await _widgetConfigurationService.updateWidgetOrder(newOrder);
   }
 
   void _onWidgetConfigurationChanged() {

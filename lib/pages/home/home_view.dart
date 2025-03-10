@@ -6,6 +6,9 @@ import 'home_controller.dart';
 import '../../components/date_selector.dart';
 import 'package:healthxp/pages/widget_configuration/widget_configuration_page.dart';
 import 'package:healthxp/services/widget_configuration_service.dart';
+import 'package:healthxp/constants/colors.constants.dart';
+import 'package:healthxp/constants/icons.constants.dart';
+import 'package:healthxp/constants/sizes.constants.dart';
 
 class HomeView extends StatefulWidget {
   static const routeName = '/home';
@@ -80,32 +83,70 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                       builder: (context, constraints) {
                         return SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: Container(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight,
-                            ),
-                            child: GridLayout(
-                              widgets: controller.displayWidgets,
-                            ),
+                          child: Column(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight - 80, // Subtract space for button
+                                ),
+                                child: GridLayout(
+                                  widgets: controller.displayWidgets,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => WidgetConfigurationPage(
+                                          homeController: controller,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: WidgetSizes.xSmallHeight,
+                                    decoration: BoxDecoration(
+                                      color: CoreColors.accentAltColor,
+                                      borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: PaddingSizes.medium,
+                                    ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            'Configure Widgets',
+                                            style: TextStyle(
+                                              fontSize: FontSizes.medium,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          right: 0,
+                                          child: Icon(
+                                            IconTypes.editIcon,
+                                            size: IconSizes.xsmall,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
                     ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WidgetConfigurationPage(),
-                        ),
-                      );
-                    },
-                    child: const Icon(Icons.edit),
                   ),
                 ),
               ],
