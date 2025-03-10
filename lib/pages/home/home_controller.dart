@@ -9,9 +9,11 @@ import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
 import 'package:provider/provider.dart';
+import 'package:healthxp/services/db_service.dart';
 
 class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   final HealthFetcherService _healthFetcherService = HealthFetcherService();
+  final DBService _dbService = DBService();
   late final HealthDataCache _healthDataCache;
   late final WidgetConfigurationService _widgetConfigurationService;
   final BuildContext context;
@@ -54,12 +56,63 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
       await _healthFetcherService.initialize();
       _healthDataCache = await HealthDataCache.getInstance();
 
-      healthItemEntities = await initializeWidgets(defaultHealthItems, _healthFetcherService);
+      // Get the saved configuration first
+      final config = await _dbService.getDocument('widget_configuration', 'default_config');
+      
+      // Create a list of all health items we need to initialize
+      List<HealthItem> itemsToInitialize = [...defaultHealthItems];
+      
+      if (config != null) {
+        final List<dynamic> headerOrder = config['headerOrder'] ?? [];
+        final List<dynamic> order = config['order'] ?? [];
+        final List<String> savedTypes = [...headerOrder, ...order];
+        
+        // Add any additional items from saved configuration
+        final allAvailableItems = [
+          HealthItemDefinitions.expendedEnergy,
+          HealthItemDefinitions.dietaryCalories,
+          HealthItemDefinitions.netCalories,
+          HealthItemDefinitions.activeCalories,
+          HealthItemDefinitions.steps,
+          HealthItemDefinitions.proteinIntake,
+          HealthItemDefinitions.sleepDuration,
+          HealthItemDefinitions.exerciseTime,
+          HealthItemDefinitions.weight,
+          HealthItemDefinitions.bodyFat,
+          HealthItemDefinitions.workoutTime,
+          HealthItemDefinitions.dietaryCarbs,
+          HealthItemDefinitions.dietaryFats,
+          HealthItemDefinitions.dietaryFiber,
+          HealthItemDefinitions.dietarySugar,
+          HealthItemDefinitions.water,
+          HealthItemDefinitions.mindfulness,
+          HealthItemDefinitions.flightsClimbed,
+          HealthItemDefinitions.distanceWalkingRunning,
+          HealthItemDefinitions.distanceCycling,
+        ];
+        
+        // Add any saved items that aren't in our default set
+        for (String type in savedTypes) {
+          final matchingItem = allAvailableItems.firstWhere(
+            (item) => item.itemType.toString().split('.').last == type,
+            orElse: () => defaultHealthItems[0]
+          );
+          if (!itemsToInitialize.contains(matchingItem)) {
+            itemsToInitialize.add(matchingItem);
+          }
+        }
+      }
+      
+      // Initialize all entities at once
+      healthItemEntities = await initializeWidgets(itemsToInitialize, _healthFetcherService);
+      
+      // Initialize the widget configuration service with all entities
       await _widgetConfigurationService.initializeWithEntities(healthItemEntities);
       
       // Listen to widget configuration changes
       _widgetConfigurationService.addListener(_onWidgetConfigurationChanged);
       
+      // Set initial display widgets
       displayWidgets = _widgetConfigurationService.getWidgets();
 
       // Add listeners to each entity
@@ -69,6 +122,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
         });
       }
 
+      // Fetch initial data
       await fetchHealthData();
     } catch (e, stackTrace) {
       await ErrorLogger.logError(
