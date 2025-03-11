@@ -137,7 +137,11 @@ class HealthEntity extends ChangeNotifier {
   String get getDisplaySubtitle {
     if (showLoading) return "--";
 
-    if (timeframe == TimeFrame.day && goal != -1) {
+    if (timeframe == TimeFrame.day) {
+      if (goal == -1 || goal == 0) {
+        return "";
+      }
+
       return goal - total >= 0 ? 
           "${(goal - total).toStringAsFixed(0)}${healthItem.unit} left" : 
           "${(total - goal).toStringAsFixed(0)}${healthItem.unit} over";
