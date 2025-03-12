@@ -17,6 +17,26 @@ class HealthDataDetailPage extends StatelessWidget {
     required this.widget,
   });
 
+  void _showInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(widget.healthItem.title),
+          content: Text(widget.healthItem.longDescription),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HealthDetailsController>(
@@ -27,6 +47,13 @@ class HealthDataDetailPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(widget.healthItem.title),
           titleSpacing: 0,
+          actions: [
+            if (widget.healthItem.longDescription.isNotEmpty)
+              IconButton(
+                icon: const Icon(Icons.info_outline),
+                onPressed: () => _showInfoDialog(context),
+              ),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
             child: Consumer<HealthDetailsController>(

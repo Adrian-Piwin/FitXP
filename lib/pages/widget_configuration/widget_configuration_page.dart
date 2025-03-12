@@ -117,9 +117,7 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
                     color: list[index].healthItem.color,
                   ),
                   title: Text(list[index].healthItem.title),
-                  subtitle: Text(index == 0 
-                    ? 'Header Bar Widget'
-                    : 'Header Sub Widget'),
+                  subtitle: Text(list[index].healthItem.shortDescription),
                 ),
             ],
           )
@@ -127,6 +125,7 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
           ReorderableListView(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
+            onReorder: onReorder!,
             children: [
               for (int index = 0; index < list.length; index++)
                 ListTile(
@@ -136,14 +135,13 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
                     color: list[index].healthItem.color,
                   ),
                   title: Text(list[index].healthItem.title),
-                  subtitle: const Text('Body Widget'),
+                  subtitle: Text(list[index].healthItem.shortDescription),
                   trailing: IconButton(
                     icon: const Icon(Icons.remove_circle_outline),
                     onPressed: () => _removeWidget(list[index]),
                   ),
                 ),
             ],
-            onReorder: onReorder!,
           ),
       ],
     );
@@ -172,6 +170,7 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
                 color: item.color,
               ),
               title: Text(item.title),
+              subtitle: Text(item.shortDescription),
               trailing: IconButton(
                 icon: const Icon(Icons.add_circle_outline),
                 onPressed: () => _addWidget(item),

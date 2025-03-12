@@ -8,9 +8,10 @@ import 'package:healthxp/models/health_entities/weight_health_entity.model.dart'
 import 'package:healthxp/models/health_entities/workout_health_entity.model.dart';
 import 'package:healthxp/models/health_item.model.dart';
 import '../enums/health_item_type.enum.dart';
-import 'colors.constants.dart';
+import '../enums/health_category.enum.dart';
 import 'icons.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../utility/health_category_colors.utility.dart';
 
 class HealthItemDefinitions {
   // List of all available health items
@@ -86,9 +87,10 @@ class HealthItemDefinitions {
     required HealthItemType itemType,
     required String title,
     required String unit,
-    required Color color,
-    required Color offColor,
+    required HealthCategory category,
     required IconData icon,
+    String shortDescription = "",
+    String longDescription = "",
     bool isTrendItem = false,
     bool supportStreaks = true,
     bool supportDecimals = false,
@@ -102,14 +104,17 @@ class HealthItemDefinitions {
       ..itemType = itemType
       ..title = title
       ..unit = unit
-      ..color = color
-      ..offColor = offColor
+      ..category = category
+      ..color = HealthCategoryColors.getColorForCategory(category)
+      ..offColor = HealthCategoryColors.getOffColorForCategory(category)
       ..icon = icon
       ..iconRotation = iconRotation
       ..doesGoalSupportStreaks = supportStreaks
       ..doesGoalSupportDecimals = supportDecimals
       ..doesGoalSupportNegative = supportNegative
-      ..doesGoalSupportTimeInput = supportTimeInput;
+      ..doesGoalSupportTimeInput = supportTimeInput
+      ..shortDescription = shortDescription
+      ..longDescription = longDescription;
 
     if (customWidgetFactory != null) {
       item.widgetFactory = customWidgetFactory;
@@ -126,9 +131,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.expendedEnergy,
     title: "Expended Energy",
     unit: "cal",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
-    icon: IconTypes.caloriesIcon
+    category: HealthCategory.energy,
+    icon: IconTypes.caloriesIcon,
+    longDescription: "The amount of energy you burn during the day",
+    shortDescription: "Total energy burned",
   );
 
   static HealthItem proteinIntake = _createHealthItem(
@@ -136,9 +142,8 @@ class HealthItemDefinitions {
     itemType: HealthItemType.proteinIntake,
     title: "Protein",
     unit: "g",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
-    icon: IconTypes.proteinIcon
+    category: HealthCategory.nutrition,
+    icon: IconTypes.proteinIcon,
   );
 
   static HealthItem exerciseTime = _createHealthItem(
@@ -146,9 +151,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.exerciseTime,
     title: "Excercise time",
     unit: "min",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
-    icon: IconTypes.exerciseIcon
+    category: HealthCategory.exercise,
+    icon: IconTypes.exerciseIcon,
+    longDescription: "The amount of time you spend exercising during the day",
+    shortDescription: "Total time spent exercising",
   );
 
   static HealthItem workoutTime = _createHealthItem(
@@ -156,9 +162,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.workoutTime,
     title: "Workout time",
     unit: "min",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
+    category: HealthCategory.exercise,
     icon: IconTypes.workoutIcon,
+    longDescription: "The amount of time in minutes you spend doing strength training workouts during the day",
+    shortDescription: "Total time spent working out",
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
         WorkoutHealthEntity(item, widgetSize, healthFetcherService))
   );
@@ -168,10 +175,11 @@ class HealthItemDefinitions {
     itemType: HealthItemType.sleep,
     title: "Sleep",
     unit: "hrs",
-    color: CoreColors.coreLightOrange,
-    offColor: CoreColors.coreOffLightOrange,
+    category: HealthCategory.wellness,
     icon: IconTypes.sleepDurationIcon,
     supportTimeInput: true,
+    longDescription: "The duration, each stage, and quality of your sleep",
+    shortDescription: "Sleep stages, duration, and quality",
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
         SleepHealthEntity(item, widgetSize, healthFetcherService))
   );
@@ -181,9 +189,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.activeCalories,
     title: "Active Calories",
     unit: "cal",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
-    icon: IconTypes.activeCaloriesIcon
+    category: HealthCategory.energy,
+    icon: IconTypes.activeCaloriesIcon,
+    longDescription: "Calories burned through physical activity, excluding your resting metabolic rate",
+    shortDescription: "Active energy expenditure",
   );
 
   static HealthItem restingCalories = _createHealthItem(
@@ -191,9 +200,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.restingCalories,
     title: "Resting Calories",
     unit: "cal",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
-    icon: IconTypes.caloriesIcon
+    category: HealthCategory.energy,
+    icon: IconTypes.caloriesIcon,
+    longDescription: "The calories your body burns at rest to maintain basic life functions, excluding activity calories",
+    shortDescription: "Basal metabolic rate",
   );
 
   static HealthItem dietaryCalories = _createHealthItem(
@@ -201,9 +211,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietaryCalories,
     title: "Dietary Calories",
     unit: "cal",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
-    icon: IconTypes.dietaryIcon
+    category: HealthCategory.nutrition,
+    icon: IconTypes.dietaryIcon,
+    longDescription: "The amount of calories you consume during the day",
+    shortDescription: "Total calories consumed",
   );
 
   static HealthItem netCalories = _createHealthItem(
@@ -211,10 +222,11 @@ class HealthItemDefinitions {
     itemType: HealthItemType.netCalories,
     title: "Net Calories",
     unit: "cal",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.body,
     icon: IconTypes.netCaloriesIcon,
     supportNegative: true,
+    longDescription: "The difference between calories burned and calories consumed",
+    shortDescription: "Energy expended minus energy consumed",
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
         NetCaloriesHealthEntity(item, widgetSize, healthFetcherService))
   );
@@ -224,8 +236,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.steps,
     title: "Steps",
     unit: "",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
+    category: HealthCategory.movement,
     icon: IconTypes.stepsIcon,
     iconRotation: 4.70
   );
@@ -235,8 +246,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.weight,
     title: "Weight",
     unit: "kg",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.body,
     icon: IconTypes.weightIcon,
     supportStreaks: false,
     supportDecimals: true,
@@ -249,8 +259,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.bodyFatPercentage,
     title: "Body Fat",
     unit: "%",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.body,
     icon: IconTypes.bodyFatIcon,
     supportDecimals: true,
     supportStreaks: false,
@@ -264,8 +273,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietaryCarbs,
     title: "Carbohydrates",
     unit: "g",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -274,8 +282,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietaryFats,
     title: "Fats",
     unit: "g",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -284,8 +291,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietaryFiber,
     title: "Fiber",
     unit: "g",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -294,8 +300,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietarySugar,
     title: "Sugar",
     unit: "g",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -304,8 +309,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietaryCholesterol,
     title: "Cholesterol",
     unit: "mg",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -314,8 +318,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.dietaryCaffeine,
     title: "Caffeine",
     unit: "mg",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -325,8 +328,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.vitaminA,
     title: "Vitamin A",
     unit: "μg",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -335,8 +337,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.vitaminB6,
     title: "Vitamin B6",
     unit: "mg",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -345,8 +346,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.vitaminB12,
     title: "Vitamin B12",
     unit: "μg",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -355,8 +355,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.vitaminC,
     title: "Vitamin C",
     unit: "mg",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -365,8 +364,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.vitaminD,
     title: "Vitamin D",
     unit: "μg",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -375,8 +373,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.vitaminE,
     title: "Vitamin E",
     unit: "mg",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -386,8 +383,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.calcium,
     title: "Calcium",
     unit: "mg",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -396,8 +392,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.iron,
     title: "Iron",
     unit: "mg",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -406,8 +401,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.magnesium,
     title: "Magnesium",
     unit: "mg",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -416,8 +410,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.potassium,
     title: "Potassium",
     unit: "mg",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -426,8 +419,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.sodium,
     title: "Sodium",
     unit: "mg",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
   );
 
@@ -437,8 +429,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.bloodGlucose,
     title: "Blood Glucose",
     unit: "mg/dL",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.droplet,
     isTrendItem: true
   );
@@ -448,8 +439,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.bloodOxygen,
     title: "Blood Oxygen",
     unit: "%",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.lungs,
     isTrendItem: true
   );
@@ -459,10 +449,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.bloodPressureDiastolic,
     title: "Diastolic BP",
     unit: "mmHg",
-    color: CoreColors.coreBrown,
-    offColor: CoreColors.coreOffBrown,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.heartPulse,
-    isTrendItem: true
+    isTrendItem: true,
+    shortDescription: "Diastolic blood pressure",
   );
 
   static HealthItem bloodPressureSystolic = _createHealthItem(
@@ -470,10 +460,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.bloodPressureSystolic,
     title: "Systolic BP",
     unit: "mmHg",
-    color: CoreColors.coreBrown,
-    offColor: CoreColors.coreOffBrown,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.heartPulse,
-    isTrendItem: true
+    isTrendItem: true,
+    shortDescription: "Systolic blood pressure",
   );
 
   static HealthItem bodyTemperature = _createHealthItem(
@@ -481,8 +471,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.bodyTemperature,
     title: "Body Temperature",
     unit: "°C",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.temperatureHalf,
     isTrendItem: true
   );
@@ -492,10 +481,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.heartRate,
     title: "Heart Rate",
     unit: "bpm",
-    color: CoreColors.coreBrown,
-    offColor: CoreColors.coreOffBrown,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.heartPulse,
-    isTrendItem: true
+    isTrendItem: true,
+    longDescription: "The number of times your heart beats per minute",
   );
 
   static HealthItem restingHeartRate = _createHealthItem(
@@ -503,10 +492,11 @@ class HealthItemDefinitions {
     itemType: HealthItemType.restingHeartRate,
     title: "Resting HR",
     unit: "bpm",
-    color: CoreColors.coreBrown,
-    offColor: CoreColors.coreOffBrown,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.bed,
-    isTrendItem: true
+    isTrendItem: true,
+    longDescription: "The number of times your heart beats per minute while at rest",
+    shortDescription: "Resting heart rate",
   );
 
   static HealthItem walkingHeartRate = _createHealthItem(
@@ -514,10 +504,11 @@ class HealthItemDefinitions {
     itemType: HealthItemType.walkingHeartRate,
     title: "Walking HR",
     unit: "bpm",
-    color: CoreColors.coreBrown,
-    offColor: CoreColors.coreOffBrown,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.personWalking,
-    isTrendItem: true
+    isTrendItem: true,
+    longDescription: "The number of times your heart beats per minute while walking",
+    shortDescription: "Walking heart rate",
   );
 
   static HealthItem respiratoryRate = _createHealthItem(
@@ -525,10 +516,10 @@ class HealthItemDefinitions {
     itemType: HealthItemType.respiratoryRate,
     title: "Respiratory Rate",
     unit: "br/min",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.health,
     icon: FontAwesomeIcons.lungs,
-    isTrendItem: true
+    isTrendItem: true,
+    longDescription: "The number of breaths per minute",
   );
 
   // Body Measurements
@@ -537,8 +528,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.height,
     title: "Height",
     unit: "cm",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.body,
     icon: FontAwesomeIcons.rulerVertical,
     isTrendItem: true
   );
@@ -548,8 +538,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.waistCircumference,
     title: "Waist",
     unit: "cm",
-    color: CoreColors.coreLightGrey,
-    offColor: CoreColors.coreOffLightGrey,
+    category: HealthCategory.body,
     icon: FontAwesomeIcons.ruler,
     isTrendItem: true
   );
@@ -560,8 +549,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.distanceWalkingRunning,
     title: "Distance (Walk/Run)",
     unit: "km",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
+    category: HealthCategory.movement,
     icon: FontAwesomeIcons.personRunning,
   );
 
@@ -570,8 +558,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.distanceSwimming,
     title: "Distance (Swim)",
     unit: "m",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.movement,
     icon: FontAwesomeIcons.personSwimming,
   );
 
@@ -580,8 +567,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.distanceCycling,
     title: "Distance (Cycle)",
     unit: "km",
-    color: CoreColors.coreGreen,
-    offColor: CoreColors.coreOffGreen,
+    category: HealthCategory.movement,
     icon: FontAwesomeIcons.bicycle,
   );
 
@@ -590,9 +576,9 @@ class HealthItemDefinitions {
     itemType: HealthItemType.flightsClimbed,
     title: "Flights Climbed",
     unit: "floors",
-    color: CoreColors.coreOrange,
-    offColor: CoreColors.coreOffOrange,
+    category: HealthCategory.movement,
     icon: FontAwesomeIcons.stairs,
+    longDescription: "The number of flights of stairs you climb",
   );
 
   // Other
@@ -601,8 +587,7 @@ class HealthItemDefinitions {
     itemType: HealthItemType.water,
     title: "Water",
     unit: "ml",
-    color: CoreColors.coreBlue,
-    offColor: CoreColors.coreOffBlue,
+    category: HealthCategory.nutrition,
     icon: FontAwesomeIcons.glassWater,
   );
 
@@ -611,8 +596,8 @@ class HealthItemDefinitions {
     itemType: HealthItemType.mindfulness,
     title: "Mindfulness",
     unit: "min",
-    color: CoreColors.coreLightOrange,
-    offColor: CoreColors.coreOffLightOrange,
+    category: HealthCategory.wellness,
     icon: FontAwesomeIcons.brain,
+    longDescription: "The amount of time you spend meditating",
   );
 }
