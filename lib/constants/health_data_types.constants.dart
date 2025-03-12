@@ -30,6 +30,47 @@ final List<HealthDataType> trendTypes = [
 final List<HealthDataType> allHealthDataTypes = [
   ...healthDataTypes,
   ...sleepTypes,
+  ...trendTypes,
+  // Dietary
+  HealthDataType.DIETARY_CARBS_CONSUMED,
+  HealthDataType.DIETARY_FATS_CONSUMED,
+  HealthDataType.DIETARY_FIBER,
+  HealthDataType.DIETARY_SUGAR,
+  HealthDataType.DIETARY_CHOLESTEROL,
+  HealthDataType.DIETARY_CAFFEINE,
+  // Vitamins
+  HealthDataType.DIETARY_VITAMIN_A,
+  HealthDataType.DIETARY_VITAMIN_B6,
+  HealthDataType.DIETARY_VITAMIN_B12,
+  HealthDataType.DIETARY_VITAMIN_C,
+  HealthDataType.DIETARY_VITAMIN_D,
+  HealthDataType.DIETARY_VITAMIN_E,
+  // Minerals
+  HealthDataType.DIETARY_CALCIUM,
+  HealthDataType.DIETARY_IRON,
+  HealthDataType.DIETARY_MAGNESIUM,
+  HealthDataType.DIETARY_POTASSIUM,
+  HealthDataType.DIETARY_SODIUM,
+  // Vitals
+  HealthDataType.BLOOD_GLUCOSE,
+  HealthDataType.BLOOD_OXYGEN,
+  HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
+  HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
+  HealthDataType.BODY_TEMPERATURE,
+  HealthDataType.HEART_RATE,
+  HealthDataType.RESTING_HEART_RATE,
+  HealthDataType.WALKING_HEART_RATE,
+  HealthDataType.RESPIRATORY_RATE,
+  // Body Measurements
+  HealthDataType.HEIGHT,
+  HealthDataType.WAIST_CIRCUMFERENCE,
+  // Distance & Activity
+  HealthDataType.DISTANCE_WALKING_RUNNING,
+  HealthDataType.DISTANCE_SWIMMING,
+  HealthDataType.DISTANCE_CYCLING,
+  HealthDataType.FLIGHTS_CLIMBED,
+  HealthDataType.WATER,
+  HealthDataType.MINDFULNESS,
 ];
 
 List<String> strengthTrainingTypes = [
