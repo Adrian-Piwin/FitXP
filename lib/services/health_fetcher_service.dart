@@ -11,28 +11,63 @@ import 'package:healthxp/utility/general.utility.dart';
 import '../models/data_points/data_point.model.dart';
 import '../services/health_data_cache_service.dart';
 import '../utility/health.utility.dart';
+import 'package:synchronized/synchronized.dart';
 
 class HealthFetcherService {
+  static HealthFetcherService? _instance;
+  static final _lock = Lock();
   final Health _health = Health();
   late final HealthDataCache _cache;
   bool _isAuthorized = false;
+  bool _isInitialized = false;
 
-  Future<void> initialize() async {
-    await dotenv.load(fileName: ".env");
-    _isAuthorized = await _health.hasPermissions(allHealthDataTypes) == true;
-    _cache = await HealthDataCache.getInstance();
+  // Private constructor
+  HealthFetcherService._();
+
+  // Factory constructor to get instance
+  static Future<HealthFetcherService> getInstance() async {
+    if (_instance == null) {
+      await _lock.synchronized(() async {
+        if (_instance == null) {
+          _instance = HealthFetcherService._();
+          await _instance!._initialize();
+        }
+      });
+    }
+    return _instance!;
   }
 
-  Future<bool> checkAndRequestPermissions() async {
+  Future<void> _initialize() async {
+    if (_isInitialized) return;
+    
+    await dotenv.load(fileName: ".env");
     _isAuthorized = await _health.hasPermissions(allHealthDataTypes) == true;
+    
     if (!_isAuthorized) {
       _isAuthorized = await _health.requestAuthorization(allHealthDataTypes);
+    }
+    
+    _cache = await HealthDataCache.getInstance();
+    _isInitialized = true;
+  }
+
+  bool get isReady => _isInitialized && _isAuthorized;
+
+  Future<bool> checkAndRequestPermissions() async {
+    if (!_isInitialized) {
+      await _initialize();
     }
     return _isAuthorized;
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> fetchBatchData(
       List<HealthEntity> entities) async {
+    if (!isReady) {
+      await _initialize();
+      if (!isReady) {
+        return {};
+      }
+    }
     Map<HealthDataType, List<DataPoint>> result = {};
 
     for (var entity in entities) {

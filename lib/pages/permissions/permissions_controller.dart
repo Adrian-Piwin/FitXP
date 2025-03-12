@@ -1,13 +1,13 @@
 import '../../services/health_fetcher_service.dart';
 
 class PermissionsController {
-  final HealthFetcherService _healthService = HealthFetcherService();
+  late final HealthFetcherService _healthService;
 
   bool isLoading = true;
   String? errorMessage;
 
   Future<bool> checkPermissions() async {
-    await _healthService.initialize();
+    _healthService = await HealthFetcherService.getInstance();
     try {
       isLoading = true;
       errorMessage = null;

@@ -8,7 +8,7 @@ import 'package:healthxp/services/health_data_cache_service.dart';
 import 'package:healthxp/services/health_fetcher_service.dart';
 
 class WorkoutsController extends ChangeNotifier {
-  final HealthFetcherService _healthFetcherService = HealthFetcherService();
+  late final HealthFetcherService _healthFetcherService;
   late final WorkoutHealthEntity _workoutEntity;
   late final HealthDataCache _healthDataCache;
   bool _isLoading = false;
@@ -34,11 +34,6 @@ class WorkoutsController extends ChangeNotifier {
   double get totalCalories => workouts.fold(0, (sum, w) => sum + (w.energyBurned ?? 0));
 
   WorkoutsController() {
-    _workoutEntity = WorkoutHealthEntity(
-      HealthItemDefinitions.workoutTime,
-      6,
-      _healthFetcherService,
-    );
     _initialize();
   }
 
@@ -47,8 +42,13 @@ class WorkoutsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _healthFetcherService.initialize();
+      _healthFetcherService = await HealthFetcherService.getInstance();
       _healthDataCache = await HealthDataCache.getInstance();
+      _workoutEntity = WorkoutHealthEntity(
+        HealthItemDefinitions.workoutTime,
+        6,
+        _healthFetcherService,
+      );
       await _workoutEntity.initialize();
       await _fetchData();
     } catch (e, stackTrace) {

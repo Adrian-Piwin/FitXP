@@ -17,7 +17,7 @@ import 'package:flutter/foundation.dart';
 class XpService extends ChangeNotifier {
   static const String _xpBoxName = 'monthly_xp_cache';
   static const String _medalsBoxName = 'earned_medals_cache';
-  final HealthFetcherService _healthFetcherService = HealthFetcherService();
+  late final HealthFetcherService _healthFetcherService;
   final DBService _dbService = DBService();
   late Box<List<dynamic>> _xpBox;
   late Box<List<String>> _medalsBox;
@@ -88,7 +88,7 @@ class XpService extends ChangeNotifier {
   Future<void> initialize() async {
     try {
       await _ensureInitialized();
-      await _healthFetcherService.initialize();
+      _healthFetcherService = await HealthFetcherService.getInstance();
       await _fetchMonthData();
       await _syncEarnedMedals();
     } catch (e) {

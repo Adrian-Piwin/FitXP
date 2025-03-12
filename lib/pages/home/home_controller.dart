@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:healthxp/services/db_service.dart';
 
 class HomeController extends ChangeNotifier with WidgetsBindingObserver {
-  final HealthFetcherService _healthFetcherService = HealthFetcherService();
+  late final HealthFetcherService _healthFetcherService;
   final DBService _dbService = DBService();
   late final HealthDataCache _healthDataCache;
   late final WidgetConfigurationService _widgetConfigurationService;
@@ -39,7 +39,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> _initializeAsync() async {
     try {
-      await _healthFetcherService.initialize();
+      _healthFetcherService = await HealthFetcherService.getInstance();
       _healthDataCache = await HealthDataCache.getInstance();
 
       // Get the saved configuration first
