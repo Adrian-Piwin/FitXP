@@ -7,7 +7,6 @@ import 'package:healthxp/constants/xp.constants.dart';
 import 'package:healthxp/enums/rank.enum.dart';
 import 'package:healthxp/services/xp_service.dart';
 import 'package:provider/provider.dart';
-import '../insights_controller.dart';
 
 class RankWidgetController extends ChangeNotifier {
   final BuildContext context;
@@ -17,7 +16,6 @@ class RankWidgetController extends ChangeNotifier {
   int _targetRank = 0;
   double _currentAnimatedXP = 0;
   double _targetXP = 0;
-  late final AnimationController _animationController;
   late final XpService _xpService;
 
   RankWidgetController(this.context) {
@@ -67,22 +65,17 @@ class RankWidgetController extends ChangeNotifier {
       await _xpService.initialize();
       await _xpService.waitForInitialization();
       
-      // Set initial values immediately
-      _currentAnimatedRank = _xpService.rank;
-      _currentAnimatedXP = _xpService.rankXpToNextRank.toDouble();
-      _updateTargetValues();
+      // Set initial values without animation
+      _targetRank = _xpService.rank;
+      _targetXP = _xpService.rankXpToNextRank.toDouble();
+      _currentAnimatedRank = _targetRank;
+      _currentAnimatedXP = _targetXP;
       
       // Listen for XP service changes
       _xpService.addListener(_onXpServiceChanged);
       
       _isLoading = false;
       notifyListeners();
-
-      // Only animate if values differ
-      if (_currentAnimatedRank != _targetRank || _currentAnimatedXP != _targetXP) {
-        await Future.delayed(const Duration(milliseconds: 100));
-        _startAnimation();
-      }
     } catch (e) {
       print('Error initializing RankWidgetController: $e');
       _isLoading = false;
@@ -92,49 +85,19 @@ class RankWidgetController extends ChangeNotifier {
 
   void _onXpServiceChanged() {
     if (_isAnimating) return;
-    _updateTargetValues();
-    _startAnimation();
-  }
-
-  void _updateTargetValues() {
-    _targetRank = _xpService.rank;
-    _targetXP = _xpService.rankXpToNextRank.toDouble();
-  }
-
-  void _startAnimation() async {
-    if (_isAnimating) return;
     
-    _isAnimating = true;
-    _currentAnimatedRank = 0;
-    _currentAnimatedXP = 0;
-    notifyListeners();
-
-    try {
-      // Animate through each rank until we reach the target
-      while (_currentAnimatedRank <= _targetRank) {
-        if (_currentAnimatedRank == _targetRank) {
-          // Final rank - animate to actual XP
-          await _animateXP(_targetXP);
-          break;
-        } else {
-          // Intermediate ranks - animate to full
-          await _animateXP(rankUpXPAmt.toDouble());
-          _currentAnimatedXP = 0;
-          _currentAnimatedRank++;
-          notifyListeners();
-          await Future.delayed(const Duration(milliseconds: 300)); // Pause between ranks
-        }
-      }
-    } catch (e) {
-      print('Error during rank animation: $e');
-    } finally {
-      _isAnimating = false;
-      notifyListeners();
+    final newRank = _xpService.rank;
+    final newXP = _xpService.rankXpToNextRank.toDouble();
+    
+    if (newRank != _targetRank || newXP != _targetXP) {
+      _targetRank = newRank;
+      _targetXP = newXP;
+      _startAnimation();
     }
   }
 
   Future<void> _animateXP(double targetXP) async {
-    const duration = Duration(milliseconds: 1000);
+    const duration = Duration(milliseconds: 500);
     final startTime = DateTime.now();
     final startXP = _currentAnimatedXP;
 
@@ -151,6 +114,41 @@ class RankWidgetController extends ChangeNotifier {
       _currentAnimatedXP = startXP + (targetXP - startXP) * curvedProgress;
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 16));
+    }
+  }
+
+  void _startAnimation() async {
+    if (_isAnimating) return;
+    
+    _isAnimating = true;
+    final startRank = _currentAnimatedRank;
+    final startXP = _currentAnimatedXP;
+    
+    try {
+      if (startRank != _targetRank) {
+        while (_currentAnimatedRank != _targetRank) {
+          if (_currentAnimatedRank < _targetRank) {
+            await _animateXP(rankUpXPAmt.toDouble());
+            _currentAnimatedXP = 0;
+            _currentAnimatedRank++;
+          } else {
+            _currentAnimatedXP = 0;
+            _currentAnimatedRank--;
+          }
+          notifyListeners();
+          await Future.delayed(const Duration(milliseconds: 200));
+        }
+      }
+      
+      await _animateXP(_targetXP);
+    } catch (e) {
+      print('Error during rank animation: $e');
+      // Restore original values on error
+      _currentAnimatedRank = startRank;
+      _currentAnimatedXP = startXP;
+      notifyListeners();
+    } finally {
+      _isAnimating = false;
     }
   }
 

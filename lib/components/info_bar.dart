@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/animations.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -65,13 +64,12 @@ class InfoBar extends StatelessWidget {
             const SizedBox(height: GapSizes.medium),
             LinearPercentIndicator(
               padding: EdgeInsets.zero,
-              lineHeight: 8.0,
+              lineHeight: PercentIndicatorSizes.lineHeightLarge,
               percent: percent.clamp(0.0, 1.0),
               backgroundColor: color.withOpacity(0.2),
               progressColor: color,
-              barRadius: const Radius.circular(4),
-              animation: animateChanges,
-              animationDuration: 1000,
+              barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
+              animation: false,
               curve: Curves.easeInOut,
             )
           ],

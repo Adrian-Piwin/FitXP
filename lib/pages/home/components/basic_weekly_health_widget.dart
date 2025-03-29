@@ -105,7 +105,7 @@ class BasicWeeklyHealthWidget extends WidgetFrame {
                 quarterTurns: 3,
                 child: LinearPercentIndicator(
                   percent: day.percentageTowardsGoal,
-                  lineHeight: 24,
+                  lineHeight: PercentIndicatorSizes.lineHeightLarge,
                   backgroundColor: CoreColors.coreGrey,
                   progressColor: widget.healthItem.color,
                   barRadius: const Radius.circular(12),

@@ -120,7 +120,7 @@ class XpService extends ChangeNotifier {
           final Map<String, dynamic> entityData = Map<String, dynamic>.from(data);
           return EntityXP(
             entityName: entityData['type'].toString(),
-            value: (entityData['rawTotal'] as num).toDouble(),
+            value: (entityData['value'] as num).toDouble(),
             rawTotal: (entityData['rawTotal'] as num).toDouble(),
             rawAverage: (entityData['rawAverage'] as num).toDouble(),
             date: DateTime.parse(entityData['date'].toString()),
@@ -132,6 +132,7 @@ class XpService extends ChangeNotifier {
         
         final List<Map<String, dynamic>> serializedXP = xpEntities.map((xp) => {
           'type': xp.entityName,
+          'value': xp.value,
           'rawTotal': xp.rawTotal,
           'rawAverage': xp.rawAverage,
           'date': xp.date.toIso8601String(),
@@ -151,7 +152,6 @@ class XpService extends ChangeNotifier {
 
   Future<void> clearCache() async {
     try {
-      await initialize();
       await _xpBox.clear();
       await _medalsBox.clear();
       xpEntities.clear();
