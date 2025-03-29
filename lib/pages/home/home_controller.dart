@@ -22,6 +22,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
   bool _isLoading = true;
+  bool _isFirstTimeLoading = true;
 
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
@@ -142,7 +143,8 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> fetchHealthData() async {
-    if (_isLoading) return;
+    if (_isLoading && !_isFirstTimeLoading) return;
+    _isFirstTimeLoading = false;
 
     for (var widget in healthItemEntities) {
       widget.isLoading = true;
