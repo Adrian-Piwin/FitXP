@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/date_selector.dart';
 import 'package:healthxp/components/loading_widget.dart';
-import 'package:healthxp/components/timeframe_tabbar.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/pages/insights/components/medal_list_widget.dart';

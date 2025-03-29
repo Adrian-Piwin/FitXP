@@ -100,7 +100,6 @@ class _RankPopupWidgetState extends State<RankPopupWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: Rank.values.map((rank) {
                 final rankModel = RankDefinitions.ranks[rank]!;
-                final isCurrentRank = rank == widget.currentRank;
                 final isSelected = rank == selectedRank;
                 
                 return GestureDetector(

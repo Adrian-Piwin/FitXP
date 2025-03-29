@@ -162,7 +162,9 @@ class XpService extends ChangeNotifier {
     }
   }
 
+  @override
   Future<void> dispose() async {
+    super.dispose();
     if (_isInitialized) {
       if (_xpBox.isOpen) await _xpBox.close();
       if (_medalsBox.isOpen) await _medalsBox.close();

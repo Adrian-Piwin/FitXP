@@ -50,10 +50,6 @@ class LineChartWidget extends WidgetFrame {
     final paddedMaxY = (effectiveMaxY * 1.03).ceil();
     final roundedTop = ((paddedMaxY + 4) ~/ 5) * 5;
     
-    // Calculate interval based on the full range
-    final range = roundedTop - roundedBottom;
-    final interval = max(1, (range / 4).ceil());
-
     // Now create validSpots after calculating the ranges
     final validSpots = groupedData.asMap().entries
         .where((entry) => entry.value.y > 0)

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:healthxp/constants/health_data_types.constants.dart';
 import 'package:healthxp/enums/timeframe.enum.dart';
 import 'package:healthxp/models/data_points/data_point.model.dart';

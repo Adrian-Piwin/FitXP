@@ -9,8 +9,6 @@ import 'package:healthxp/pages/insights/components/rank_widget.dart';
 import 'package:healthxp/services/db_service.dart';
 import 'package:healthxp/constants/health_item_definitions.constants.dart';
 import 'package:healthxp/models/health_item.model.dart';
-import 'package:healthxp/services/health_fetcher_service.dart';
-import 'package:healthxp/utility/health.utility.dart';
 
 class WidgetConfigurationService extends ChangeNotifier {
   List<HealthEntity> healthEntities = [];

@@ -234,7 +234,6 @@ class RankWidgetController extends ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: Rank.values.map((rank) {
                       final rankModel = RankDefinitions.ranks[rank]!;
-                      final isCurrentRank = rank == _xpService.currentRank;
                       final isSelected = rank == selectedRank;
                       
                       return GestureDetector(
