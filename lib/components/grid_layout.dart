@@ -1,5 +1,5 @@
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 

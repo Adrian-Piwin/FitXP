@@ -1,6 +1,6 @@
-import 'package:healthxp/models/data_points/data_point.model.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
+import 'package:healthcore/models/data_points/data_point.model.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/health_entities/trend_health_entity.model.dart';
 
 class BodyfatHealthEntity extends TrendHealthEntity {
   BodyfatHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);

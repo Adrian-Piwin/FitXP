@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthcore/services/error_logger.service.dart';
 import 'db_service.dart';
 
 class GoalsService extends DBService {

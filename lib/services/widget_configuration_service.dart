@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/enums/health_item_type.enum.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/pages/home/components/basic_health_widget.dart';
-import 'package:healthxp/pages/home/components/circular_health_widget.dart';
-import 'package:healthxp/pages/home/components/header_widget_item.dart';
-import 'package:healthxp/pages/insights/components/basic_weekly_health_widget.dart';
-import 'package:healthxp/pages/insights/components/rank_widget.dart';
-import 'package:healthxp/services/db_service.dart';
-import 'package:healthxp/constants/health_item_definitions.constants.dart';
-import 'package:healthxp/models/health_item.model.dart';
+import 'package:healthcore/enums/health_item_type.enum.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/pages/home/components/basic_health_widget.dart';
+import 'package:healthcore/pages/home/components/circular_health_widget.dart';
+import 'package:healthcore/pages/home/components/header_widget_item.dart';
+import 'package:healthcore/pages/insights/components/basic_weekly_health_widget.dart';
+import 'package:healthcore/pages/insights/components/rank_widget.dart';
+import 'package:healthcore/services/db_service.dart';
+import 'package:healthcore/constants/health_item_definitions.constants.dart';
+import 'package:healthcore/models/health_item.model.dart';
 
 class WidgetConfigurationService extends ChangeNotifier {
   List<HealthEntity> healthEntities = [];

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/enums/health_item_type.enum.dart';
-import 'package:healthxp/models/monthly_medal.model.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/enums/health_item_type.enum.dart';
+import 'package:healthcore/models/monthly_medal.model.dart';
 
 enum MedalType {
   monthlyAverage,  // Based on average for a specific month

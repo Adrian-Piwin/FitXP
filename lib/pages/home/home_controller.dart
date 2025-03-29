@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/models/health_item.model.dart';
-import 'package:healthxp/services/error_logger.service.dart';
-import 'package:healthxp/services/health_data_cache_service.dart';
-import 'package:healthxp/services/widget_configuration_service.dart';
-import 'package:healthxp/utility/health.utility.dart';
+import 'package:healthcore/models/health_item.model.dart';
+import 'package:healthcore/services/error_logger.service.dart';
+import 'package:healthcore/services/health_data_cache_service.dart';
+import 'package:healthcore/services/widget_configuration_service.dart';
+import 'package:healthcore/utility/health.utility.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
 import '../../enums/timeframe.enum.dart';
 import 'package:provider/provider.dart';
-import 'package:healthxp/services/db_service.dart';
+import 'package:healthcore/services/db_service.dart';
 
 class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   late final HealthFetcherService _healthFetcherService;

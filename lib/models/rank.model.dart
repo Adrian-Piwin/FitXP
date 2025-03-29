@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/enums/rank.enum.dart';
+import 'package:healthcore/enums/rank.enum.dart';
 
 class RankModel {
   final Rank rank;

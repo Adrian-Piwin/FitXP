@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
 
 class StreakService {
   Future<int> getStreak(HealthEntity entity, double goalValue) async {

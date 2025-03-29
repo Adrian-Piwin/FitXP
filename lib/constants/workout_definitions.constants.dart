@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/icons.constants.dart';
+import 'package:healthcore/constants/icons.constants.dart';
 
 class WorkoutDefinitions {
   static String getWorkoutName(String workoutType) {

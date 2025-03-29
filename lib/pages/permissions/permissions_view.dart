@@ -1,6 +1,6 @@
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
-import 'package:healthxp/pages/app.dart';
+import 'package:healthcore/pages/app.dart';
 import 'permissions_controller.dart';
 
 class PermissionsView extends StatefulWidget {

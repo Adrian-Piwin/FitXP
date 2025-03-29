@@ -1,9 +1,9 @@
-import 'package:healthxp/constants/magic_numbers.constants.dart';
-import 'package:healthxp/enums/unit_system.enum.dart';
-import 'package:healthxp/models/data_points/data_point.model.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/health_entities/trend_health_entity.model.dart';
-import 'package:healthxp/services/preferences_service.dart';
+import 'package:healthcore/constants/magic_numbers.constants.dart';
+import 'package:healthcore/enums/unit_system.enum.dart';
+import 'package:healthcore/models/data_points/data_point.model.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/health_entities/trend_health_entity.model.dart';
+import 'package:healthcore/services/preferences_service.dart';
 
 class WeightHealthEntity extends TrendHealthEntity {
   WeightHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);

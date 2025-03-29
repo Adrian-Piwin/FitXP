@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/widget_frame.dart';
+import 'package:healthcore/components/widget_frame.dart';
 
 class LoadingWidget extends WidgetFrame {
   const LoadingWidget({

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
-import 'package:healthxp/components/barchart_widget.dart';
-import 'package:healthxp/components/icon_info_widget.dart';
-import 'package:healthxp/components/loading_widget.dart';
-import 'package:healthxp/components/sleep_barchart_widget.dart';
-import 'package:healthxp/components/sleep_info_widget.dart';
-import 'package:healthxp/constants/icons.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/enums/sleep_stages.enum.dart';
-import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/models/bar_data.model.dart';
-import 'package:healthxp/models/data_points/data_point.model.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
-import 'package:healthxp/services/sleep_service.dart';
-import 'package:healthxp/utility/chart.utility.dart';
-import 'package:healthxp/utility/general.utility.dart';
+import 'package:healthcore/components/barchart_widget.dart';
+import 'package:healthcore/components/icon_info_widget.dart';
+import 'package:healthcore/components/loading_widget.dart';
+import 'package:healthcore/components/sleep_barchart_widget.dart';
+import 'package:healthcore/components/sleep_info_widget.dart';
+import 'package:healthcore/constants/icons.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/enums/sleep_stages.enum.dart';
+import 'package:healthcore/enums/timeframe.enum.dart';
+import 'package:healthcore/models/bar_data.model.dart';
+import 'package:healthcore/models/data_points/data_point.model.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/data_points/sleep_data_point.model.dart';
+import 'package:healthcore/services/sleep_service.dart';
+import 'package:healthcore/utility/chart.utility.dart';
+import 'package:healthcore/utility/general.utility.dart';
 
 class SleepHealthEntity extends HealthEntity {
   int? sleepScoreCache;

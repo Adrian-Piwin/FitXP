@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/magic_numbers.constants.dart';
-import 'package:healthxp/models/monthly_medal.model.dart';
-import 'package:healthxp/services/xp_service.dart';
+import 'package:healthcore/constants/magic_numbers.constants.dart';
+import 'package:healthcore/models/monthly_medal.model.dart';
+import 'package:healthcore/services/xp_service.dart';
 
 class InsightsController extends ChangeNotifier {
   late final XpService _xpService;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/health_item_definitions.constants.dart';
-import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/models/data_points/workout_data_point.model.dart';
-import 'package:healthxp/models/health_entities/workout_health_entity.model.dart';
-import 'package:healthxp/services/error_logger.service.dart';
-import 'package:healthxp/services/health_data_cache_service.dart';
-import 'package:healthxp/services/health_fetcher_service.dart';
+import 'package:healthcore/constants/health_item_definitions.constants.dart';
+import 'package:healthcore/enums/timeframe.enum.dart';
+import 'package:healthcore/models/data_points/workout_data_point.model.dart';
+import 'package:healthcore/models/health_entities/workout_health_entity.model.dart';
+import 'package:healthcore/services/error_logger.service.dart';
+import 'package:healthcore/services/health_data_cache_service.dart';
+import 'package:healthcore/services/health_fetcher_service.dart';
 
 class WorkoutsController extends ChangeNotifier {
   late final HealthFetcherService _healthFetcherService;

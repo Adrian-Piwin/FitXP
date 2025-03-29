@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/enums/health_category.enum.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/enums/health_category.enum.dart';
 
 class HealthCategoryColors {
   static Color getColorForCategory(HealthCategory category) {

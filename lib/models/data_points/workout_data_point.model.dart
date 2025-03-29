@@ -1,4 +1,4 @@
-import 'package:healthxp/models/data_points/data_point.model.dart';
+import 'package:healthcore/models/data_points/data_point.model.dart';
 
 class WorkoutDataPoint extends DataPoint {
   final String? workoutType;

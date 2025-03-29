@@ -1,5 +1,5 @@
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/icons.constants.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/icons.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

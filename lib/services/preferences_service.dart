@@ -1,4 +1,4 @@
-import 'package:healthxp/enums/unit_system.enum.dart';
+import 'package:healthcore/enums/unit_system.enum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {

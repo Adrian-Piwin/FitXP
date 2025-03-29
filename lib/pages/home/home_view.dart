@@ -1,14 +1,14 @@
-import 'package:healthxp/components/timeframe_tabbar.dart';
+import 'package:healthcore/components/timeframe_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
-import 'package:healthxp/pages/widget_configuration/widget_configuration_page.dart';
-import 'package:healthxp/services/widget_configuration_service.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/icons.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/pages/widget_configuration/widget_configuration_page.dart';
+import 'package:healthcore/services/widget_configuration_service.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/icons.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 
 class HomeView extends StatefulWidget {
   static const routeName = '/home';

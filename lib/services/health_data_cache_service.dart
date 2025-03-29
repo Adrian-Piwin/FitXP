@@ -1,8 +1,8 @@
 import 'package:health/health.dart';
-import 'package:healthxp/constants/health_data_types.constants.dart';
-import 'package:healthxp/enums/sleep_stages.enum.dart';
-import 'package:healthxp/models/data_points/sleep_data_point.model.dart';
-import 'package:healthxp/models/data_points/workout_data_point.model.dart';
+import 'package:healthcore/constants/health_data_types.constants.dart';
+import 'package:healthcore/enums/sleep_stages.enum.dart';
+import 'package:healthcore/models/data_points/sleep_data_point.model.dart';
+import 'package:healthcore/models/data_points/workout_data_point.model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/data_points/data_point.model.dart';
 

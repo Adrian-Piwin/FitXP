@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 
 class IconButtonCustom extends StatelessWidget {
   final String label;

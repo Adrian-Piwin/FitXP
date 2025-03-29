@@ -1,5 +1,5 @@
 import 'package:health/health.dart';
-import 'package:healthxp/enums/sleep_stages.enum.dart';
+import 'package:healthcore/enums/sleep_stages.enum.dart';
 
 String formatMinutes(int totalMinutes) {
   int hours = totalMinutes ~/ 60;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/constants/workout_definitions.constants.dart';
-import 'package:healthxp/models/data_points/workout_data_point.model.dart';
-import 'package:healthxp/utility/general.utility.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/constants/workout_definitions.constants.dart';
+import 'package:healthcore/models/data_points/workout_data_point.model.dart';
+import 'package:healthcore/utility/general.utility.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutListItem extends StatelessWidget {

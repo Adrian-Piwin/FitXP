@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
-import 'package:healthxp/enums/health_item_type.enum.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/services/health_fetcher_service.dart';
-import 'package:healthxp/enums/health_category.enum.dart';
+import 'package:healthcore/enums/health_item_type.enum.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/services/health_fetcher_service.dart';
+import 'package:healthcore/enums/health_category.enum.dart';
 
 typedef WidgetFactory = HealthEntity Function(
     HealthItem item, int widgetSize, HealthFetcherService healthFetcherService);

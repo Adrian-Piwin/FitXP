@@ -1,7 +1,7 @@
 import 'package:health/health.dart';
-import 'package:healthxp/models/data_points/data_point.model.dart';
-import 'package:healthxp/models/data_points/workout_data_point.model.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/data_points/data_point.model.dart';
+import 'package:healthcore/models/data_points/workout_data_point.model.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
 
 class WorkoutHealthEntity extends HealthEntity {
   WorkoutHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);

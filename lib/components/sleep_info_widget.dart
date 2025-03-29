@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SleepInfoWidget extends WidgetFrame {

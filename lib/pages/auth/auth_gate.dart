@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:flutter/material.dart';
-import 'package:healthxp/pages/auth/custom_sign_in_screen.dart';
+import 'package:healthcore/pages/auth/custom_sign_in_screen.dart';
 import '../permissions/permissions_view.dart';
 
 class AuthGate extends StatelessWidget {

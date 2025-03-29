@@ -1,4 +1,4 @@
-import 'package:healthxp/enums/health_item_type.enum.dart';
+import 'package:healthcore/enums/health_item_type.enum.dart';
 
 const int levelUpXPAmt = 1000;
 const int rankUpXPAmt = 50000;

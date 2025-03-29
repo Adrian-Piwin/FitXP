@@ -1,10 +1,10 @@
-import 'package:healthxp/constants/health_data_types.constants.dart';
-import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/models/data_points/data_point.model.dart';
+import 'package:healthcore/constants/health_data_types.constants.dart';
+import 'package:healthcore/enums/timeframe.enum.dart';
+import 'package:healthcore/models/data_points/data_point.model.dart';
 import 'package:health/health.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/health_item.model.dart';
-import 'package:healthxp/services/health_fetcher_service.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/health_item.model.dart';
+import 'package:healthcore/services/health_fetcher_service.dart';
 
 double getHealthAverage(List<DataPoint> data) {
   if (data.isEmpty) return 0.0;

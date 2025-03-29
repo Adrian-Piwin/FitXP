@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/info_bar.dart';
-import 'package:healthxp/components/loading_widget.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/constants/xp.constants.dart';
+import 'package:healthcore/components/info_bar.dart';
+import 'package:healthcore/components/loading_widget.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/constants/xp.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:healthxp/services/xp_service.dart';
+import 'package:healthcore/services/xp_service.dart';
 import 'rank_widget_controller.dart';
 
 class RankWidget extends WidgetFrame {

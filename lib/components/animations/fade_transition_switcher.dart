@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/animations.constants.dart';
+import 'package:healthcore/constants/animations.constants.dart';
 
 enum SlideDirection {
   left,

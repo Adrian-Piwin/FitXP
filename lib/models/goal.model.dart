@@ -1,4 +1,4 @@
-import 'package:healthxp/enums/phase_type.enum.dart';
+import 'package:healthcore/enums/phase_type.enum.dart';
 
 class Goal {
   PhaseType phaseType; // Using PhaseType enum

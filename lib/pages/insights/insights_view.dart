@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/date_selector.dart';
-import 'package:healthxp/components/loading_widget.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/pages/insights/components/medal_list_widget.dart';
-import 'package:healthxp/pages/insights/components/rank_widget.dart';
-import 'package:healthxp/services/xp_service.dart';
+import 'package:healthcore/components/date_selector.dart';
+import 'package:healthcore/components/loading_widget.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/enums/timeframe.enum.dart';
+import 'package:healthcore/pages/insights/components/medal_list_widget.dart';
+import 'package:healthcore/pages/insights/components/rank_widget.dart';
+import 'package:healthcore/services/xp_service.dart';
 import 'package:provider/provider.dart';
 import 'insights_controller.dart';
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/timeframe_tabbar.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/pages/workouts/components/workout_list_item.dart';
-import 'package:healthxp/pages/workouts/components/workout_summary.dart';
-import 'package:healthxp/pages/workouts/components/workout_type_filter.dart';
+import 'package:healthcore/components/timeframe_tabbar.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/pages/workouts/components/workout_list_item.dart';
+import 'package:healthcore/pages/workouts/components/workout_summary.dart';
+import 'package:healthcore/pages/workouts/components/workout_type_filter.dart';
 import 'package:provider/provider.dart';
-import 'package:healthxp/components/date_selector.dart';
+import 'package:healthcore/components/date_selector.dart';
 import 'workouts_controller.dart';
 
 class WorkoutsView extends StatefulWidget {

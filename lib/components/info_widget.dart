@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 
 class InfoWidget extends WidgetFrame {
   final String title;

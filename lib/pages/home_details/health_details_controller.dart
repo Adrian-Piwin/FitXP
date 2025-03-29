@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/services/error_logger.service.dart';
 import '../../enums/timeframe.enum.dart';
 
 class HealthDetailsController extends ChangeNotifier {

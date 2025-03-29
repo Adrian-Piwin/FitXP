@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:healthxp/enums/unit_system.enum.dart';
-import 'package:healthxp/services/error_logger.service.dart';
-import 'package:healthxp/services/health_data_cache_service.dart';
-import 'package:healthxp/services/preferences_service.dart';
-import 'package:healthxp/services/goals_service.dart';
-import 'package:healthxp/services/xp_service.dart';
+import 'package:healthcore/enums/unit_system.enum.dart';
+import 'package:healthcore/services/error_logger.service.dart';
+import 'package:healthcore/services/health_data_cache_service.dart';
+import 'package:healthcore/services/preferences_service.dart';
+import 'package:healthcore/services/goals_service.dart';
+import 'package:healthcore/services/xp_service.dart';
 
 class SettingsController with ChangeNotifier {
   late final GoalsService _goalsService;

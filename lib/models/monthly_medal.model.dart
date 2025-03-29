@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/constants/medal_definitions.constants.dart';
-import 'package:healthxp/enums/health_item_type.enum.dart';
+import 'package:healthcore/constants/medal_definitions.constants.dart';
+import 'package:healthcore/enums/health_item_type.enum.dart';
 
 class Medal {
   final String id;

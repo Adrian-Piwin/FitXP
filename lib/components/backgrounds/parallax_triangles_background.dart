@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:healthxp/constants/colors.constants.dart';
+import 'package:healthcore/constants/colors.constants.dart';
 
 class ParallaxTrianglesBackground extends StatefulWidget {
   final Color triangleColor;

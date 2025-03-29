@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/monthly_medal.model.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/models/monthly_medal.model.dart';
 
 class MedalListWidget extends StatelessWidget {
   final List<Medal> medals;

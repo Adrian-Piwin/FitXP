@@ -1,7 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/enums/rank.enum.dart';
-import 'package:healthxp/models/rank.model.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/enums/rank.enum.dart';
+import 'package:healthcore/models/rank.model.dart';
 
 class RankDefinitions {
   static final Map<Rank, RankModel> ranks = {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/rank_definitions.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/enums/rank.enum.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/rank_definitions.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/enums/rank.enum.dart';
 
 class RankPopupWidget extends StatefulWidget {
   final Rank currentRank;

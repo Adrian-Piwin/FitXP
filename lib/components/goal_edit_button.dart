@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/icons.constants.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/icons.constants.dart';
 import '../constants/sizes.constants.dart';
 
 class GoalEditButton extends WidgetFrame {

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:healthxp/services/error_logger.service.dart';
+import 'package:healthcore/services/error_logger.service.dart';
 
 class DBService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

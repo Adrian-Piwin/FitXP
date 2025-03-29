@@ -1,4 +1,4 @@
-import 'package:healthxp/models/circular_percent_config.model.dart';
+import 'package:healthcore/models/circular_percent_config.model.dart';
 
 class FontSizes {
   static const double xsmall = 10.0;

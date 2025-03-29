@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/grid_layout.dart';
-import 'package:healthxp/components/info_bar.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/enums/timeframe.enum.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/components/grid_layout.dart';
+import 'package:healthcore/components/info_bar.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/enums/timeframe.enum.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
 import 'package:provider/provider.dart';
 import '../../components/timeframe_tabbar.dart';
 import '../../components/date_selector.dart';

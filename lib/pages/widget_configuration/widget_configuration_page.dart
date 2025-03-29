@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
-import 'package:healthxp/models/health_item.model.dart';
-import 'package:healthxp/pages/home/home_controller.dart';
-import 'package:healthxp/services/widget_configuration_service.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/models/health_item.model.dart';
+import 'package:healthcore/pages/home/home_controller.dart';
+import 'package:healthcore/services/widget_configuration_service.dart';
 import 'package:provider/provider.dart';
-import 'package:healthxp/constants/health_item_definitions.constants.dart';
+import 'package:healthcore/constants/health_item_definitions.constants.dart';
 
 class WidgetConfigurationPage extends StatefulWidget {
   final HomeController homeController;

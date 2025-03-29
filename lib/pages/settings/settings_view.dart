@@ -1,6 +1,6 @@
-import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
-import 'package:healthxp/enums/unit_system.enum.dart';
+import 'package:healthcore/enums/unit_system.enum.dart';
 import 'settings_controller.dart';
 import '../../services/error_logger.service.dart';
 

@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:healthxp/components/icon_button_custom.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/pages/permissions/permissions_view.dart';
+import 'package:healthcore/components/icon_button_custom.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/pages/permissions/permissions_view.dart';
 
 class CustomSignInScreen extends StatefulWidget {
   const CustomSignInScreen({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/colors.constants.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/daily_goal_status.model.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/colors.constants.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/models/daily_goal_status.model.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

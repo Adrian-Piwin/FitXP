@@ -1,10 +1,10 @@
-import 'package:healthxp/components/info_bar.dart';
-import 'package:healthxp/components/widget_frame.dart';
-import 'package:healthxp/constants/sizes.constants.dart';
-import 'package:healthxp/models/health_entities/health_entity.model.dart';
+import 'package:healthcore/components/info_bar.dart';
+import 'package:healthcore/components/widget_frame.dart';
+import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
-import 'package:healthxp/pages/home/components/circular_health_widget.dart';
-import 'package:healthxp/pages/home_details/health_details_view.dart';
+import 'package:healthcore/pages/home/components/circular_health_widget.dart';
+import 'package:healthcore/pages/home_details/health_details_view.dart';
 
 class HeaderWidgetItem extends WidgetFrame {
   final HealthEntity barWidget;
