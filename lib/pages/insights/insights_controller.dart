@@ -15,10 +15,10 @@ class InsightsController extends ChangeNotifier {
   bool get showLoading => _showLoading;
   bool get isInitializing => _isInitializing;
   int get offset => _isInitializing ? 0 : _xpService.offset;
-  List<Medal> get medals => _xpService.getEarnedMedals();
-  String get rankName => _xpService.rankName;
-  int get currentXP => _xpService.rankXpToNextRank;
-  int get requiredXP => _xpService.rankXP;
+  List<Medal> get medals => _isInitializing ? [] : _xpService.getEarnedMedals();
+  String get rankName => _isInitializing ? '' : _xpService.rankName;
+  int get currentXP => _isInitializing ? 0 : _xpService.rankXpToNextRank;
+  int get requiredXP => _isInitializing ? 0 : _xpService.rankXP;
 
   InsightsController() {
     _initialize();
@@ -46,16 +46,21 @@ class InsightsController extends ChangeNotifier {
     try {
       _xpService = await XpService.getInstance();
       await _xpService.initialize();
+      _xpService.addListener(() {
+        if (!_isInitializing) {
+          notifyListeners();
+        }
+      });
     } catch (e) {
       print('Error initializing InsightsController: $e');
+    } finally {
+      _isInitializing = false;
+      notifyListeners();
     }
-
-    _isInitializing = false;
-    notifyListeners();
   }
 
   void updateOffset(int newOffset) async {
-    if (_isInitializing) return;
+    if (_isInitializing || _isLoading) return;
     
     _setLoading(true);
     
@@ -70,7 +75,7 @@ class InsightsController extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
-    if (_isInitializing) return;
+    if (_isInitializing || _isLoading) return;
     
     _setLoading(true);
 

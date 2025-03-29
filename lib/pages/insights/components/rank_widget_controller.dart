@@ -10,37 +10,148 @@ import 'package:provider/provider.dart';
 import '../insights_controller.dart';
 
 class RankWidgetController extends ChangeNotifier {
-  late final InsightsController _insightsController;
-  late final XpService _xpService;
+  final BuildContext context;
   bool _isLoading = true;
+  bool _isAnimating = false;
+  int _currentAnimatedRank = 0;
+  int _targetRank = 0;
+  double _currentAnimatedXP = 0;
+  double _targetXP = 0;
+  late final AnimationController _animationController;
+  late final XpService _xpService;
 
-  bool get isLoading => _isLoading;
-  String get rankName => _insightsController.rankName;
-  int get currentXP => _insightsController.currentXP;
-  int get requiredXP => rankUpXPAmt;
-  double get rankProgress => currentXP / requiredXP;
-
-  // Getters for rank styling
-  IconData get rankIcon => RankDefinitions.ranks[_xpService.currentRank]!.icon;
-  Color get rankColor => RankDefinitions.ranks[_xpService.currentRank]!.color;
-
-  RankWidgetController(BuildContext context) {
-    _insightsController = Provider.of<InsightsController>(context, listen: false);
+  RankWidgetController(this.context) {
+    _xpService = Provider.of<XpService>(context, listen: false);
     _initialize();
   }
 
-  Future<void> _initialize() async {
-    _isLoading = true;
-    notifyListeners();
+  bool get isLoading => _isLoading;
+  bool get isAnimating => _isAnimating;
+  int get currentAnimatedRank => _currentAnimatedRank;
+  double get currentAnimatedXP => _currentAnimatedXP;
+  
+  String get rankName => switch (_currentAnimatedRank) {
+    < 1 => Rank.bronze.displayName,
+    < 2 => Rank.silver.displayName,
+    < 3 => Rank.gold.displayName,
+    _ => Rank.diamond.displayName,
+  };
 
+  Color get rankColor => switch (_currentAnimatedRank) {
+    < 1 => CoreColors.coreBronze,
+    < 2 => CoreColors.coreSilver,
+    < 3 => CoreColors.coreGold,
+    _ => CoreColors.coreDiamond,
+  };
+
+  IconData get rankIcon => switch (_currentAnimatedRank) {
+    < 1 => FontAwesomeIcons.medal,
+    < 2 => FontAwesomeIcons.medal,
+    < 3 => FontAwesomeIcons.medal,
+    _ => FontAwesomeIcons.gem,
+  };
+
+  double get rankProgress {
+    if (_currentAnimatedRank == _targetRank) {
+      return _currentAnimatedXP / rankUpXPAmt;
+    }
+    return _currentAnimatedXP / rankUpXPAmt;
+  }
+
+  Future<void> _initialize() async {
     try {
-      _xpService = await XpService.getInstance();
+      _isLoading = true;
+      notifyListeners();
+
+      // Wait for XP service to be fully initialized
+      await _xpService.initialize();
+      await _xpService.waitForInitialization();
+      
+      // Set initial values immediately
+      _currentAnimatedRank = _xpService.rank;
+      _currentAnimatedXP = _xpService.rankXpToNextRank.toDouble();
+      _updateTargetValues();
+      
+      // Listen for XP service changes
+      _xpService.addListener(_onXpServiceChanged);
+      
       _isLoading = false;
+      notifyListeners();
+
+      // Only animate if values differ
+      if (_currentAnimatedRank != _targetRank || _currentAnimatedXP != _targetXP) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        _startAnimation();
+      }
     } catch (e) {
       print('Error initializing RankWidgetController: $e');
       _isLoading = false;
+      notifyListeners();
     }
+  }
+
+  void _onXpServiceChanged() {
+    if (_isAnimating) return;
+    _updateTargetValues();
+    _startAnimation();
+  }
+
+  void _updateTargetValues() {
+    _targetRank = _xpService.rank;
+    _targetXP = _xpService.rankXpToNextRank.toDouble();
+  }
+
+  void _startAnimation() async {
+    if (_isAnimating) return;
+    
+    _isAnimating = true;
+    _currentAnimatedRank = 0;
+    _currentAnimatedXP = 0;
     notifyListeners();
+
+    try {
+      // Animate through each rank until we reach the target
+      while (_currentAnimatedRank <= _targetRank) {
+        if (_currentAnimatedRank == _targetRank) {
+          // Final rank - animate to actual XP
+          await _animateXP(_targetXP);
+          break;
+        } else {
+          // Intermediate ranks - animate to full
+          await _animateXP(rankUpXPAmt.toDouble());
+          _currentAnimatedXP = 0;
+          _currentAnimatedRank++;
+          notifyListeners();
+          await Future.delayed(const Duration(milliseconds: 300)); // Pause between ranks
+        }
+      }
+    } catch (e) {
+      print('Error during rank animation: $e');
+    } finally {
+      _isAnimating = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _animateXP(double targetXP) async {
+    const duration = Duration(milliseconds: 1000);
+    final startTime = DateTime.now();
+    final startXP = _currentAnimatedXP;
+
+    while (true) {
+      final elapsedTime = DateTime.now().difference(startTime);
+      if (elapsedTime >= duration) {
+        _currentAnimatedXP = targetXP;
+        notifyListeners();
+        break;
+      }
+
+      final progress = elapsedTime.inMilliseconds / duration.inMilliseconds;
+      final curvedProgress = Curves.easeInOut.transform(progress);
+      _currentAnimatedXP = startXP + (targetXP - startXP) * curvedProgress;
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 16));
+    }
   }
 
   void showRankDetails(BuildContext context) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:healthxp/components/info_bar.dart';
+import 'package:healthxp/components/loading_widget.dart';
 import 'package:healthxp/components/widget_frame.dart';
 import 'package:healthxp/constants/colors.constants.dart';
 import 'package:healthxp/constants/sizes.constants.dart';
+import 'package:healthxp/constants/xp.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:healthxp/services/xp_service.dart';
@@ -24,7 +26,12 @@ class RankWidget extends WidgetFrame {
       child: Consumer2<RankWidgetController, XpService>(
         builder: (context, controller, xpService, _) {
           if (controller.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingWidget(
+              size: 6,
+              height: WidgetSizes.mediumHeight,
+              color: CoreColors.backgroundColor,
+              showShadow: false,
+            );
           }
 
           return Column(
@@ -43,10 +50,14 @@ class RankWidget extends WidgetFrame {
                         borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
                       ),
                       child: Center(
-                        child: FaIcon(
-                          controller.rankIcon,
-                          size: IconSizes.large,
-                          color: controller.rankColor,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: FaIcon(
+                            controller.rankIcon,
+                            key: ValueKey(controller.currentAnimatedRank),
+                            size: IconSizes.large,
+                            color: controller.rankColor,
+                          ),
                         ),
                       ),
                     ),
@@ -55,11 +66,12 @@ class RankWidget extends WidgetFrame {
                     Expanded(
                       child: InfoBar(
                         title: controller.rankName,
-                        value: controller.currentXP.toString(),
-                        goal: controller.requiredXP.toString(),
+                        value: controller.currentAnimatedXP.toInt().toString(),
+                        goal: rankUpXPAmt.toString(),
                         percent: controller.rankProgress,
                         color: controller.rankColor,
                         textColor: CoreColors.textColor,
+                        animateChanges: true,
                       ),
                     ),
                   ],

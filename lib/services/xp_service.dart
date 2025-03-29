@@ -13,6 +13,7 @@ import 'package:healthxp/constants/medal_definitions.constants.dart';
 import 'package:healthxp/services/db_service.dart';
 import 'package:healthxp/enums/rank.enum.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 
 class XpService extends ChangeNotifier {
   static const String _xpBoxName = 'monthly_xp_cache';
@@ -22,8 +23,10 @@ class XpService extends ChangeNotifier {
   late Box<List<dynamic>> _xpBox;
   late Box<List<String>> _medalsBox;
   bool _isInitialized = false;
+  bool _isInitializing = false;
   List<EntityXP> xpEntities = []; // XP entities for the current month
   int _offset = 0;
+  final _initCompleter = Completer<void>();
 
   // Private constructor
   XpService._();
@@ -36,6 +39,9 @@ class XpService extends ChangeNotifier {
   void setOffset(int newOffset) {
     _offset = newOffset;
   }
+
+  bool get isInitialized => _isInitialized;
+  Future<void> waitForInitialization() => _initCompleter.future;
 
   // Factory constructor
   static Future<XpService> getInstance() async {
@@ -50,13 +56,31 @@ class XpService extends ChangeNotifier {
     if (!_isInitialized) {
       _xpBox = await Hive.openBox<List>(_xpBoxName);
       _medalsBox = await Hive.openBox<List<String>>(_medalsBoxName);
-      _isInitialized = true;
     }
   }
 
-  Future<void> _ensureInitialized() async {
-    if (!_isInitialized) {
-      await _initHive();
+  Future<void> initialize() async {
+    if (_isInitializing) {
+      return await waitForInitialization();
+    }
+    if (_isInitialized) {
+      return;
+    }
+
+    _isInitializing = true;
+    try {
+      _healthFetcherService = await HealthFetcherService.getInstance();
+      await _fetchMonthData();
+      await _syncEarnedMedals();
+      _isInitialized = true;
+      _initCompleter.complete();
+      notifyListeners();
+    } catch (e) {
+      print('Error initializing XP Service: $e');
+      _initCompleter.completeError(e);
+      rethrow;
+    } finally {
+      _isInitializing = false;
     }
   }
 
@@ -84,18 +108,6 @@ class XpService extends ChangeNotifier {
     < 3 => Rank.gold,
     _ => Rank.diamond,
   };
-
-  Future<void> initialize() async {
-    try {
-      await _ensureInitialized();
-      _healthFetcherService = await HealthFetcherService.getInstance();
-      await _fetchMonthData();
-      await _syncEarnedMedals();
-    } catch (e) {
-      print('Error initializing XP Service: $e');
-      rethrow;
-    }
-  }
 
   Future<void> _fetchMonthData() async {
     final monthKey = _getMonthKey(DateTime.now().subtract(Duration(days: _offset * 30)));
@@ -133,12 +145,13 @@ class XpService extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error fetching month data: $e');
+      rethrow;
     }
   }
 
   Future<void> clearCache() async {
     try {
-      await _ensureInitialized();
+      await initialize();
       await _xpBox.clear();
       await _medalsBox.clear();
       xpEntities.clear();
@@ -298,9 +311,15 @@ class XpService extends ChangeNotifier {
   }
 
   Future<void> updateData() async {
+    if (!_isInitialized) {
+      await initialize();
+      return;
+    }
+
     try {
       await _fetchMonthData();
       await _syncEarnedMedals();
+      notifyListeners();
     } catch (e) {
       print('Error updating XP data: $e');
       rethrow;

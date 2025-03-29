@@ -10,6 +10,7 @@ class InfoBar extends StatelessWidget {
   final double percent;
   final Color color;
   final Color textColor;
+  final bool animateChanges;
 
   const InfoBar({
     super.key,
@@ -19,6 +20,7 @@ class InfoBar extends StatelessWidget {
     required this.percent,
     required this.color,
     required this.textColor,
+    this.animateChanges = false,
   });
 
   @override
@@ -62,14 +64,15 @@ class InfoBar extends StatelessWidget {
             ),
             const SizedBox(height: GapSizes.medium),
             LinearPercentIndicator(
-              percent: percent,
-              lineHeight: PercentIndicatorSizes.lineHeightLarge,
+              padding: EdgeInsets.zero,
+              lineHeight: 8.0,
+              percent: percent.clamp(0.0, 1.0),
               backgroundColor: color.withOpacity(0.2),
               progressColor: color,
-              barRadius: const Radius.circular(PercentIndicatorSizes.barRadius),
-              padding: EdgeInsets.zero,
-              animation: true,
-              animationDuration: PercentIndicatorAnimations.duration,
+              barRadius: const Radius.circular(4),
+              animation: animateChanges,
+              animationDuration: 1000,
+              curve: Curves.easeInOut,
             )
           ],
       )
