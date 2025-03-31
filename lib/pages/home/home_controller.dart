@@ -146,21 +146,10 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     if (_isLoading && !_isFirstTimeLoading) return;
     _isFirstTimeLoading = false;
 
-    for (var widget in healthItemEntities) {
-      widget.isLoading = true;
-    }
-    _updateDisplayWidgets();
-
     try {
       await setDataPerWidgetWithTimeframe(healthItemEntities, _selectedTimeFrame, _offset);
-      _updateDisplayWidgets();
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
-    } finally {
-      for (var widget in healthItemEntities) {
-        widget.isLoading = false;
-      }
-      _updateDisplayWidgets();
     }
   }
 

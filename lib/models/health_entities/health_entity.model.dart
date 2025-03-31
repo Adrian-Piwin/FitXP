@@ -42,11 +42,15 @@ class HealthEntity extends ChangeNotifier {
     if (value) {
       _loadingTimer?.cancel();
       _loadingTimer = Timer(loadingDelay, () {
-        showLoading = true;
+        if (_isLoading) {  // Only show loading if we're still loading after delay
+          showLoading = true;
+          notifyListeners();
+        }
       });
     } else {
       _loadingTimer?.cancel();
       showLoading = false;
+      notifyListeners();
     }
   }
 
@@ -156,6 +160,11 @@ class HealthEntity extends ChangeNotifier {
     return formatNumber(total, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0) + healthItem.unit;
   }
 
+  String get getDisplayStreak {
+    if (showLoading) return "--";
+    return "${cachedStreak.toString()} day streak";
+  }
+
   String formatValue(double value) {
     return formatNumber(value, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
   }
@@ -255,7 +264,7 @@ class HealthEntity extends ChangeNotifier {
     return [
       IconInfoWidget(
         title: "Streak",
-        displayValue: "${cachedStreak.toString()} day streak",
+        displayValue: getDisplayStreak,
         icon: IconTypes.streakIcon,
         iconColor: healthItem.color,
       ),
@@ -294,13 +303,19 @@ class HealthEntity extends ChangeNotifier {
   }
 
   Future<void> updateData() async {
-    final batchData = await healthFetcherService.fetchBatchData([this]);
-    data = Map.fromEntries(
-      healthItem.dataType.map((type) => 
-        MapEntry(type, batchData[type] ?? [])
-      )
-    );
-    clearCache();
+    isLoading = true;
+    
+    try {
+      final batchData = await healthFetcherService.fetchBatchData([this]);
+      data = Map.fromEntries(
+        healthItem.dataType.map((type) => 
+          MapEntry(type, batchData[type] ?? [])
+        )
+      );
+      clearCache();
+    } finally {
+      isLoading = false;
+    }
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> getData(DateTimeRange dateRange) async {
