@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:healthcore/components/grid_layout.dart';
 import 'package:healthcore/components/info_bar.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
-import 'package:healthcore/enums/timeframe.enum.dart';
 import 'package:healthcore/models/health_entities/health_entity.model.dart';
 import 'package:provider/provider.dart';
 import '../../components/timeframe_tabbar.dart';
@@ -80,15 +79,18 @@ class HealthDataDetailPage extends StatelessWidget {
                   if (controller.widget.getGoalPercent != -1)
                     Padding(
                       padding: const EdgeInsets.all(GapSizes.large),
-                      child: InfoBar(
-                        title: controller.widget.healthItem.title,
-                        value: controller.widget.timeframe == TimeFrame.day 
-                          ? controller.widget.getDisplayValueWithUnit 
-                          : controller.widget.getDisplayAverage,
-                        goal: controller.widget.getDisplayGoalWithUnit,
-                        percent: controller.widget.getGoalPercent,
-                        color: controller.widget.healthItem.color,
-                        textColor: controller.widget.healthItem.offColor,
+                      child: RepaintBoundary(
+                        child: InfoBar(
+                          title: controller.widget.healthItem.title,
+                          value: controller.widget.total,
+                          formatValue: controller.widget.formatValue,
+                          unit: controller.widget.healthItem.unit,
+                          goal: controller.widget.getDisplayGoal,
+                          percent: controller.widget.getGoalPercent,
+                          color: controller.widget.healthItem.color,
+                          textColor: controller.widget.healthItem.offColor,
+                          animateChanges: true,
+                        ),
                       ),
                     ),
                   Expanded(

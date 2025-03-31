@@ -38,13 +38,18 @@ class HeaderWidgetItem extends WidgetFrame {
                     ),
                   );
                 },
-                child: InfoBar(
-                  title: barWidget.healthItem.title,
-                  value: barWidget.getDisplayValue,
-                  goal: barWidget.getDisplayGoal,
-                  percent: barWidget.getGoalPercent,
-                  color: barWidget.healthItem.color,
-                  textColor: barWidget.healthItem.offColor,
+                child: RepaintBoundary(
+                  child: InfoBar(
+                    title: barWidget.healthItem.title,
+                    formatValue: barWidget.formatValue,
+                    value: barWidget.total,
+                    unit: barWidget.healthItem.unit,
+                    goal: barWidget.getDisplayGoal,
+                    percent: barWidget.getGoalPercent,
+                    color: barWidget.healthItem.color,
+                    textColor: barWidget.healthItem.offColor,
+                    animateChanges: true,
+                  ),
                 ),
               ),
               const SizedBox(height: GapSizes.xxlarge),

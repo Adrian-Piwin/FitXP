@@ -6,6 +6,7 @@ import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:healthcore/constants/xp.constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:healthcore/utility/general.utility.dart';
 import 'package:provider/provider.dart';
 import 'package:healthcore/services/xp_service.dart';
 import 'rank_widget_controller.dart';
@@ -64,14 +65,17 @@ class RankWidget extends WidgetFrame {
                     const SizedBox(width: GapSizes.medium),
                     // XP Progress
                     Expanded(
-                      child: InfoBar(
-                        title: controller.rankName,
-                        value: controller.currentAnimatedXP.toInt().toString(),
-                        goal: rankUpXPAmt.toString(),
-                        percent: controller.rankProgress,
-                        color: controller.rankColor,
-                        textColor: CoreColors.textColor,
-                        animateChanges: true,
+                      child: RepaintBoundary(
+                        child: InfoBar(
+                          title: controller.rankName,
+                          formatValue: formatNumberSimple,
+                          value: controller.currentAnimatedXP,
+                          goal: rankUpXPAmt.toString(),
+                          percent: controller.rankProgress,
+                          color: controller.rankColor,
+                          textColor: CoreColors.textColor,
+                          animateChanges: true,
+                        ),
                       ),
                     ),
                   ],

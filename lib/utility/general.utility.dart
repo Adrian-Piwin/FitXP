@@ -16,6 +16,13 @@ String formatNumber(num number, {int decimalPlaces = 0}) {
   );
 }
 
+String formatNumberSimple(double number) {
+  return number.toStringAsFixed(0).replaceAllMapped(
+    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+    (Match m) => '${m[1]},'
+  );
+}
+
 /// Maps a [HealthDataType] to our [SleepStage] enum.
 SleepStage mapSleepStage(HealthDataType type) {
   switch (type) {

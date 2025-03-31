@@ -156,6 +156,10 @@ class HealthEntity extends ChangeNotifier {
     return formatNumber(total, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0) + healthItem.unit;
   }
 
+  String formatValue(double value) {
+    return formatNumber(value, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
+  }
+
   String get getDisplayValue {
     if (showLoading) return "--";
     return formatNumber(total, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
