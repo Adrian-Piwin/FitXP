@@ -47,7 +47,13 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
       )
     ).toList();
     
+    // Get available items and sort them to match original order
     availableItems = await widget.homeController.getAvailableItems();
+    availableItems.sort((a, b) {
+      int indexA = HealthItemDefinitions.allHealthItems.indexWhere((item) => item.itemType == a.itemType);
+      int indexB = HealthItemDefinitions.allHealthItems.indexWhere((item) => item.itemType == b.itemType);
+      return indexA.compareTo(indexB);
+    });
     
     setState(() {
       isLoading = false;
@@ -75,6 +81,13 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
       setState(() {
         bodyWidgets.remove(entity);
         availableItems.add(entity.healthItem);
+        
+        // Sort the available items to match the original order in allHealthItems
+        availableItems.sort((a, b) {
+          int indexA = HealthItemDefinitions.allHealthItems.indexWhere((item) => item.itemType == a.itemType);
+          int indexB = HealthItemDefinitions.allHealthItems.indexWhere((item) => item.itemType == b.itemType);
+          return indexA.compareTo(indexB);
+        });
       });
       await widget.homeController.removeWidget(entity);
     }
@@ -85,6 +98,9 @@ class _WidgetConfigurationPageState extends State<WidgetConfigurationPage> {
     setState(() {
       bodyWidgets.add(entity);
       availableItems.remove(item);
+      
+      // No need to sort here as we're just removing an item from availableItems
+      // The order of remaining items is preserved
     });
   }
 

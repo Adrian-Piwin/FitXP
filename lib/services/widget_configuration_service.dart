@@ -27,9 +27,13 @@ class WidgetConfigurationService extends ChangeNotifier {
   }
 
   Future<List<HealthItem>> getAvailableItems() async {
-    return HealthItemDefinitions.allHealthItems.where((item) => 
+    // Filter out items that are already in use
+    List<HealthItem> availableItems = HealthItemDefinitions.allHealthItems.where((item) => 
       !healthEntities.any((e) => e.healthItem.itemType == item.itemType)
     ).toList();
+    
+    // No need to sort as we're preserving the original order from allHealthItems
+    return availableItems;
   }
 
   bool canRemoveWidget(HealthEntity entity) {
