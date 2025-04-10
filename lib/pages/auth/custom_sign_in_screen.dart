@@ -5,6 +5,7 @@ import 'package:healthcore/components/icon_button_custom.dart';
 import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:healthcore/pages/permissions/permissions_view.dart';
+import 'package:healthcore/pages/auth/forgot_password_screen.dart';
 
 class CustomSignInScreen extends StatefulWidget {
   const CustomSignInScreen({super.key});
@@ -19,7 +20,6 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
   final _passwordController = TextEditingController();
   bool _isEmailSignInLoading = false;
   bool _isGoogleSignInLoading = false;
-  bool _isForgotPasswordLoading = false;
   bool _isRegistering = false;
   bool _obscurePassword = true;
   String? _errorMessage;
@@ -291,46 +291,14 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
-                              onPressed: _isForgotPasswordLoading
-                                  ? null
-                                  : () async {
-                                      if (_emailController.text.isEmpty) {
-                                        setState(() {
-                                          _errorMessage = 'Please enter your email address first';
-                                        });
-                                        return;
-                                      }
-                                      setState(() {
-                                        _isForgotPasswordLoading = true;
-                                        _errorMessage = null;
-                                      });
-                                      try {
-                                        await FirebaseAuth.instance.sendPasswordResetEmail(
-                                          email: _emailController.text.trim(),
-                                        );
-                                        if (mounted) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Password reset email sent'),
-                                            ),
-                                          );
-                                        }
-                                      } on FirebaseAuthException catch (e) {
-                                        setState(() {
-                                          _errorMessage = switch (e.code) {
-                                            'user-not-found' => 'No user found with this email.',
-                                            'invalid-email' => 'Invalid email address.',
-                                            _ => 'An error occurred. Please try again.',
-                                          };
-                                        });
-                                      } finally {
-                                        if (mounted) {
-                                          setState(() {
-                                            _isForgotPasswordLoading = false;
-                                          });
-                                        }
-                                      }
-                                    },
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ForgotPasswordScreen(),
+                                  ),
+                                );
+                              },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
                                 minimumSize: Size.zero,
@@ -346,15 +314,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                               ).copyWith(
                                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                               ),
-                              child: _isForgotPasswordLoading
-                                ? const SizedBox(
-                                    width: 12,
-                                    height: 12,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text('Forgot Password?'),
+                              child: const Text('Forgot Password?'),
                             ),
                           ),
                           const SizedBox(height: PaddingSizes.xlarge),
@@ -434,7 +394,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                                 ),
                               ),
                               TextButton(
-                                onPressed: (_isEmailSignInLoading || _isGoogleSignInLoading || _isForgotPasswordLoading)
+                                onPressed: (_isEmailSignInLoading || _isGoogleSignInLoading)
                                     ? null
                                     : () {
                                         setState(() {

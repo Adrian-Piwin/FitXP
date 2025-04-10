@@ -6,6 +6,7 @@ import 'package:healthcore/pages/insights/insights_view.dart';
 import 'package:healthcore/pages/workouts/workouts_view.dart';
 import 'package:healthcore/pages/permissions/permissions_view.dart';
 import 'package:healthcore/pages/settings/settings_view.dart';
+import 'package:healthcore/pages/auth/forgot_password_screen.dart';
 import 'package:healthcore/services/widget_configuration_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -170,6 +171,8 @@ class MyApp extends StatelessWidget {
                     return const PermissionsView();
                   case MainView.routeName:
                     return const MainView();
+                  case ForgotPasswordScreen.routeName:
+                    return const ForgotPasswordScreen();
                   default:
                     return const AuthGate();
                 }
