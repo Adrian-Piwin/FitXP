@@ -364,7 +364,7 @@ class HealthEntity extends ChangeNotifier {
   Future<void> _loadGoal() async {
     try {
       final primaryType = healthItem.itemType.toString();
-      _cachedGoal = await _goalsService.getGoal(primaryType);
+      _cachedGoal = await _goalsService.getGoal(primaryType) ?? healthItem.defaultGoal;
     } catch (e) {
       await ErrorLogger.logError('Error loading goal: $e');
       _cachedGoal = 0.0;

@@ -44,23 +44,11 @@ class HealthItemDefinitions {
     magnesium,
     potassium,
     sodium,
-    bloodGlucose,
-    bloodOxygen,
-    bloodPressureDiastolic,
-    bloodPressureSystolic,
-    bodyTemperature,
-    heartRate,
-    restingHeartRate,
-    walkingHeartRate,
-    respiratoryRate,
-    height,
-    waistCircumference,
     distanceWalkingRunning,
     distanceSwimming,
     distanceCycling,
     flightsClimbed,
     water,
-    mindfulness,
   ];
 
   // Default header widgets (static, cannot be changed)
@@ -89,6 +77,7 @@ class HealthItemDefinitions {
     required String unit,
     required HealthCategory category,
     required IconData icon,
+    required double defaultGoal,
     String shortDescription = "",
     String longDescription = "",
     bool isTrendItem = false,
@@ -114,7 +103,8 @@ class HealthItemDefinitions {
       ..doesGoalSupportNegative = supportNegative
       ..doesGoalSupportTimeInput = supportTimeInput
       ..shortDescription = shortDescription
-      ..longDescription = longDescription;
+      ..longDescription = longDescription
+      ..defaultGoal = defaultGoal;
 
     if (customWidgetFactory != null) {
       item.widgetFactory = customWidgetFactory;
@@ -133,6 +123,7 @@ class HealthItemDefinitions {
     unit: "cal",
     category: HealthCategory.energy,
     icon: IconTypes.caloriesIcon,
+    defaultGoal: 2500,
     longDescription: "The amount of energy you burn during the day",
     shortDescription: "Total energy burned",
   );
@@ -144,6 +135,7 @@ class HealthItemDefinitions {
     unit: "g",
     category: HealthCategory.nutrition,
     icon: IconTypes.proteinIcon,
+    defaultGoal: 100,
   );
 
   static HealthItem exerciseTime = _createHealthItem(
@@ -153,6 +145,7 @@ class HealthItemDefinitions {
     unit: "min",
     category: HealthCategory.exercise,
     icon: IconTypes.exerciseIcon,
+    defaultGoal: 30,
     longDescription: "The amount of time you spend exercising during the day",
     shortDescription: "Total time spent exercising",
   );
@@ -164,6 +157,7 @@ class HealthItemDefinitions {
     unit: "min",
     category: HealthCategory.exercise,
     icon: IconTypes.workoutIcon,
+    defaultGoal: 45,
     longDescription: "The amount of time in minutes you spend doing strength training workouts during the day",
     shortDescription: "Total time spent working out",
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
@@ -177,6 +171,7 @@ class HealthItemDefinitions {
     unit: "hrs",
     category: HealthCategory.wellness,
     icon: IconTypes.sleepDurationIcon,
+    defaultGoal: 480,
     supportTimeInput: true,
     longDescription: "The duration, each stage, and quality of your sleep",
     shortDescription: "Sleep stages, duration, and quality",
@@ -191,6 +186,7 @@ class HealthItemDefinitions {
     unit: "cal",
     category: HealthCategory.energy,
     icon: IconTypes.activeCaloriesIcon,
+    defaultGoal: 600,
     longDescription: "Calories burned through physical activity, excluding your resting metabolic rate",
     shortDescription: "Active energy expenditure",
   );
@@ -202,6 +198,7 @@ class HealthItemDefinitions {
     unit: "cal",
     category: HealthCategory.energy,
     icon: IconTypes.caloriesIcon,
+    defaultGoal: 1600,
     longDescription: "The calories your body burns at rest to maintain basic life functions, excluding activity calories",
     shortDescription: "Basal metabolic rate",
   );
@@ -213,6 +210,7 @@ class HealthItemDefinitions {
     unit: "cal",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 2000,
     longDescription: "The amount of calories you consume during the day",
     shortDescription: "Total calories consumed",
   );
@@ -224,6 +222,7 @@ class HealthItemDefinitions {
     unit: "cal",
     category: HealthCategory.body,
     icon: IconTypes.netCaloriesIcon,
+    defaultGoal: -500,
     supportNegative: true,
     longDescription: "The difference between calories burned and calories consumed",
     shortDescription: "Energy expended minus energy consumed",
@@ -238,6 +237,7 @@ class HealthItemDefinitions {
     unit: "",
     category: HealthCategory.movement,
     icon: IconTypes.stepsIcon,
+    defaultGoal: 10000,
     iconRotation: 4.70
   );
 
@@ -248,6 +248,7 @@ class HealthItemDefinitions {
     unit: "kg",
     category: HealthCategory.body,
     icon: IconTypes.weightIcon,
+    defaultGoal: 70,
     supportStreaks: false,
     supportDecimals: true,
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
@@ -261,6 +262,7 @@ class HealthItemDefinitions {
     unit: "%",
     category: HealthCategory.body,
     icon: IconTypes.bodyFatIcon,
+    defaultGoal: 20,
     supportDecimals: true,
     supportStreaks: false,
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
@@ -275,6 +277,7 @@ class HealthItemDefinitions {
     unit: "g",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 250,
   );
 
   static HealthItem dietaryFats = _createHealthItem(
@@ -284,6 +287,7 @@ class HealthItemDefinitions {
     unit: "g",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 65,
   );
 
   static HealthItem dietaryFiber = _createHealthItem(
@@ -293,6 +297,7 @@ class HealthItemDefinitions {
     unit: "g",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 30,
   );
 
   static HealthItem dietarySugar = _createHealthItem(
@@ -302,6 +307,7 @@ class HealthItemDefinitions {
     unit: "g",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 25,
   );
 
   static HealthItem dietaryCholesterol = _createHealthItem(
@@ -311,6 +317,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 300,
   );
 
   static HealthItem dietaryCaffeine = _createHealthItem(
@@ -320,6 +327,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 400,
   );
 
   // Vitamins
@@ -330,6 +338,7 @@ class HealthItemDefinitions {
     unit: "μg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 900,
   );
 
   static HealthItem vitaminB6 = _createHealthItem(
@@ -339,6 +348,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 1.3,
   );
 
   static HealthItem vitaminB12 = _createHealthItem(
@@ -348,6 +358,7 @@ class HealthItemDefinitions {
     unit: "μg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 2.4,
   );
 
   static HealthItem vitaminC = _createHealthItem(
@@ -357,6 +368,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 90,
   );
 
   static HealthItem vitaminD = _createHealthItem(
@@ -366,6 +378,7 @@ class HealthItemDefinitions {
     unit: "μg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 20,
   );
 
   static HealthItem vitaminE = _createHealthItem(
@@ -375,6 +388,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 15,
   );
 
   // Minerals
@@ -385,6 +399,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 1000,
   );
 
   static HealthItem iron = _createHealthItem(
@@ -394,6 +409,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 8,
   );
 
   static HealthItem magnesium = _createHealthItem(
@@ -403,6 +419,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 400,
   );
 
   static HealthItem potassium = _createHealthItem(
@@ -412,6 +429,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 3500,
   );
 
   static HealthItem sodium = _createHealthItem(
@@ -421,6 +439,7 @@ class HealthItemDefinitions {
     unit: "mg",
     category: HealthCategory.nutrition,
     icon: IconTypes.dietaryIcon,
+    defaultGoal: 2300,
   );
 
   // Vitals
@@ -431,6 +450,7 @@ class HealthItemDefinitions {
     unit: "mg/dL",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.droplet,
+    defaultGoal: 100,
     isTrendItem: true
   );
 
@@ -441,6 +461,7 @@ class HealthItemDefinitions {
     unit: "%",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.lungs,
+    defaultGoal: 95,
     isTrendItem: true
   );
 
@@ -451,6 +472,7 @@ class HealthItemDefinitions {
     unit: "mmHg",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.heartPulse,
+    defaultGoal: 80,
     isTrendItem: true,
     shortDescription: "Diastolic blood pressure",
   );
@@ -462,6 +484,7 @@ class HealthItemDefinitions {
     unit: "mmHg",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.heartPulse,
+    defaultGoal: 120,
     isTrendItem: true,
     shortDescription: "Systolic blood pressure",
   );
@@ -473,6 +496,7 @@ class HealthItemDefinitions {
     unit: "°C",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.temperatureHalf,
+    defaultGoal: 37,
     isTrendItem: true
   );
 
@@ -483,6 +507,7 @@ class HealthItemDefinitions {
     unit: "bpm",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.heartPulse,
+    defaultGoal: 70,
     isTrendItem: true,
     longDescription: "The number of times your heart beats per minute",
   );
@@ -494,6 +519,7 @@ class HealthItemDefinitions {
     unit: "bpm",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.bed,
+    defaultGoal: 60,
     isTrendItem: true,
     longDescription: "The number of times your heart beats per minute while at rest",
     shortDescription: "Resting heart rate",
@@ -506,6 +532,7 @@ class HealthItemDefinitions {
     unit: "bpm",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.personWalking,
+    defaultGoal: 100,
     isTrendItem: true,
     longDescription: "The number of times your heart beats per minute while walking",
     shortDescription: "Walking heart rate",
@@ -518,6 +545,7 @@ class HealthItemDefinitions {
     unit: "br/min",
     category: HealthCategory.health,
     icon: FontAwesomeIcons.lungs,
+    defaultGoal: 16,
     isTrendItem: true,
     longDescription: "The number of breaths per minute",
   );
@@ -530,6 +558,7 @@ class HealthItemDefinitions {
     unit: "cm",
     category: HealthCategory.body,
     icon: FontAwesomeIcons.rulerVertical,
+    defaultGoal: 170,
     isTrendItem: true
   );
 
@@ -540,6 +569,7 @@ class HealthItemDefinitions {
     unit: "cm",
     category: HealthCategory.body,
     icon: FontAwesomeIcons.ruler,
+    defaultGoal: 90,
     isTrendItem: true
   );
 
@@ -551,6 +581,7 @@ class HealthItemDefinitions {
     unit: "km",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.personRunning,
+    defaultGoal: 5,
   );
 
   static HealthItem distanceSwimming = _createHealthItem(
@@ -560,6 +591,7 @@ class HealthItemDefinitions {
     unit: "m",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.personSwimming,
+    defaultGoal: 500,
   );
 
   static HealthItem distanceCycling = _createHealthItem(
@@ -569,6 +601,7 @@ class HealthItemDefinitions {
     unit: "km",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.bicycle,
+    defaultGoal: 10,
   );
 
   static HealthItem flightsClimbed = _createHealthItem(
@@ -578,6 +611,7 @@ class HealthItemDefinitions {
     unit: "floors",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.stairs,
+    defaultGoal: 10,
     longDescription: "The number of flights of stairs you climb",
   );
 
@@ -589,6 +623,7 @@ class HealthItemDefinitions {
     unit: "ml",
     category: HealthCategory.nutrition,
     icon: FontAwesomeIcons.glassWater,
+    defaultGoal: 2500,
   );
 
   static HealthItem mindfulness = _createHealthItem(
@@ -598,6 +633,7 @@ class HealthItemDefinitions {
     unit: "min",
     category: HealthCategory.wellness,
     icon: FontAwesomeIcons.brain,
+    defaultGoal: 15,
     longDescription: "The amount of time you spend meditating",
   );
 }

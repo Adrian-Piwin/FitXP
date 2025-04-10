@@ -43,7 +43,7 @@ class GoalsService extends DBService {
     return parts.length > 1 ? parts.last.toUpperCase() : goalKey.toUpperCase();
   }
 
-  Future<double> getGoal(String goalKey) async {
+  Future<double?> getGoal(String goalKey) async {
     await _ensureInitialized();
     if (userId == null) throw Exception('User not logged in');
 
@@ -72,10 +72,10 @@ class GoalsService extends DBService {
           return goalValue;
         }
       }
-      return 0.0;
+      return null;
     } catch (e) {
       await ErrorLogger.logError('Error retrieving goal for $goalKey: $e');
-      return 0.0;
+      return null;
     }
   }
 

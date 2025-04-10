@@ -17,6 +17,7 @@ class HealthItem {
   late Color offColor;
   late IconData icon;
   late HealthCategory category;  // Category of the health item
+  late double defaultGoal;
   double iconRotation = 0;
   bool doesGoalSupportStreaks = true;
   bool doesGoalSupportDecimals = false;
