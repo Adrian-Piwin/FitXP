@@ -85,10 +85,12 @@ class XpService extends ChangeNotifier {
   }
 
   List<HealthItem> valueEntities = [
-    HealthItemDefinitions.workoutTime,
+    HealthItemDefinitions.cardioTime,
+    HealthItemDefinitions.strengthTrainingTime,
     HealthItemDefinitions.steps,
     HealthItemDefinitions.proteinIntake,
     HealthItemDefinitions.sleepDuration,
+    HealthItemDefinitions.netCalories,
   ];
 
   int _rankXP = 0;
@@ -300,12 +302,25 @@ class XpService extends ChangeNotifier {
 
     List<EntityXP> entityXPs = [];
     for (var entity in entities) {
-      final xpMultiplier = xpMapping[entity.healthItem.itemType] ?? 1.0;
+      final xpMultiplier = xpMapping[entity.healthItem.itemType]!;
+      var total = entity.total;
+
+      // If net calories, above 0 means we gained weight, so no rewards
+      // Below 0 means we lost weight, so we use that calorie deficit for xp/medals
+      if (entity.healthItem.itemType == HealthItemType.netCalories) {
+        if (entity.total > 0) {
+          total = 0;
+        }else {
+          total *= -1;
+        }
+      }
+
       entityXPs.add(EntityXP(
           entityName: entity.healthItem.itemType.toString(),
-          value: xpMultiplier * entity.total,
+          value: xpMultiplier * total,
           rawTotal: entity.total,
-          rawAverage: entity.average,
+          // Do this instead of using entities average because that does not account for empty days
+          rawAverage: entity.total / 30, 
           date: entity.queryDateRange!.start,
         ));
     }
