@@ -105,12 +105,20 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     entity.addListener(() {
       _updateDisplayWidgets();
     });
-    await fetchHealthData();
+    
+    // Update only the new widget instead of all widgets
+    entity.updateQuery(_selectedTimeFrame, _offset);
+    await entity.updateData();
+    
     return entity;
   }
 
   Future<void> removeWidget(HealthEntity entity) async {
     await _widgetConfigurationService.removeWidget(entity);
+    // Clean up properly
+    entity.removeListener(() {
+      _updateDisplayWidgets();
+    });
     entity.dispose();
   }
 
@@ -120,6 +128,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> updateWidgetOrder(List<HealthEntity> newOrder) async {
     await _widgetConfigurationService.updateWidgetOrder(newOrder);
+    // No need to fetch data again as we're just changing the order
   }
 
   void _onWidgetConfigurationChanged() {
@@ -134,34 +143,38 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   void updateTimeFrame(TimeFrame newTimeFrame) {
     _selectedTimeFrame = newTimeFrame;
     _offset = 0;
-    fetchHealthData();
+    fetchHealthData(forceUpdate: true);
   }
 
   void updateOffset(int newOffset) {
     _offset = newOffset;
-    fetchHealthData();
+    fetchHealthData(forceUpdate: true);
   }
 
-  Future<void> fetchHealthData() async {
-    if (_isLoading && !_isFirstTimeLoading) return;
+  Future<void> fetchHealthData({bool forceUpdate = false}) async {
+    if (_isLoading && !_isFirstTimeLoading && !forceUpdate) return;
     _isFirstTimeLoading = false;
+
+    _isLoading = true;
+    notifyListeners();
 
     try {
       await setDataPerWidgetWithTimeframe(healthItemEntities, _selectedTimeFrame, _offset);
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
   Future<void> refresh(bool hardRefresh) async {
-    if (_isLoading) return;
-    
     _selectedTimeFrame = TimeFrame.day;
     _offset = 0;
     if (hardRefresh) {
       await _healthDataCache.clearTodaysCache();
     }
-    await fetchHealthData();
+    await fetchHealthData(forceUpdate: true);
   }
 
   @override
