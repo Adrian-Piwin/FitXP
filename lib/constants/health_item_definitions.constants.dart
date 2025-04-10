@@ -578,10 +578,10 @@ class HealthItemDefinitions {
     dataTypes: [HealthDataType.DISTANCE_WALKING_RUNNING],
     itemType: HealthItemType.distanceWalkingRunning,
     title: "Distance (Walk/Run)",
-    unit: "km",
+    unit: "m",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.personRunning,
-    defaultGoal: 5,
+    defaultGoal: 5000,
   );
 
   static HealthItem distanceSwimming = _createHealthItem(
@@ -598,17 +598,17 @@ class HealthItemDefinitions {
     dataTypes: [HealthDataType.DISTANCE_CYCLING],
     itemType: HealthItemType.distanceCycling,
     title: "Distance (Cycle)",
-    unit: "km",
+    unit: "m",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.bicycle,
-    defaultGoal: 10,
+    defaultGoal: 10000,
   );
 
   static HealthItem flightsClimbed = _createHealthItem(
     dataTypes: [HealthDataType.FLIGHTS_CLIMBED],
     itemType: HealthItemType.flightsClimbed,
     title: "Flights Climbed",
-    unit: "floors",
+    unit: " floors",
     category: HealthCategory.movement,
     icon: FontAwesomeIcons.stairs,
     defaultGoal: 10,
