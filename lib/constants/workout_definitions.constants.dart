@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:healthcore/constants/icons.constants.dart';
 
 class WorkoutDefinitions {
+
+  static const strengthTrainingWorkoutTypes = [
+    'STRENGTH_TRAINING',
+    'TRADITIONAL_STRENGTH_TRAINING',
+    'FUNCTIONAL_STRENGTH_TRAINING',
+    'WEIGHTLIFTING',
+    'CALISTHENICS',
+  ];
+
   static String getWorkoutName(String workoutType) {
     switch (workoutType.toUpperCase()) {
       case 'RUNNING':

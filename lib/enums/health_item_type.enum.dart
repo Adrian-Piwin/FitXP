@@ -11,6 +11,8 @@ enum HealthItemType {
   weight,
   bodyFatPercentage,
   workoutTime,
+  strengthTrainingTime,
+  cardioTime,
   dietaryCarbs,
   dietaryFats,
   dietaryFiber,

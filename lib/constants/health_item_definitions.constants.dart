@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:healthcore/models/health_entities/bodyfat_health_entity.model.dart';
+import 'package:healthcore/models/health_entities/cardio_health_entity.dart';
 import 'package:healthcore/models/health_entities/netcalories_health_entity.model.dart';
 import 'package:healthcore/models/health_entities/sleep_health_entity.model.dart';
+import 'package:healthcore/models/health_entities/strengthtraining_health_entity.dart';
 import 'package:healthcore/models/health_entities/trend_health_entity.model.dart';
 import 'package:healthcore/models/health_entities/weight_health_entity.model.dart';
 import 'package:healthcore/models/health_entities/workout_health_entity.model.dart';
@@ -27,6 +29,8 @@ class HealthItemDefinitions {
     weight,
     bodyFat,
     workoutTime,
+    cardioTime,
+    strengthTrainingTime,
     dietaryCarbs,
     dietaryFats,
     dietaryFiber,
@@ -158,10 +162,38 @@ class HealthItemDefinitions {
     category: HealthCategory.exercise,
     icon: IconTypes.workoutIcon,
     defaultGoal: 45,
-    longDescription: "The amount of time in minutes you spend doing strength training workouts during the day",
+    longDescription: "The amount of time in minutes you spend doing any type of workout during the day",
     shortDescription: "Total time spent working out",
     customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
         WorkoutHealthEntity(item, widgetSize, healthFetcherService))
+  );
+
+  static HealthItem strengthTrainingTime = _createHealthItem(
+    dataTypes: [HealthDataType.WORKOUT],
+    itemType: HealthItemType.strengthTrainingTime,
+    title: "Strength Training time",
+    unit: "min",
+    category: HealthCategory.exercise,
+    icon: IconTypes.workoutIcon,
+    defaultGoal: 45,
+    longDescription: "The amount of time in minutes you spend doing strength training workouts during the day",
+    shortDescription: "Total time spent strength training",
+    customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
+        StrengthTrainingHealthEntity(item, widgetSize, healthFetcherService))
+  );
+
+  static HealthItem cardioTime = _createHealthItem(
+    dataTypes: [HealthDataType.WORKOUT],
+    itemType: HealthItemType.cardioTime,
+    title: "Cardio time",
+    unit: "min",
+    category: HealthCategory.exercise,
+    icon: IconTypes.workoutIcon,
+    defaultGoal: 45,
+    longDescription: "The amount of time in minutes you spend doing cardio workouts during the day",
+    shortDescription: "Total time spent doing cardio",
+    customWidgetFactory: ((item, widgetSize, healthFetcherService) =>
+        CardioHealthEntity(item, widgetSize, healthFetcherService))
   );
 
   static HealthItem sleepDuration = _createHealthItem(
