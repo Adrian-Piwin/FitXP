@@ -320,7 +320,7 @@ class XpService extends ChangeNotifier {
           value: xpMultiplier * total,
           rawTotal: entity.total,
           // Do this instead of using entities average because that does not account for empty days
-          rawAverage: entity.total / 30, 
+          rawAverage: entity.total / calculateDaysInMonth(offset: offset), 
           date: entity.queryDateRange!.start,
         ));
     }
@@ -341,5 +341,32 @@ class XpService extends ChangeNotifier {
       print('Error updating XP data: $e');
       rethrow;
     }
+  }
+
+  // Function to calcualte how many days in a month with a timeframe and offset
+  // If the month is the current month, it will return the number of days so far this month
+  int calculateDaysInMonth({int offset = 0}) {
+    // Get current date and apply offset
+    final now = DateTime.now();
+    final targetMonth = DateTime(
+      now.year,
+      now.month + offset,
+      1,
+    );
+    
+    // Calculate the last day of the target month
+    final lastDayOfMonth = DateTime(
+      targetMonth.year,
+      targetMonth.month + 1,
+      0,
+    ).day;
+    
+    // If target month is the current month, return days elapsed so far
+    if (offset == 0) {
+      return now.day;
+    }
+    
+    // Otherwise return the total days in the month
+    return lastDayOfMonth;
   }
 }
