@@ -69,8 +69,6 @@ class UserService extends DBService {
     
     if (localStatus != null) {
       return localStatus;
-    }else{
-      return false;
     }
     
     // If not in local storage, check Firestore
