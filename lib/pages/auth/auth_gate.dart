@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:flutter/material.dart';
 import 'package:healthcore/pages/auth/custom_sign_in_screen.dart';
+import 'package:healthcore/pages/onboarding/onboarding_controller.dart';
+import 'package:healthcore/services/user_service.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import '../permissions/permissions_view.dart';
 
@@ -24,7 +26,27 @@ class AuthGate extends StatelessWidget {
           Superwall.shared.identify(user.uid);
         }
         
-        return const PermissionsView();
+        return FutureBuilder<bool>(
+          future: UserService().hasCompletedOnboarding(),
+          builder: (context, onboardingSnapshot) {
+            // Show a loading indicator while checking onboarding status
+            if (!onboardingSnapshot.hasData) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            
+            // If onboarding is not completed, navigate to the onboarding flow
+            if (!onboardingSnapshot.data!) {
+              return const OnboardingController();
+            }
+            
+            // If onboarding is completed, proceed to permissions screen
+            return const PermissionsView();
+          },
+        );
       },
     );
   }

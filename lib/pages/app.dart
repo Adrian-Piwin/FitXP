@@ -45,24 +45,35 @@ class MyApp extends StatelessWidget {
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
 
+          // Set default text style for the entire app
+          builder: (context, child) {
+            return DefaultTextStyle(
+              style: const TextStyle(
+                fontFamily: 'Inter',
+                color: CoreColors.textColor,
+              ),
+              child: child!,
+            );
+          },
+
           theme: ThemeData(
             fontFamily: 'Inter',
             textTheme: const TextTheme(
-              displayLarge: TextStyle(fontFamily: 'Inter'),
-              displayMedium: TextStyle(fontFamily: 'Inter'),
-              displaySmall: TextStyle(fontFamily: 'Inter'),
-              headlineLarge: TextStyle(fontFamily: 'Inter'),
-              headlineMedium: TextStyle(fontFamily: 'Inter'),
-              headlineSmall: TextStyle(fontFamily: 'Inter'),
-              titleLarge: TextStyle(fontFamily: 'Inter'),
-              titleMedium: TextStyle(fontFamily: 'Inter'),
-              titleSmall: TextStyle(fontFamily: 'Inter'),
-              bodyLarge: TextStyle(fontFamily: 'Inter'),
-              bodyMedium: TextStyle(fontFamily: 'Inter'),
-              bodySmall: TextStyle(fontFamily: 'Inter'),
-              labelLarge: TextStyle(fontFamily: 'Inter'),
-              labelMedium: TextStyle(fontFamily: 'Inter'),
-              labelSmall: TextStyle(fontFamily: 'Inter'),
+              displayLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              displayMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              displaySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              headlineLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              headlineMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              headlineSmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              titleLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              titleMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              titleSmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodyLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodyMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              labelLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              labelMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              labelSmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
             ),
           ),
           darkTheme: ThemeData.dark().copyWith(
@@ -81,24 +92,21 @@ class MyApp extends StatelessWidget {
 
             // Text theme with Inter font
             textTheme: const TextTheme(
-              displayLarge: TextStyle(fontFamily: 'Inter'),
-              displayMedium: TextStyle(fontFamily: 'Inter'),
-              displaySmall: TextStyle(fontFamily: 'Inter'),
-              headlineLarge: TextStyle(fontFamily: 'Inter'),
-              headlineMedium: TextStyle(fontFamily: 'Inter'),
-              headlineSmall: TextStyle(fontFamily: 'Inter'),
-              titleLarge: TextStyle(fontFamily: 'Inter'),
-              titleMedium: TextStyle(fontFamily: 'Inter'),
-              titleSmall: TextStyle(fontFamily: 'Inter'),
-              bodyLarge:
-                  TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
-              bodyMedium:
-                  TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
-              bodySmall:
-                  TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
-              labelLarge: TextStyle(fontFamily: 'Inter'),
-              labelMedium: TextStyle(fontFamily: 'Inter'),
-              labelSmall: TextStyle(fontFamily: 'Inter'),
+              displayLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              displayMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              displaySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              headlineLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              headlineMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              headlineSmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              titleLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              titleMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              titleSmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodyLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodyMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              bodySmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              labelLarge: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              labelMedium: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
+              labelSmall: TextStyle(fontFamily: 'Inter', color: CoreColors.textColor),
             ).apply(
               fontFamily: 'Inter',
               bodyColor: CoreColors.textColor,

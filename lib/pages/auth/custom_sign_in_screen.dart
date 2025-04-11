@@ -6,6 +6,7 @@ import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:healthcore/pages/permissions/permissions_view.dart';
 import 'package:healthcore/pages/auth/forgot_password_screen.dart';
+import 'package:healthcore/pages/auth/auth_gate.dart';
 
 class CustomSignInScreen extends StatefulWidget {
   const CustomSignInScreen({super.key});
@@ -45,7 +46,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
         password: _passwordController.text,
       );
       if (mounted) {
-        Navigator.pushReplacementNamed(context, PermissionsView.routeName);
+        Navigator.pushReplacementNamed(context, AuthGate.routeName);
       }
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -91,7 +92,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       if (mounted) {
-        Navigator.pushReplacementNamed(context, PermissionsView.routeName);
+        Navigator.pushReplacementNamed(context, AuthGate.routeName);
       }
     } catch (e) {
       setState(() {
@@ -341,7 +342,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                                         password: _passwordController.text,
                                       );
                                       if (mounted) {
-                                        Navigator.pushReplacementNamed(context, PermissionsView.routeName);
+                                        Navigator.pushReplacementNamed(context, AuthGate.routeName);
                                       }
                                     } on FirebaseAuthException catch (e) {
                                       setState(() {
