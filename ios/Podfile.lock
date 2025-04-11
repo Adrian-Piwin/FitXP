@@ -1378,6 +1378,12 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - Superscript (0.1.18)
+  - SuperwallKit (4.0.6):
+    - Superscript (= 0.1.18)
+  - superwallkit_flutter (0.0.1):
+    - Flutter
+    - SuperwallKit (= 4.0.6)
 
 DEPENDENCIES:
   - app_settings (from `.symlinks/plugins/app_settings/ios`)
@@ -1393,6 +1399,7 @@ DEPENDENCIES:
   - health (from `.symlinks/plugins/health/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - superwallkit_flutter (from `.symlinks/plugins/superwallkit_flutter/ios`)
 
 SPEC REPOS:
   trunk:
@@ -1419,6 +1426,8 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - RecaptchaInterop
+    - Superscript
+    - SuperwallKit
 
 EXTERNAL SOURCES:
   app_settings:
@@ -1447,6 +1456,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  superwallkit_flutter:
+    :path: ".symlinks/plugins/superwallkit_flutter/ios"
 
 SPEC CHECKSUMS:
   abseil: d121da9ef7e2ff4cab7666e76c5a3e0915ae08c3
@@ -1485,6 +1496,9 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  Superscript: 88a0e5e467fc986289f99e20e383232513c41ea9
+  SuperwallKit: 18a4588702d5369880563d5a17cb967423f94c89
+  superwallkit_flutter: 8b17d2999070e8173c3be23cd64a524df3ed2ba9
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 

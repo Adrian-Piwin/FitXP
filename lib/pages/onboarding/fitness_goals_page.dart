@@ -23,8 +23,9 @@ class FitnessGoalsPage extends StatelessWidget {
     return OnboardingBasePage(
       title: 'What is your fitness goal?',
       subtitle: 'The insights we provide will help reach your fitness goals',
-      onNext: selectedGoal != null ? onNext : () {}, // Only enable if a selection is made
+      onNext: onNext,
       onSkip: onSkip,
+      nextEnabled: selectedGoal != null,
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -24,10 +24,11 @@ class ActivityLevelPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return OnboardingBasePage(
       title: 'How active are you weekly?',
-      subtitle: 'We sync with your fitness data to provide better understanding of your activity level',
-      onNext: selectedLevel != null ? onNext : () {}, // Only enable if a selection is made
+      subtitle: 'This helps us tailor recommendations to your lifestyle',
+      onNext: onNext,
       onSkip: onSkip,
       isLastPage: isLastPage,
+      nextEnabled: selectedLevel != null,
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

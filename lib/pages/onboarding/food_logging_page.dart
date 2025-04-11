@@ -22,8 +22,9 @@ class FoodLoggingPage extends StatelessWidget {
     return OnboardingBasePage(
       title: 'Do you use a food logging app?',
       subtitle: 'We can sync with your nutrition data to provide better insights',
-      onNext: selectedValue != null ? onNext : () {}, // Only enable if a selection is made
+      onNext: onNext,
       onSkip: onSkip,
+      nextEnabled: selectedValue != null,
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

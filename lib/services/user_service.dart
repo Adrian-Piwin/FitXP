@@ -18,7 +18,6 @@ enum ActivityLevel {
 class UserService extends DBService {
   static const String _onboardingCompletedKey = 'onboarding_completed';
   static const String _userCollectionPath = 'users';
-  static const String _onboardingDocPath = 'onboarding';
   
   // Singleton pattern
   static final UserService _instance = UserService._internal();
@@ -31,21 +30,31 @@ class UserService extends DBService {
   
   /// Saves the user's onboarding data to Firestore and marks onboarding as completed locally
   Future<void> saveOnboardingData({
-    required bool usesFoodLoggingApp,
-    required FitnessGoal fitnessGoal,
-    required ActivityLevel activityLevel,
+    bool? usesFoodLoggingApp,
+    FitnessGoal? fitnessGoal,
+    ActivityLevel? activityLevel,
   }) async {
     if (userId == null) {
       throw Exception('User must be authenticated to save onboarding data');
     }
     
-    // Save to Firestore
-    final onboardingData = {
-      'usesFoodLoggingApp': usesFoodLoggingApp,
-      'fitnessGoal': fitnessGoal.toString(),
-      'activityLevel': activityLevel.toString(),
+    // Save to Firestore, only including data that was explicitly provided
+    final Map<String, dynamic> onboardingData = {
       'completedAt': DateTime.now().toIso8601String(),
     };
+    
+    // Only add fields that the user actually provided
+    if (usesFoodLoggingApp != null) {
+      onboardingData['usesFoodLoggingApp'] = usesFoodLoggingApp;
+    }
+    
+    if (fitnessGoal != null) {
+      onboardingData['fitnessGoal'] = fitnessGoal.toString();
+    }
+    
+    if (activityLevel != null) {
+      onboardingData['activityLevel'] = activityLevel.toString();
+    }
     
     await updateDocument(
       collectionPath: _userCollectionPath,

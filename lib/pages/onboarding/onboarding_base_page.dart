@@ -10,6 +10,7 @@ class OnboardingBasePage extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onSkip;
   final bool isLastPage;
+  final bool nextEnabled;
   
   const OnboardingBasePage({
     super.key,
@@ -19,6 +20,7 @@ class OnboardingBasePage extends StatelessWidget {
     required this.onNext,
     required this.onSkip,
     this.isLastPage = false,
+    this.nextEnabled = true,
   });
 
   @override
@@ -68,10 +70,10 @@ class OnboardingBasePage extends StatelessWidget {
                   
                   // Next button
                   ElevatedButton(
-                    onPressed: onNext,
+                    onPressed: nextEnabled ? onNext : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: CoreColors.coreOrange,
-                      foregroundColor: Colors.white,
+                      foregroundColor: CoreColors.textColor,
                       padding: const EdgeInsets.symmetric(vertical: PaddingSizes.large),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
@@ -87,8 +89,10 @@ class OnboardingBasePage extends StatelessWidget {
                     ),
                   ),
 
+                  const SizedBox(height: PaddingSizes.medium),
+
                   // Skip button
-                  ElevatedButton(
+                  TextButton(
                     onPressed: onSkip,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: CoreColors.accentAltColor,

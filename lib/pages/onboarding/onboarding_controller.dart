@@ -4,6 +4,7 @@ import 'package:healthcore/pages/onboarding/fitness_goals_page.dart';
 import 'package:healthcore/pages/onboarding/activity_level_page.dart';
 import 'package:healthcore/pages/permissions/permissions_view.dart';
 import 'package:healthcore/services/user_service.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class OnboardingController extends StatefulWidget {
   const OnboardingController({super.key});
@@ -42,25 +43,34 @@ class _OnboardingControllerState extends State<OnboardingController> {
     }
   }
   
-  void _skipOnboarding() {
-    // Set default values for skipped pages
-    _usesFoodLoggingApp ??= false;
-    _fitnessGoal ??= FitnessGoal.maintainWeight;
-    _activityLevel ??= ActivityLevel.moderate;
-    
-    _completeOnboarding();
+  // Skip current page and move to next page or complete onboarding
+  void _skipCurrentPage() {
+    if (_currentPage < 2) {
+      // Skip to next page
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      // On last page, complete the onboarding with whatever data user has selected
+      _completeOnboarding();
+    }
   }
   
   Future<void> _completeOnboarding() async {
     try {
+      // Only save selections that were explicitly made by the user
       await _userService.saveOnboardingData(
-        usesFoodLoggingApp: _usesFoodLoggingApp ?? false,
-        fitnessGoal: _fitnessGoal ?? FitnessGoal.maintainWeight,
-        activityLevel: _activityLevel ?? ActivityLevel.moderate,
+        usesFoodLoggingApp: _usesFoodLoggingApp,
+        fitnessGoal: _fitnessGoal,
+        activityLevel: _activityLevel,
       );
       
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed(PermissionsView.routeName);
+        Superwall.shared.registerPlacement('CompleteOnboarding', feature: () {
+            print('CompleteOnboarding');
+            Navigator.of(context).pushReplacementNamed(PermissionsView.routeName);
+        });
       }
     } catch (e) {
       // Show error dialog if saving fails
@@ -115,7 +125,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
           // Food Logging Page
           FoodLoggingPage(
             onNext: _nextPage,
-            onSkip: _skipOnboarding,
+            onSkip: _skipCurrentPage,
             onSelectionChanged: _updateFoodLoggingSelection,
             selectedValue: _usesFoodLoggingApp,
           ),
@@ -123,7 +133,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
           // Fitness Goals Page
           FitnessGoalsPage(
             onNext: _nextPage,
-            onSkip: _skipOnboarding,
+            onSkip: _skipCurrentPage,
             onSelectionChanged: _updateFitnessGoal,
             selectedGoal: _fitnessGoal,
           ),
@@ -131,7 +141,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
           // Activity Level Page
           ActivityLevelPage(
             onNext: _nextPage,
-            onSkip: _skipOnboarding,
+            onSkip: _skipCurrentPage, // Now using _skipCurrentPage for the last page too
             onSelectionChanged: _updateActivityLevel,
             selectedLevel: _activityLevel,
             isLastPage: true,
