@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CoreColors{
-  static const Color backgroundColor = Color.fromRGBO(47, 47, 47, 1);
+  static const Color backgroundColor = Color(0xFF2F2F2F);
   static const Color foregroundColor = Color(0xFF282828);
   static const Color accentColor = Color(0xFF787472);
   static const Color accentAltColor = Color(0x80787472);
