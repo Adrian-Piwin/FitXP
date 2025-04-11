@@ -6,6 +6,7 @@ import 'package:healthcore/services/health_data_cache_service.dart';
 import 'package:healthcore/services/preferences_service.dart';
 import 'package:healthcore/services/goals_service.dart';
 import 'package:healthcore/services/xp_service.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SettingsController with ChangeNotifier {
   late final GoalsService _goalsService;
@@ -63,6 +64,7 @@ class SettingsController with ChangeNotifier {
       await _goalsService.dispose();
       await _healthDataCache.dispose();
       await _xpService.dispose();
+      await Superwall.shared.reset();
       await FirebaseAuth.instance.signOut();
 
       navigator.pushNamedAndRemoveUntil('/', (route) => false);
