@@ -303,19 +303,13 @@ class HealthEntity extends ChangeNotifier {
   }
 
   Future<void> updateData() async {
-    isLoading = true;
-    
-    try {
-      final batchData = await healthFetcherService.fetchBatchData([this]);
-      data = Map.fromEntries(
-        healthItem.dataType.map((type) => 
-          MapEntry(type, batchData[type] ?? [])
-        )
-      );
-      clearCache();
-    } finally {
-      isLoading = false;
-    }
+    final batchData = await healthFetcherService.fetchBatchData([this]);
+    data = Map.fromEntries(
+      healthItem.dataType.map((type) => 
+        MapEntry(type, batchData[type] ?? [])
+      )
+    );
+    clearCache();
   }
 
   Future<Map<HealthDataType, List<DataPoint>>> getData(DateTimeRange dateRange) async {

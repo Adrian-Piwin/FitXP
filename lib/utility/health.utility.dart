@@ -348,9 +348,14 @@ Future<List<HealthEntity>> initializeWidgets(List<HealthItem> healthItems, Healt
 Future<void> setDataPerWidgetWithTimeframe(List<HealthEntity> entities, TimeFrame timeframe, int offset) async {
   for (var widget in entities) {
     widget.updateQuery(timeframe, offset);
+    widget.isLoading = true;
   }
 
   for (var widget in entities) {
     await widget.updateData();
+  }
+
+  for (var widget in entities) {
+    widget.isLoading = false;
   }
 }
