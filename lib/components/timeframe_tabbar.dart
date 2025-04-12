@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:healthcore/components/premium_indicator.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import '../enums/timeframe.enum.dart';
 
 class TimeFrameTabBar extends StatefulWidget {
@@ -21,6 +23,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late List<TimeFrame> _timeFrames;
+  bool _isPremiumUser = false;
 
   @override
   void initState() {
@@ -34,12 +37,61 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
       initialIndex: _timeFrames.indexOf(widget.selectedTimeFrame),
     );
 
-    // Listen to changes and notify parent when a new tab is selected.
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        widget.onChanged(_timeFrames[_tabController.index]);
-      }
-    });
+    // Listen to changes and handle tab selection, checking for premium access when needed
+    _tabController.addListener(_handleTabChange);
+    
+    // Check if user is premium
+    _checkPremiumStatus();
+  }
+  
+  /// Checks if the user has premium access
+  Future<void> _checkPremiumStatus() async {
+    try {
+      final status = await Superwall.shared.getSubscriptionStatus();
+      final statusString = await status.description;
+      // Check if the subscription status indicates an active subscription
+      setState(() {
+        _isPremiumUser = statusString != "INACTIVE";
+      });
+    } catch (e) {
+      setState(() {
+        _isPremiumUser = false;
+      });
+    }
+  }
+  
+  /// Handles tab changes, showing paywall for premium timeframes if needed
+  void _handleTabChange() {
+    if (!_tabController.indexIsChanging) return;
+    
+    final selectedTimeFrame = _timeFrames[_tabController.index];
+    
+    // Check if selected timeframe requires premium
+    final isPremiumTimeframe = selectedTimeFrame == TimeFrame.month || 
+                              selectedTimeFrame == TimeFrame.year;
+    
+    if (isPremiumTimeframe && !_isPremiumUser) {
+      // Revert to previous tab
+      _tabController.animateTo(_timeFrames.indexOf(widget.selectedTimeFrame));
+      
+      // Show paywall for premium timeframe
+      Superwall.shared.registerPlacement(
+        'SelectPremiumTimeframe',
+        feature: () {
+          // User has premium access now, update the timeframe
+          setState(() {
+            _isPremiumUser = true;
+          });
+          
+          // Proceed with the timeframe change
+          _tabController.animateTo(_timeFrames.indexOf(selectedTimeFrame));
+          widget.onChanged(selectedTimeFrame);
+        },
+      );
+    } else {
+      // Standard timeframe or user has premium, proceed with change
+      widget.onChanged(selectedTimeFrame);
+    }
   }
 
   @override
@@ -55,6 +107,9 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
         vsync: this,
         initialIndex: _timeFrames.indexOf(widget.selectedTimeFrame),
       );
+      
+      // Re-attach the listener
+      _tabController.addListener(_handleTabChange);
     }
     // Update the TabController index if the selectedTimeFrame changes externally.
     else if (widget.selectedTimeFrame != oldWidget.selectedTimeFrame) {
@@ -64,6 +119,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
   }
@@ -73,8 +129,25 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
     return TabBar(
       controller: _tabController,
       tabs: _timeFrames.map((timeFrame) {
+        // Check if this is a premium timeframe
+        final isPremiumTimeframe = timeFrame == TimeFrame.month || 
+                              timeFrame == TimeFrame.year;
+        
+        // Show indicator for premium timeframes if user is not premium
+        final showPremiumIndicator = isPremiumTimeframe && !_isPremiumUser;
+        
         return Tab(
-          text: timeFrameToString(context, timeFrame),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(timeFrameToString(context, timeFrame)),
+              if (showPremiumIndicator) ...[
+                const SizedBox(width: 4),
+                const PremiumIndicator(mini: true),
+              ],
+            ],
+          ),
         );
       }).toList(),
       indicatorSize: TabBarIndicatorSize.tab,
