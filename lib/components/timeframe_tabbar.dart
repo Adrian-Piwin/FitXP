@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthcore/components/premium_indicator.dart';
+import 'package:healthcore/utility/superwall.utility.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import '../enums/timeframe.enum.dart';
 
@@ -41,23 +42,9 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
     _tabController.addListener(_handleTabChange);
     
     // Check if user is premium
-    _checkPremiumStatus();
-  }
-  
-  /// Checks if the user has premium access
-  Future<void> _checkPremiumStatus() async {
-    try {
-      final status = await Superwall.shared.getSubscriptionStatus();
-      final statusString = await status.description;
-      // Check if the subscription status indicates an active subscription
-      setState(() {
-        _isPremiumUser = statusString != "INACTIVE";
-      });
-    } catch (e) {
-      setState(() {
-        _isPremiumUser = false;
-      });
-    }
+    setState(() {
+      checkPremiumStatus().then((value) => _isPremiumUser = value);
+    });
   }
   
   /// Handles tab changes, showing paywall for premium timeframes if needed
@@ -70,7 +57,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
     final isPremiumTimeframe = selectedTimeFrame == TimeFrame.month || 
                               selectedTimeFrame == TimeFrame.year;
     
-    if (isPremiumTimeframe && !_isPremiumUser) {
+    if (isPremiumTimeframe) {
       // Revert to previous tab
       _tabController.animateTo(_timeFrames.indexOf(widget.selectedTimeFrame));
       

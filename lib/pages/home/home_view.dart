@@ -9,6 +9,7 @@ import 'package:healthcore/services/widget_configuration_service.dart';
 import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/icons.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
+import 'package:healthcore/components/premium_indicator.dart';
 
 class HomeView extends StatefulWidget {
   static const routeName = '/home';
@@ -97,14 +98,7 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                                 padding: const EdgeInsets.all(16.0),
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => WidgetConfigurationPage(
-                                          homeController: controller,
-                                        ),
-                                      ),
-                                    );
+                                    controller.navigateToWidgetConfiguration();
                                   },
                                   child: Container(
                                     width: double.infinity,
@@ -119,15 +113,22 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
-                                        Center(
-                                          child: Text(
-                                            'Configure Widgets',
-                                            style: TextStyle(
-                                              fontSize: FontSizes.medium,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Configure Widgets',
+                                              style: TextStyle(
+                                                fontSize: FontSizes.medium,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
                                             ),
-                                          ),
+                                            if (!controller.isPremiumUser) ...[
+                                              const SizedBox(width: 6),
+                                              const PremiumIndicator(mini: true),
+                                            ],
+                                          ],
                                         ),
                                         Positioned(
                                           right: 0,

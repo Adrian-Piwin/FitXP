@@ -68,7 +68,6 @@ class _OnboardingControllerState extends State<OnboardingController> {
       
       if (mounted) {
         Superwall.shared.registerPlacement('CompleteOnboarding', feature: () {
-            print('CompleteOnboarding');
             Navigator.of(context).pushReplacementNamed(PermissionsView.routeName);
         });
       }

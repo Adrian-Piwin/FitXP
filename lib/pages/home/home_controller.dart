@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:healthcore/models/health_item.model.dart';
+import 'package:healthcore/pages/widget_configuration/widget_configuration_page.dart';
 import 'package:healthcore/services/error_logger.service.dart';
 import 'package:healthcore/services/health_data_cache_service.dart';
 import 'package:healthcore/services/widget_configuration_service.dart';
 import 'package:healthcore/utility/health.utility.dart';
+import 'package:healthcore/utility/superwall.utility.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import '../../constants/health_item_definitions.constants.dart';
 import '../../models/health_entities/health_entity.model.dart';
 import '../../services/health_fetcher_service.dart';
@@ -22,12 +25,13 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   TimeFrame _selectedTimeFrame = TimeFrame.day;
   int _offset = 0; // Offset for date navigation
   bool _isLoading = true;
-  bool _isFirstTimeLoading = true;
+  bool _isPremiumUser = false;
 
   // Getters
   TimeFrame get selectedTimeFrame => _selectedTimeFrame;
   int get offset => _offset;
   bool get isLoading => _isLoading;
+  bool get isPremiumUser => _isPremiumUser;
 
   List<HealthEntity> healthItemEntities = [];
   List<Widget> displayWidgets = [];
@@ -42,6 +46,9 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     try {
       _healthFetcherService = await HealthFetcherService.getInstance();
       _healthDataCache = await HealthDataCache.getInstance();
+
+      // Check premium status
+      _isPremiumUser = await checkPremiumStatus();
 
       // Get the saved configuration first
       final config = await _dbService.getDocument('widget_configuration', 'default_config');
@@ -99,6 +106,40 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     }
   }
 
+  /// Navigate to widget configuration page with premium check
+  void navigateToWidgetConfiguration() {
+    if (_isPremiumUser) {
+      // User has premium, navigate directly
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WidgetConfigurationPage(
+            homeController: this,
+          ),
+        ),
+      );
+    } else {
+      // Show paywall for premium feature
+      Superwall.shared.registerPlacement(
+        'ConfigureWidgets',
+        feature: () {
+          // User has purchased premium, update status and navigate
+          _isPremiumUser = true;
+          notifyListeners();
+          
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WidgetConfigurationPage(
+                homeController: this,
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
   Future<HealthEntity> addWidget(HealthItem item) async {
     final entity = (await initializeWidgets([item], _healthFetcherService)).first;
     await _widgetConfigurationService.addWidget(entity);
@@ -143,18 +184,15 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
   void updateTimeFrame(TimeFrame newTimeFrame) {
     _selectedTimeFrame = newTimeFrame;
     _offset = 0;
-    fetchHealthData(forceUpdate: true);
+    fetchHealthData();
   }
 
   void updateOffset(int newOffset) {
     _offset = newOffset;
-    fetchHealthData(forceUpdate: true);
+    fetchHealthData();
   }
 
-  Future<void> fetchHealthData({bool forceUpdate = false}) async {
-    if (_isLoading && !_isFirstTimeLoading && !forceUpdate) return;
-    _isFirstTimeLoading = false;
-
+  Future<void> fetchHealthData() async {
     try {
       await setDataPerWidgetWithTimeframe(healthItemEntities, _selectedTimeFrame, _offset);
     } catch (e) {
@@ -170,7 +208,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
     if (hardRefresh) {
       await _healthDataCache.clearTodaysCache();
     }
-    await fetchHealthData(forceUpdate: true);
+    await fetchHealthData();
   }
 
   @override
