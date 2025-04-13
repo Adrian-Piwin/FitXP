@@ -4,7 +4,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:healthcore/components/icon_button_custom.dart';
 import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
-import 'package:healthcore/pages/permissions/permissions_view.dart';
 import 'package:healthcore/pages/auth/forgot_password_screen.dart';
 import 'package:healthcore/pages/auth/auth_gate.dart';
 
@@ -313,7 +312,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                                   fontSize: FontSizes.small,
                                 ),
                               ).copyWith(
-                                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                overlayColor: WidgetStateProperty.all(Colors.transparent),
                               ),
                               child: const Text('Forgot Password?'),
                             ),
@@ -341,7 +340,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                                         email: _emailController.text.trim(),
                                         password: _passwordController.text,
                                       );
-                                      if (mounted) {
+                                      if (context.mounted) {
                                         Navigator.pushReplacementNamed(context, AuthGate.routeName);
                                       }
                                     } on FirebaseAuthException catch (e) {

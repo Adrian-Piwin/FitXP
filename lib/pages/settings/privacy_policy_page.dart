@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthcore/constants/colors.constants.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   static const routeName = '/privacy-policy';

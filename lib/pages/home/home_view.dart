@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../components/grid_layout.dart';
 import 'home_controller.dart';
 import '../../components/date_selector.dart';
-import 'package:healthcore/pages/widget_configuration/widget_configuration_page.dart';
 import 'package:healthcore/services/widget_configuration_service.dart';
 import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/icons.constants.dart';

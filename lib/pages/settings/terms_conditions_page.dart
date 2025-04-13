@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:healthcore/constants/colors.constants.dart';
 
 class TermsConditionsPage extends StatelessWidget {
   static const routeName = '/terms-conditions';
