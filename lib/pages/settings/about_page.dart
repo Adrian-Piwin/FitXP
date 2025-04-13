@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthcore/pages/settings/privacy_policy_page.dart';
 import 'package:healthcore/pages/settings/terms_conditions_page.dart';
+import 'package:healthcore/pages/settings/error_logs_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutPage extends StatefulWidget {
@@ -15,6 +16,8 @@ class AboutPage extends StatefulWidget {
 class _AboutPageState extends State<AboutPage> {
   String _version = '';
   bool _isLoading = true;
+  int _tapCount = 0;
+  DateTime? _lastTapTime;
 
   @override
   void initState() {
@@ -42,6 +45,26 @@ class _AboutPageState extends State<AboutPage> {
     }
   }
 
+  void _handleVersionTap() {
+    final now = DateTime.now();
+    if (_lastTapTime == null || now.difference(_lastTapTime!).inSeconds > 2) {
+      _tapCount = 1;
+    } else {
+      _tapCount++;
+    }
+    _lastTapTime = now;
+
+    if (_tapCount >= 3) {
+      _tapCount = 0;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ErrorLogsPage(),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,12 +89,15 @@ class _AboutPageState extends State<AboutPage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              _isLoading
-                ? const CircularProgressIndicator.adaptive()
-                : Text(
-                    'Version $_version',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
+              GestureDetector(
+                onTap: _handleVersionTap,
+                child: _isLoading
+                  ? const CircularProgressIndicator.adaptive()
+                  : Text(
+                      'Version $_version',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+              ),
               const SizedBox(height: 32),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
