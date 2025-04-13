@@ -91,8 +91,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       });
       await ErrorLogger.logError('Error updating password: $e');
     } finally {
-      if (!mounted) return;
-      
       setState(() {
         _isLoading = false;
       });
