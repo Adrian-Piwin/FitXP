@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:healthcore/enums/unit_system.enum.dart';
 import 'package:healthcore/pages/settings/about_page.dart';
 import 'package:healthcore/pages/settings/contact_us_page.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'settings_controller.dart';
 
 class SettingsView extends StatefulWidget {
@@ -19,6 +20,7 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
   bool get wantKeepAlive => true;
 
   final SettingsController controller = SettingsController();
+  final InAppReview _inAppReview = InAppReview.instance;
   bool _isInitialized = false;
 
   @override
@@ -32,6 +34,32 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
     setState(() {
       _isInitialized = true;
     });
+  }
+
+  Future<void> _requestReview() async {
+    try {
+      if (await _inAppReview.isAvailable()) {
+        await _inAppReview.requestReview();
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Unable to open review dialog at this time.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error requesting review: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -91,6 +119,11 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
                       );
                     },
                     child: const Text('Contact Us'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: _requestReview,
+                    child: const Text('Review on the App Store'),
                   ),
                   const SizedBox(height: 24.0),
                   const Text(
