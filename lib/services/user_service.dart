@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:healthcore/services/db_service.dart';
 import 'package:healthcore/services/error_logger.service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum FitnessGoal {
   gainWeight,
@@ -29,6 +30,8 @@ class UserService extends DBService {
   
   UserService._internal();
   
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  
   /// Saves the user's onboarding data to Firestore and marks onboarding as completed locally
   Future<void> saveOnboardingData({
     bool? usesFoodLoggingApp,
@@ -39,36 +42,59 @@ class UserService extends DBService {
       throw Exception('User must be authenticated to save onboarding data');
     }
     
-    // Save to Firestore, only including data that was explicitly provided
-    final Map<String, dynamic> onboardingData = {
-      'completedAt': DateTime.now().toIso8601String(),
-    };
-    
-    // Only add fields that the user actually provided
-    if (usesFoodLoggingApp != null) {
-      onboardingData['usesFoodLoggingApp'] = usesFoodLoggingApp;
-    }
-    
-    if (fitnessGoal != null) {
-      onboardingData['fitnessGoal'] = fitnessGoal.toString();
-    }
-    
-    if (activityLevel != null) {
-      onboardingData['activityLevel'] = activityLevel.toString();
-    }
-    
-    await updateDocument(
-      collectionPath: _userCollectionPath,
-      documentId: userId!,
-      data: {
+    try {
+      // Save to Firestore, only including data that was explicitly provided
+      final Map<String, dynamic> onboardingData = {
+        'completedAt': DateTime.now().toIso8601String(),
+      };
+      
+      // Only add fields that the user actually provided
+      if (usesFoodLoggingApp != null) {
+        onboardingData['usesFoodLoggingApp'] = usesFoodLoggingApp;
+      }
+      
+      if (fitnessGoal != null) {
+        onboardingData['fitnessGoal'] = fitnessGoal.toString();
+      }
+      
+      if (activityLevel != null) {
+        onboardingData['activityLevel'] = activityLevel.toString();
+      }
+      
+      final userDoc = await readDocument(
+        collectionPath: _userCollectionPath,
+        documentId: userId!,
+      );
+      
+      final userData = {
         'onboarding': onboardingData,
         'isOnboarded': true,
-      },
-    );
-    
-    // Save locally to SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_onboardingCompletedKey, true);
+      };
+      
+      if (!userDoc.exists) {
+        await createDocument(
+          collectionPath: _userCollectionPath,
+          documentId: userId!,
+          data: {
+            ...userData,
+            'createdAt': DateTime.now().toIso8601String(),
+          },
+        );
+      } else {
+        await updateDocument(
+          collectionPath: _userCollectionPath,
+          documentId: userId!,
+          data: userData,
+        );
+      }
+      
+      // Save locally to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_onboardingCompletedKey, true);
+    } catch (e) {
+      await ErrorLogger.logError('Error saving onboarding data: $e');
+      rethrow;
+    }
   }
   
   /// Checks if the user has completed onboarding (checks local storage first)
