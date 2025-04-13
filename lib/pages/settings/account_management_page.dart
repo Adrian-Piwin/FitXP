@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/services/user_service.dart';
 import 'package:healthcore/services/error_logger.service.dart';
+import 'package:flutter/services.dart';
 
 class AccountManagementPage extends StatefulWidget {
   static const routeName = '/account-management';
@@ -137,6 +139,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
 
   Future<void> _showDeleteAccountDialog() async {
     final passwordController = TextEditingController();
+    bool isPasswordEmpty = true;
     
     return showDialog(
       context: context,
@@ -157,6 +160,11 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 TextField(
                   controller: passwordController,
                   obscureText: true,
+                  onChanged: (value) {
+                    setState(() {
+                      isPasswordEmpty = value.isEmpty;
+                    });
+                  },
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Current Password',
@@ -170,7 +178,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: passwordController.text.isEmpty
+                onPressed: isPasswordEmpty
                     ? null
                     : () async {
                         try {
@@ -183,6 +191,10 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                           
                           // Restore the original password
                           _currentPasswordController.text = currentPassword;
+                          
+                          if (mounted) {
+                            Navigator.pop(context);
+                          }
                         } catch (e) {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -217,14 +229,22 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
       await _currentUser!.delete();
 
       if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        // Sign out to clear any remaining auth state
+        await _auth.signOut();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Account deleted successfully, please log out'),
+            backgroundColor: CoreColors.successColor,
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error deleting account: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: CoreColors.errorColor,
           ),
         );
       }
