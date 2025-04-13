@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:healthcore/services/db_service.dart';
+import 'package:healthcore/services/error_logger.service.dart';
 
 enum FitnessGoal {
   gainWeight,
@@ -134,6 +135,28 @@ class UserService extends DBService {
         documentId: userId!,
         data: {'isOnboarded': false},
       );
+    }
+  }
+  
+  /// Deletes all user data from Firestore
+  Future<void> deleteUserData() async {
+    if (userId == null) {
+      throw Exception('User must be authenticated to delete data');
+    }
+
+    try {
+      // Delete user document and all subcollections
+      await deleteDocument(
+        collectionPath: _userCollectionPath,
+        documentId: userId!,
+      );
+
+      // Clear local preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_onboardingCompletedKey);
+    } catch (e) {
+      await ErrorLogger.logError('Error deleting user data: $e');
+      rethrow;
     }
   }
 } 

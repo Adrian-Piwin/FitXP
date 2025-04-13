@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:healthcore/enums/unit_system.enum.dart';
 import 'package:healthcore/pages/settings/about_page.dart';
 import 'package:healthcore/pages/settings/contact_us_page.dart';
+import 'package:healthcore/pages/settings/account_management_page.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'settings_controller.dart';
 
@@ -119,6 +120,18 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
                       );
                     },
                     child: const Text('Contact Us'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AccountManagementPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Account'),
                   ),
                   const SizedBox(height: 16.0),
                   ElevatedButton(
