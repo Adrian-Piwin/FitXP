@@ -14,8 +14,9 @@ void main() async {
 
   await Firebase.initializeApp(
    options: DefaultFirebaseOptions.currentPlatform,
- );
+  );
 
+  // Initialize Health plugin
   Health().configure();
 
   runApp(const MyApp());

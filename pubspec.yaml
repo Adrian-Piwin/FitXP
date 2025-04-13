@@ -36,6 +36,8 @@ dependencies:
   hive_flutter: ^1.1.0
   synchronized: ^3.1.0
   superwallkit_flutter: ^2.0.5
+  flutter_widget_from_html: ^0.16.0
+  package_info_plus: ^8.3.0
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +54,7 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/logo.png
     - .env
     - assets/models/character.glb
 

@@ -1,6 +1,7 @@
 import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcore/enums/unit_system.enum.dart';
+import 'package:healthcore/pages/settings/about_page.dart';
 import 'settings_controller.dart';
 import '../../services/error_logger.service.dart';
 
@@ -68,6 +69,18 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
                     child: const Text('Clear Cache'),
                   ),
                   const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AboutPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('About'),
+                  ),
+                  const SizedBox(height: 24.0),
                   const Text(
                     'Unit System',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
