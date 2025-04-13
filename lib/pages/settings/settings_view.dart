@@ -2,6 +2,7 @@ import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcore/enums/unit_system.enum.dart';
 import 'package:healthcore/pages/settings/about_page.dart';
+import 'package:healthcore/pages/settings/contact_us_page.dart';
 import 'settings_controller.dart';
 
 class SettingsView extends StatefulWidget {
@@ -78,6 +79,18 @@ class _SettingsViewState extends State<SettingsView> with AutomaticKeepAliveClie
                       );
                     },
                     child: const Text('About'),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ContactUsPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Contact Us'),
                   ),
                   const SizedBox(height: 24.0),
                   const Text(
