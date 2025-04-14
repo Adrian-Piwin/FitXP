@@ -14,7 +14,7 @@ class PremiumIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: mini ? 4.0 : 6.0,
+        horizontal: mini ? 2.0 : 6.0,
         vertical: mini ? 2.0 : 3.0,
       ),
       decoration: BoxDecoration(
