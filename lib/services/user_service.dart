@@ -61,32 +61,19 @@ class UserService extends DBService {
         onboardingData['activityLevel'] = activityLevel.toString();
       }
       
-      final userDoc = await readDocument(
-        collectionPath: _userCollectionPath,
-        documentId: userId!,
-      );
-      
       final userData = {
         'onboarding': onboardingData,
         'isOnboarded': true,
       };
       
-      if (!userDoc.exists) {
-        await createDocument(
-          collectionPath: _userCollectionPath,
-          documentId: userId!,
-          data: {
-            ...userData,
-            'createdAt': DateTime.now().toIso8601String(),
-          },
-        );
-      } else {
-        await updateDocument(
-          collectionPath: _userCollectionPath,
-          documentId: userId!,
-          data: userData,
-        );
-      }
+      await createDocument(
+        collectionPath: _userCollectionPath,
+        documentId: userId!,
+        data: {
+          ...userData,
+          'createdAt': DateTime.now().toIso8601String(),
+        },
+      );
       
       // Save locally to SharedPreferences
       final prefs = await SharedPreferences.getInstance();

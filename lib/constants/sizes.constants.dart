@@ -63,8 +63,8 @@ class InputSizes {
 class WidgetSizes {
   static const double xSmallHeight = 40.0;
   static const double smallHeight = 120.0;
-  static const double mediumHeight = 140.0;
-  static const double largeHeight = 200.0;
+  static const double mediumHeight = 145.0;
+  static const double largeHeight = 205.0;
 }
 
 class CircularPercentWidgetSizes {

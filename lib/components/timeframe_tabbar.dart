@@ -40,11 +40,16 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
 
     // Listen to changes and handle tab selection, checking for premium access when needed
     _tabController.addListener(_handleTabChange);
-    
-    // Check if user is premium
-    setState(() {
-      checkPremiumStatus().then((value) => _isPremiumUser = value);
-    });
+    initAsync();
+  }
+
+  Future<void> initAsync() async {
+    final premiumStatus = await checkPremiumStatus();
+    if (mounted) {
+      setState(() {
+        _isPremiumUser = premiumStatus;
+      });
+    }
   }
   
   /// Handles tab changes, showing paywall for premium timeframes if needed
@@ -57,10 +62,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
     final isPremiumTimeframe = selectedTimeFrame == TimeFrame.month || 
                               selectedTimeFrame == TimeFrame.year;
     
-    if (isPremiumTimeframe) {
-      // Revert to previous tab
-      _tabController.animateTo(_timeFrames.indexOf(widget.selectedTimeFrame));
-      
+    if (isPremiumTimeframe && !_isPremiumUser) {
       // Show paywall for premium timeframe
       Superwall.shared.registerPlacement(
         'SelectPremiumTimeframe',
@@ -71,10 +73,14 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
           });
           
           // Proceed with the timeframe change
-          _tabController.animateTo(_timeFrames.indexOf(selectedTimeFrame));
           widget.onChanged(selectedTimeFrame);
         },
       );
+
+      if (!_isPremiumUser) {
+        // Revert to previous tab
+        _tabController.animateTo(_timeFrames.indexOf(widget.selectedTimeFrame));
+      }
     } else {
       // Standard timeframe or user has premium, proceed with change
       widget.onChanged(selectedTimeFrame);
