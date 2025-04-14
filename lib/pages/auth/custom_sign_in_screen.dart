@@ -118,26 +118,26 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
           Center(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
-                top: PaddingSizes.xlarge * 3,
-                bottom: PaddingSizes.xlarge * 4, // Extra space for terms text
+                top: PaddingSizes.xlarge * 2,
+                bottom: PaddingSizes.xlarge * 2,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // App Logo/Title Section
                   Padding(
-                    padding: const EdgeInsets.only(bottom: PaddingSizes.xlarge * 3),
+                    padding: const EdgeInsets.only(bottom: PaddingSizes.xlarge * 2),
                     child: Column(
                       children: [
                         Text(
                           'HealthCore',
                           style: TextStyle(
-                            fontSize: 40,
+                            fontSize: screenSize.width > 600 ? 40 : 32,
                             fontWeight: FontWeight.bold,
                             color: CoreColors.textColor,
                           ),
                         ),
-                        const SizedBox(height: PaddingSizes.large),
+                        const SizedBox(height: PaddingSizes.medium),
                         Container(
                           width: 80,
                           height: 4,
@@ -153,8 +153,8 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                   // Main Form Card
                   Container(
                     width: formWidth,
-                    padding: const EdgeInsets.all(PaddingSizes.xlarge * 1.5),
-                    margin: const EdgeInsets.symmetric(horizontal: PaddingSizes.xlarge),
+                    padding: EdgeInsets.all(screenSize.width > 600 ? PaddingSizes.xlarge * 1.5 : PaddingSizes.large),
+                    margin: const EdgeInsets.symmetric(horizontal: PaddingSizes.medium),
                     decoration: BoxDecoration(
                       color: CoreColors.foregroundColor,
                       borderRadius: BorderRadius.circular(BorderRadiusSizes.large),
@@ -382,73 +382,72 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
 
                         // Toggle Register/Sign In
                         Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                _isRegistering
-                                    ? 'Already have an account? '
-                                    : 'Don\'t have an account? ',
-                                style: TextStyle(
-                                  color: CoreColors.textColor.withOpacity(0.7),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: (_isEmailSignInLoading || _isGoogleSignInLoading)
-                                    ? null
-                                    : () {
-                                        setState(() {
-                                          _isRegistering = !_isRegistering;
-                                          _errorMessage = null;
-                                        });
-                                      },
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  foregroundColor: CoreColors.coreOrange,
-                                  backgroundColor: Colors.transparent,
-                                  elevation: 0,
-                                  shadowColor: Colors.transparent,
-                                  surfaceTintColor: Colors.transparent,
-                                  textStyle: const TextStyle(
-                                    decoration: TextDecoration.underline,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: PaddingSizes.xlarge),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _isRegistering
+                                      ? 'Already have an account? '
+                                      : 'Don\'t have an account? ',
+                                  style: TextStyle(
+                                    color: CoreColors.textColor.withOpacity(0.7),
+                                    fontSize: screenSize.width > 600 ? FontSizes.medium : FontSizes.small,
                                   ),
-                                ).copyWith(
-                                  overlayColor: WidgetStateProperty.all(Colors.transparent),
                                 ),
-                                child: Text(_isRegistering ? 'Sign In' : 'Create Account'),
-                              ),
-                            ],
+                                TextButton(
+                                  onPressed: (_isEmailSignInLoading || _isGoogleSignInLoading)
+                                      ? null
+                                      : () {
+                                          setState(() {
+                                            _isRegistering = !_isRegistering;
+                                            _errorMessage = null;
+                                          });
+                                        },
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    foregroundColor: CoreColors.coreOrange,
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    shadowColor: Colors.transparent,
+                                    surfaceTintColor: Colors.transparent,
+                                    textStyle: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontSize: screenSize.width > 600 ? FontSizes.medium : FontSizes.small,
+                                    ),
+                                  ).copyWith(
+                                    overlayColor: WidgetStateProperty.all(Colors.transparent),
+                                  ),
+                                  child: Text(_isRegistering ? 'Sign In' : 'Create Account'),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
 
-          // Terms Text - Positioned at bottom with proper margins
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: PaddingSizes.xxlarge,
-            child: Container(
-              width: formWidth,
-              margin: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width > 600 
-                    ? (MediaQuery.of(context).size.width - 500) / 2 
-                    : MediaQuery.of(context).size.width * 0.075,
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: PaddingSizes.xlarge),
-              child: Text(
-                'By continuing, you agree to our Terms of Service and Privacy Policy',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: CoreColors.textColor.withOpacity(0.5),
-                  fontSize: 12,
-                ),
+                  // Terms Text - Positioned below the form card
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: PaddingSizes.xlarge,
+                      bottom: PaddingSizes.xlarge,
+                      left: PaddingSizes.medium,
+                      right: PaddingSizes.medium,
+                    ),
+                    child: Text(
+                      'By continuing, you agree to our Terms of Service and Privacy Policy',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: CoreColors.textColor.withOpacity(0.5),
+                        fontSize: screenSize.width > 600 ? 12 : 10,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -29,67 +29,69 @@ class ActivityLevelPage extends StatelessWidget {
       onSkip: onSkip,
       isLastPage: isLastPage,
       nextEnabled: selectedLevel != null,
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // None (0 hours)
-          _buildActivityCard(
-            context: context,
-            icon: Icons.weekend,
-            title: 'Not Active',
-            subtitle: '0 hours per week',
-            isSelected: selectedLevel == ActivityLevel.none,
-            onTap: () => onSelectionChanged(ActivityLevel.none),
-          ),
-          
-          const SizedBox(height: PaddingSizes.large),
-          
-          // Light (1-2 hours)
-          _buildActivityCard(
-            context: context,
-            icon: Icons.directions_walk,
-            title: 'Light Activity',
-            subtitle: '1-2 hours per week',
-            isSelected: selectedLevel == ActivityLevel.light,
-            onTap: () => onSelectionChanged(ActivityLevel.light),
-          ),
-          
-          const SizedBox(height: PaddingSizes.large),
-          
-          // Moderate (3-4 hours)
-          _buildActivityCard(
-            context: context,
-            icon: Icons.hiking,
-            title: 'Moderate Activity',
-            subtitle: '3-4 hours per week',
-            isSelected: selectedLevel == ActivityLevel.moderate,
-            onTap: () => onSelectionChanged(ActivityLevel.moderate),
-          ),
-          
-          const SizedBox(height: PaddingSizes.large),
-          
-          // Active (5-6 hours)
-          _buildActivityCard(
-            context: context,
-            icon: Icons.directions_run,
-            title: 'Active',
-            subtitle: '5-6 hours per week',
-            isSelected: selectedLevel == ActivityLevel.active,
-            onTap: () => onSelectionChanged(ActivityLevel.active),
-          ),
-          
-          const SizedBox(height: PaddingSizes.large),
-          
-          // Very Active (7+ hours)
-          _buildActivityCard(
-            context: context,
-            icon: Icons.fitness_center,
-            title: 'Very Active',
-            subtitle: '7+ hours per week',
-            isSelected: selectedLevel == ActivityLevel.veryActive,
-            onTap: () => onSelectionChanged(ActivityLevel.veryActive),
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // None (0 hours)
+            _buildActivityCard(
+              context: context,
+              icon: Icons.weekend,
+              title: 'Not Active',
+              subtitle: '0 hours per week',
+              isSelected: selectedLevel == ActivityLevel.none,
+              onTap: () => onSelectionChanged(ActivityLevel.none),
+            ),
+            
+            const SizedBox(height: PaddingSizes.medium),
+            
+            // Light (1-2 hours)
+            _buildActivityCard(
+              context: context,
+              icon: Icons.directions_walk,
+              title: 'Light Activity',
+              subtitle: '1-2 hours per week',
+              isSelected: selectedLevel == ActivityLevel.light,
+              onTap: () => onSelectionChanged(ActivityLevel.light),
+            ),
+            
+            const SizedBox(height: PaddingSizes.medium),
+            
+            // Moderate (3-4 hours)
+            _buildActivityCard(
+              context: context,
+              icon: Icons.hiking,
+              title: 'Moderate Activity',
+              subtitle: '3-4 hours per week',
+              isSelected: selectedLevel == ActivityLevel.moderate,
+              onTap: () => onSelectionChanged(ActivityLevel.moderate),
+            ),
+            
+            const SizedBox(height: PaddingSizes.medium),
+            
+            // Active (5-6 hours)
+            _buildActivityCard(
+              context: context,
+              icon: Icons.directions_run,
+              title: 'Active',
+              subtitle: '5-6 hours per week',
+              isSelected: selectedLevel == ActivityLevel.active,
+              onTap: () => onSelectionChanged(ActivityLevel.active),
+            ),
+            
+            const SizedBox(height: PaddingSizes.medium),
+            
+            // Very Active (7+ hours)
+            _buildActivityCard(
+              context: context,
+              icon: Icons.fitness_center,
+              title: 'Very Active',
+              subtitle: '7+ hours per week',
+              isSelected: selectedLevel == ActivityLevel.veryActive,
+              onTap: () => onSelectionChanged(ActivityLevel.veryActive),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -102,10 +104,13 @@ class ActivityLevelPage extends StatelessWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 600;
+
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(PaddingSizes.large),
+        padding: EdgeInsets.all(isSmallScreen ? PaddingSizes.medium : PaddingSizes.large),
         decoration: BoxDecoration(
           color: isSelected ? CoreColors.coreOrange.withOpacity(0.1) : CoreColors.foregroundColor,
           borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
@@ -125,7 +130,7 @@ class ActivityLevelPage extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(PaddingSizes.medium),
+              padding: EdgeInsets.all(isSmallScreen ? PaddingSizes.small : PaddingSizes.medium),
               decoration: BoxDecoration(
                 color: isSelected 
                     ? CoreColors.coreOrange.withOpacity(0.2) 
@@ -135,10 +140,10 @@ class ActivityLevelPage extends StatelessWidget {
               child: Icon(
                 icon,
                 color: isSelected ? CoreColors.coreOrange : CoreColors.textColor.withOpacity(0.6),
-                size: IconSizes.medium,
+                size: isSmallScreen ? IconSizes.small : IconSizes.medium,
               ),
             ),
-            const SizedBox(width: GapSizes.large),
+            SizedBox(width: isSmallScreen ? GapSizes.medium : GapSizes.large),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +152,7 @@ class ActivityLevelPage extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: CoreColors.textColor,
-                      fontSize: 16,
+                      fontSize: isSmallScreen ? 14 : 16,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
@@ -156,7 +161,7 @@ class ActivityLevelPage extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       color: CoreColors.textColor.withOpacity(0.7),
-                      fontSize: 12,
+                      fontSize: isSmallScreen ? 10 : 12,
                     ),
                   ),
                 ],
@@ -166,7 +171,7 @@ class ActivityLevelPage extends StatelessWidget {
               Icon(
                 Icons.check_circle,
                 color: CoreColors.coreOrange,
-                size: IconSizes.medium,
+                size: isSmallScreen ? IconSizes.small : IconSizes.medium,
               ),
           ],
         ),
