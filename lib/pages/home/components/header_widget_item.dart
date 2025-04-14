@@ -42,9 +42,10 @@ class HeaderWidgetItem extends WidgetFrame {
                   child: InfoBar(
                     title: barWidget.healthItem.title,
                     formatValue: barWidget.formatValue,
+                    formatValueWithUnit: barWidget.formatValueWithUnit,
                     value: barWidget.total,
                     unit: barWidget.healthItem.unit,
-                    goal: barWidget.getDisplayGoal,
+                    goal: barWidget.goal,
                     percent: barWidget.getGoalPercent,
                     color: barWidget.healthItem.color,
                     textColor: barWidget.healthItem.offColor,

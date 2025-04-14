@@ -69,8 +69,9 @@ class RankWidget extends WidgetFrame {
                         child: InfoBar(
                           title: controller.rankName,
                           formatValue: formatNumberSimple,
+                          formatValueWithUnit: formatNumberSimple,
                           value: controller.currentAnimatedXP,
-                          goal: rankUpXPAmt.toString(),
+                          goal: double.parse(rankUpXPAmt.toString()),
                           percent: controller.rankProgress,
                           color: controller.rankColor,
                           textColor: CoreColors.textColor,

@@ -6,8 +6,9 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 class InfoBar extends StatefulWidget {
   final String title;
   final Function(double value) formatValue;
+  final Function(double value) formatValueWithUnit;
   final double value;
-  final String goal;
+  final double goal;
   final double percent;
   final Color color;
   final Color textColor;
@@ -18,6 +19,7 @@ class InfoBar extends StatefulWidget {
     super.key,
     required this.title,
     required this.formatValue,
+    required this.formatValueWithUnit,
     required this.value,
     required this.goal,
     required this.percent,
@@ -110,7 +112,7 @@ class _InfoBarState extends State<InfoBar> {
                       ),
                     ),
                     TextSpan(
-                      text: '/${widget.goal}${widget.unit ?? ''}',
+                      text: '/${widget.formatValueWithUnit(widget.goal)}',
                       style: TextStyle(
                         fontSize: FontSizes.large,
                         color: widget.textColor,

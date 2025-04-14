@@ -9,6 +9,14 @@ String formatMinutes(int totalMinutes) {
     : "${minutes}min";
 }
 
+String formatMinutesWithoutUnit(int totalMinutes) {
+  int hours = totalMinutes ~/ 60;
+  int minutes = totalMinutes % 60;
+  return hours > 0 
+    ? "$hours:${minutes.toString().padLeft(2, '0')}" 
+    : "$minutes";
+}
+
 String formatNumber(num number, {int decimalPlaces = 0}) {
   return number.toStringAsFixed(decimalPlaces).replaceAllMapped(
     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),

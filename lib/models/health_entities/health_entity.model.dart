@@ -169,6 +169,10 @@ class HealthEntity extends ChangeNotifier {
     return formatNumber(value, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
   }
 
+  String formatValueWithUnit(double value) {
+    return formatNumber(value, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0) + healthItem.unit;
+  }
+
   String get getDisplayValue {
     if (showLoading) return "--";
     return formatNumber(total, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
@@ -189,12 +193,6 @@ class HealthEntity extends ChangeNotifier {
   String get getDisplayGoal {
     if (showLoading) return "--";
     return formatNumber(goal, decimalPlaces: healthItem.doesGoalSupportDecimals ? 1 : 0);
-  }
-
-  // The percentage of the goal for this health entity against our daily average
-  String get getDisplayGoalWithUnitAveragePercent {
-    if (showLoading) return "--";
-    return "${(getGoalAveragePercent * 100).toStringAsFixed(0)}%";
   }
 
   // #endregion
