@@ -68,10 +68,21 @@ class SleepHealthEntity extends HealthEntity {
   }
 
   int getSleepScore() {
+    if (timeframe != TimeFrame.day) {
+      return 0;
+    }
+
     if (sleepScoreCache != null) return sleepScoreCache!;
     SleepService sleepService = SleepService(sleepDataPoints);
     sleepScoreCache = sleepService.calculateSleepScore();
     return sleepScoreCache!;
+  }
+
+  String get getSleepScoreDescription {
+    if (timeframe != TimeFrame.day) {
+      return "N/A";
+    }
+    return "${getSleepScore()} ${SleepService.getSleepQualityDescription(getSleepScore())}";
   }
 
   @override
@@ -119,7 +130,7 @@ class SleepHealthEntity extends HealthEntity {
       [
         IconInfoWidget(
           title: "Sleep Score",
-          displayValue: "${getSleepScore()} ${SleepService.getSleepQualityDescription(getSleepScore())}",
+          displayValue: getSleepScoreDescription,
           icon: IconTypes.sleepScoreIcon,
           iconColor: healthItem.color,
         ),
