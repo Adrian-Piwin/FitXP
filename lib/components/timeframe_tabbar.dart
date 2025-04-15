@@ -53,9 +53,8 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
   }
 
   /// Returns whether the currently selected timeframe requires premium access
-  bool get isPremiumTimeframe {
-    final selectedTimeFrame = _timeFrames[_tabController.index];
-    return selectedTimeFrame == TimeFrame.year;
+  bool isPremiumTimeframe(TimeFrame timeFrame) {
+    return timeFrame == TimeFrame.year;
   }
   
   /// Handles tab changes, showing paywall for premium timeframes if needed
@@ -64,7 +63,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
     
     final selectedTimeFrame = _timeFrames[_tabController.index];
     
-    if (isPremiumTimeframe && !_isPremiumUser) {
+    if (isPremiumTimeframe(selectedTimeFrame) && !_isPremiumUser) {
       // Show paywall for premium timeframe
       Superwall.shared.registerPlacement(
         'SelectPremiumTimeframe',
@@ -125,7 +124,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
       controller: _tabController,
       tabs: _timeFrames.map((timeFrame) {        
         // Show indicator for premium timeframes if user is not premium
-        final showPremiumIndicator = isPremiumTimeframe && !_isPremiumUser;
+        final showPremiumIndicator = isPremiumTimeframe(timeFrame) && !_isPremiumUser;
         
         return Tab(
           child: Row(
