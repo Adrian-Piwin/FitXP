@@ -51,16 +51,18 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
       });
     }
   }
+
+  /// Returns whether the currently selected timeframe requires premium access
+  bool get isPremiumTimeframe {
+    final selectedTimeFrame = _timeFrames[_tabController.index];
+    return selectedTimeFrame == TimeFrame.year;
+  }
   
   /// Handles tab changes, showing paywall for premium timeframes if needed
   void _handleTabChange() {
     if (!_tabController.indexIsChanging) return;
     
     final selectedTimeFrame = _timeFrames[_tabController.index];
-    
-    // Check if selected timeframe requires premium
-    final isPremiumTimeframe = selectedTimeFrame == TimeFrame.month || 
-                              selectedTimeFrame == TimeFrame.year;
     
     if (isPremiumTimeframe && !_isPremiumUser) {
       // Show paywall for premium timeframe
@@ -121,11 +123,7 @@ class TimeFrameTabBarState extends State<TimeFrameTabBar>
   Widget build(BuildContext context) {
     return TabBar(
       controller: _tabController,
-      tabs: _timeFrames.map((timeFrame) {
-        // Check if this is a premium timeframe
-        final isPremiumTimeframe = timeFrame == TimeFrame.month || 
-                              timeFrame == TimeFrame.year;
-        
+      tabs: _timeFrames.map((timeFrame) {        
         // Show indicator for premium timeframes if user is not premium
         final showPremiumIndicator = isPremiumTimeframe && !_isPremiumUser;
         

@@ -28,7 +28,7 @@ class TrendHealthEntity extends HealthEntity {
   }
 
   @override
-  List<TimeFrame> get supportedTimeFrames => [TimeFrame.week, TimeFrame.month, TimeFrame.year];
+  List<TimeFrame> get supportedTimeFrames => [TimeFrame.month, TimeFrame.year];
 
   @override
   double get getGoalPercent{
