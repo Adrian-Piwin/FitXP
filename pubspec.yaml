@@ -36,7 +36,6 @@ dependencies:
   hive_flutter: ^1.1.0
   synchronized: ^3.1.0
   superwallkit_flutter: ^2.0.5
-  flutter_widget_from_html: ^0.16.0
   package_info_plus: ^8.3.0
   in_app_review: ^2.0.10
 
