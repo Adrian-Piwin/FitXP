@@ -10,6 +10,7 @@ import 'package:healthcore/models/health_entities/health_entity.model.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcore/utility/chart.utility.dart';
 import 'package:healthcore/utility/health.utility.dart';
+import 'package:healthcore/utility/timeframe.utility.dart';
 
 class TrendHealthEntity extends HealthEntity {
   TrendHealthEntity(super.healthItem, super.widgetSize, super.healthFetcherService);
@@ -51,10 +52,32 @@ class TrendHealthEntity extends HealthEntity {
   // Include the past 30 days so we can get the most recent data point
   @override
   void updateQuery(TimeFrame newTimeFrame, int newOffset) {
-    if (!supportedTimeFrames.contains(newTimeFrame)) {
-      newTimeFrame = supportedTimeFrames.first;
-    }
-    super.updateQuery(newTimeFrame, newOffset);
+    // Using supported timeframe, we can just update the query
+    if (supportedTimeFrames.contains(newTimeFrame)) {
+      super.updateQuery(newTimeFrame, newOffset);
+      return;
+    } 
+
+    // Since we use the month timeframe by default for trends, the offset might be referring to day or week timeframes.
+    // We only want to adjust the offset if we're requesting data from a different month than our current month.
+    final requestedDateRange = calculateDateRange(newTimeFrame, newOffset);
+    
+    // Get the current month (April) and year
+    final now = DateTime.now();
+    final currentMonth = now.month;
+    final currentYear = now.year;
+    
+    // Get the month and year of the requested date range's start date
+    final requestedMonth = requestedDateRange.start.month;
+    final requestedYear = requestedDateRange.start.year;
+    
+    // Calculate how many months we need to go back from current month (April)
+    // For example: 
+    // - If we're in April (4) and requesting March (3), difference is -1
+    // - If we're in April (4) and requesting February (2), difference is -2
+    final monthDifference = (requestedYear - currentYear) * 12 + (requestedMonth - currentMonth);
+    
+    super.updateQuery(supportedTimeFrames.first, monthDifference);
   }
 
   @override

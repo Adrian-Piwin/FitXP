@@ -13,7 +13,7 @@ class HealthDetailsController extends ChangeNotifier {
 
   HealthDetailsController({
     required HealthEntity widget,
-  }) : _widget = widget,
+  }) : _widget = widget.clone(),
        _selectedTimeFrame = widget.timeframe,
        _offset = widget.offset,
        timeFrameOptions = widget.supportedTimeFrames {
