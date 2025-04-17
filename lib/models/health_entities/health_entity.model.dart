@@ -59,7 +59,7 @@ class HealthEntity extends ChangeNotifier {
   DateTimeRange? queryDateRange;
   double? cachedTotal;
   double? cachedAverage;
-  int? cachedStreak;
+  int cachedStreak = 0;
   List<DataPoint>? cachedCurrentData;
 
   HealthEntity(this.healthItem, this.widgetSize, this.healthFetcherService);
@@ -68,9 +68,7 @@ class HealthEntity extends ChangeNotifier {
     _goalsService = await GoalsService.getInstance();
     await _loadGoal();
     if (healthItem.doesGoalSupportStreaks) {
-      if (goal == 0){
-        cachedStreak = 0;
-      } else {
+      if (goal != 0){
         var streakService = StreakService();
         cachedStreak = await streakService.getStreak(this, goal);
       }
@@ -359,7 +357,7 @@ class HealthEntity extends ChangeNotifier {
       _cachedGoal = await _goalsService.getGoal(primaryType) ?? healthItem.defaultGoal;
     } catch (e) {
       await ErrorLogger.logError('Error loading goal: $e');
-      _cachedGoal = 0.0;
+      rethrow;
     }
   }
 

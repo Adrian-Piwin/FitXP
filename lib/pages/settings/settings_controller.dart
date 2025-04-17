@@ -6,6 +6,7 @@ import 'package:healthcore/services/health_data_cache_service.dart';
 import 'package:healthcore/services/preferences_service.dart';
 import 'package:healthcore/services/goals_service.dart';
 import 'package:healthcore/services/xp_service.dart';
+import 'package:healthcore/utility/global_ui.utility.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SettingsController with ChangeNotifier {
@@ -52,6 +53,7 @@ class SettingsController with ChangeNotifier {
       await _healthDataCache.clearCache();
       await _xpService.clearCache();
     } catch (e) {
+      GlobalUI.showError('Error clearing cache');
       await ErrorLogger.logError('Error clearing cache: $e');
     }
   }

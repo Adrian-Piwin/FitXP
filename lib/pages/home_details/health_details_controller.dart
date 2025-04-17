@@ -55,7 +55,8 @@ class HealthDetailsController extends ChangeNotifier {
       _widget.updateQuery(_selectedTimeFrame, _offset);
       await _widget.updateData();
     } catch (e) {
-      await ErrorLogger.logError('Errorr fetching health data: $e');
+      GlobalUI.showError('Error fetching health data');
+      await ErrorLogger.logError('Error fetching health data: $e');
     }
 
     _isLoading = false;

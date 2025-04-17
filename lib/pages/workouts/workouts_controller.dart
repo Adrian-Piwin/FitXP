@@ -121,7 +121,6 @@ class WorkoutsController extends ChangeNotifier {
     try {
       _offset = 0;
       // Ensure cache is initialized before using it
-      _healthDataCache = await HealthDataCache.getInstance();
       await _healthDataCache.clearTodaysCache();
       await _fetchData();
     } catch (e) {

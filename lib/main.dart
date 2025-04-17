@@ -4,7 +4,7 @@ import 'package:healthcore/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
-import 'pages/app.dart';
+import 'package:healthcore/pages/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

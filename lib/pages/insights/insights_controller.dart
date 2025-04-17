@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:healthcore/constants/magic_numbers.constants.dart';
 import 'package:healthcore/models/monthly_medal.model.dart';
+import 'package:healthcore/services/error_logger.service.dart';
 import 'package:healthcore/services/xp_service.dart';
+import 'package:healthcore/utility/global_ui.utility.dart';
 
 class InsightsController extends ChangeNotifier {
   late final XpService _xpService;
@@ -52,7 +54,8 @@ class InsightsController extends ChangeNotifier {
         }
       });
     } catch (e) {
-      print('Error initializing InsightsController: $e');
+      GlobalUI.showError('Error initializing InsightsController');
+      await ErrorLogger.logError('Error initializing InsightsController: $e');
     } finally {
       _isInitializing = false;
       notifyListeners();
@@ -68,7 +71,8 @@ class InsightsController extends ChangeNotifier {
       _xpService.setOffset(newOffset);
       await _xpService.updateData();
     } catch (e) {
-      print('Error updating offset: $e');
+      GlobalUI.showError('Error updating data');
+      await ErrorLogger.logError('Error updating data: $e');
     }
     
     _setLoading(false);
@@ -82,7 +86,8 @@ class InsightsController extends ChangeNotifier {
     try {
       await _xpService.updateData();
     } catch (e) {
-      print('Error refreshing insights: $e');
+      GlobalUI.showError('Error refreshing insights');
+      await ErrorLogger.logError('Error refreshing insights: $e');
     }
 
     _setLoading(false);

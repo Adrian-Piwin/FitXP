@@ -6,7 +6,9 @@ import 'package:healthcore/constants/rank_definitions.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:healthcore/constants/xp.constants.dart';
 import 'package:healthcore/enums/rank.enum.dart';
+import 'package:healthcore/services/error_logger.service.dart';
 import 'package:healthcore/services/xp_service.dart';
+import 'package:healthcore/utility/global_ui.utility.dart';
 import 'package:provider/provider.dart';
 
 class RankWidgetController extends ChangeNotifier {
@@ -73,7 +75,8 @@ class RankWidgetController extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      print('Error initializing RankWidgetController: $e');
+      GlobalUI.showError('Error initializing RankWidgetController');
+      await ErrorLogger.logError('Error initializing RankWidgetController: $e');
       _isLoading = false;
       notifyListeners();
     }

@@ -4,6 +4,7 @@ import 'package:healthcore/pages/widget_configuration/widget_configuration_page.
 import 'package:healthcore/services/error_logger.service.dart';
 import 'package:healthcore/services/health_data_cache_service.dart';
 import 'package:healthcore/services/widget_configuration_service.dart';
+import 'package:healthcore/utility/global_ui.utility.dart';
 import 'package:healthcore/utility/health.utility.dart';
 import 'package:healthcore/utility/superwall.utility.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
@@ -101,6 +102,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
       notifyListeners();
     } catch (e) {
       await ErrorLogger.logError('Error during initialization in HomeController: $e');
+      GlobalUI.showError('Error during initialization in HomeController');
       _isLoading = false;
       notifyListeners();
     }
@@ -197,6 +199,7 @@ class HomeController extends ChangeNotifier with WidgetsBindingObserver {
       await setDataPerWidgetWithTimeframe(healthItemEntities, _selectedTimeFrame, _offset);
     } catch (e) {
       await ErrorLogger.logError('Error fetching data: $e');
+      GlobalUI.showError('Error fetching data: $e');
     } finally {
       notifyListeners();
     }

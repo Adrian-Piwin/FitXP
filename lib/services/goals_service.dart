@@ -32,19 +32,12 @@ class GoalsService extends DBService {
     }
   }
 
-  Future<void> _ensureInitialized() async {
-    if (!_isInitialized) {
-      await _initHive();
-    }
-  }
-
   String _normalizeGoalKey(String goalKey) {
     final parts = goalKey.split('.');
     return parts.length > 1 ? parts.last.toUpperCase() : goalKey.toUpperCase();
   }
 
   Future<double?> getGoal(String goalKey) async {
-    await _ensureInitialized();
     if (userId == null) throw Exception('User not logged in');
 
     final normalizedKey = _normalizeGoalKey(goalKey);
@@ -80,18 +73,17 @@ class GoalsService extends DBService {
   }
 
   Future<void> saveGoal(String goalKey, double value) async {
-    await _ensureInitialized();
     if (userId == null) throw Exception('User not logged in');
 
     final normalizedKey = _normalizeGoalKey(goalKey);
     try {
+      await _saveGoalToCache(userId!, goalKey, value);
+      _cachedGoals[goalKey] = value;
       await updateDocument(
         collectionPath: collectionName,
         documentId: userId!,
         data: {normalizedKey: value},
       );
-      await _saveGoalToCache(userId!, goalKey, value);
-      _cachedGoals[goalKey] = value;
     } catch (e) {
       await ErrorLogger.logError('Error saving goal for $goalKey: $e');
       rethrow;
@@ -108,7 +100,6 @@ class GoalsService extends DBService {
 
   Future<void> clearCache() async {
     try {
-      await _ensureInitialized();
       if (userId == null) return;
 
       _cachedGoals.clear();
