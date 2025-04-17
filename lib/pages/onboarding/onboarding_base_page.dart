@@ -8,7 +8,6 @@ class OnboardingBasePage extends StatelessWidget {
   final String? subtitle;
   final Widget content;
   final VoidCallback onNext;
-  final VoidCallback onSkip;
   final bool isLastPage;
   final bool nextEnabled;
   
@@ -18,7 +17,7 @@ class OnboardingBasePage extends StatelessWidget {
     this.subtitle,
     required this.content,
     required this.onNext,
-    required this.onSkip,
+
     this.isLastPage = false,
     this.nextEnabled = true,
   });
@@ -85,27 +84,6 @@ class OnboardingBasePage extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: CoreColors.textColor,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: PaddingSizes.medium),
-
-                  // Skip button
-                  TextButton(
-                    onPressed: onSkip,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: CoreColors.accentAltColor,
-                      foregroundColor: CoreColors.textColor,
-                      padding: const EdgeInsets.symmetric(vertical: PaddingSizes.large),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-                      ),
-                    ),
-                    child: Text(
-                      'Skip',
-                      style: const TextStyle(
-                        fontSize: 16,
                       ),
                     ),
                   ),

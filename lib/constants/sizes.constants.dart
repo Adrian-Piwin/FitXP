@@ -43,6 +43,7 @@ class PaddingSizes {
   static const double large = 12.0;
   static const double xlarge = 16.0;
   static const double xxlarge = 20.0;
+  static const double xxxlarge = 30.0;
 }
 
 class PercentIndicatorSizes{

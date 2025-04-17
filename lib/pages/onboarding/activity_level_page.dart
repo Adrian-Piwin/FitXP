@@ -2,101 +2,84 @@ import 'package:flutter/material.dart';
 import 'package:healthcore/constants/colors.constants.dart';
 import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:healthcore/pages/onboarding/onboarding_base_page.dart';
-import 'package:healthcore/services/user_service.dart';
+import 'package:healthcore/enums/activity_level.enum.dart';
 
 class ActivityLevelPage extends StatelessWidget {
   final VoidCallback onNext;
-  final VoidCallback onSkip;
   final Function(ActivityLevel) onSelectionChanged;
   final ActivityLevel? selectedLevel;
-  final bool isLastPage;
-
+  
   const ActivityLevelPage({
     super.key,
     required this.onNext,
-    required this.onSkip,
     required this.onSelectionChanged,
     this.selectedLevel,
-    this.isLastPage = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return OnboardingBasePage(
-      title: 'How active are you weekly?',
-      subtitle: 'This helps us tailor recommendations to your lifestyle',
-      onNext: onNext,
-      onSkip: onSkip,
-      isLastPage: isLastPage,
-      nextEnabled: selectedLevel != null,
-      content: SingleChildScrollView(
+      title: 'How active are you?',
+      subtitle: 'This helps us calculate your daily calorie needs',
+      content: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: PaddingSizes.xxxlarge),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // None (0 hours)
-            _buildActivityCard(
-              context: context,
-              icon: Icons.weekend,
-              title: 'Not Active',
-              subtitle: '0 hours per week',
-              isSelected: selectedLevel == ActivityLevel.none,
-              onTap: () => onSelectionChanged(ActivityLevel.none),
-            ),
-            
-            const SizedBox(height: PaddingSizes.medium),
-            
-            // Light (1-2 hours)
-            _buildActivityCard(
-              context: context,
-              icon: Icons.directions_walk,
-              title: 'Light Activity',
-              subtitle: '1-2 hours per week',
-              isSelected: selectedLevel == ActivityLevel.light,
-              onTap: () => onSelectionChanged(ActivityLevel.light),
-            ),
-            
-            const SizedBox(height: PaddingSizes.medium),
-            
-            // Moderate (3-4 hours)
-            _buildActivityCard(
-              context: context,
-              icon: Icons.hiking,
-              title: 'Moderate Activity',
-              subtitle: '3-4 hours per week',
-              isSelected: selectedLevel == ActivityLevel.moderate,
-              onTap: () => onSelectionChanged(ActivityLevel.moderate),
-            ),
-            
-            const SizedBox(height: PaddingSizes.medium),
-            
-            // Active (5-6 hours)
-            _buildActivityCard(
-              context: context,
-              icon: Icons.directions_run,
-              title: 'Active',
-              subtitle: '5-6 hours per week',
-              isSelected: selectedLevel == ActivityLevel.active,
-              onTap: () => onSelectionChanged(ActivityLevel.active),
-            ),
-            
-            const SizedBox(height: PaddingSizes.medium),
-            
-            // Very Active (7+ hours)
-            _buildActivityCard(
-              context: context,
-              icon: Icons.fitness_center,
-              title: 'Very Active',
-              subtitle: '7+ hours per week',
-              isSelected: selectedLevel == ActivityLevel.veryActive,
-              onTap: () => onSelectionChanged(ActivityLevel.veryActive),
-            ),
+            // Sedentary
+          _buildLevelCard(
+            context: context,
+            icon: Icons.chair,
+            title: 'Sedentary',
+            subtitle: 'Little or no exercise',
+            isSelected: selectedLevel == ActivityLevel.sedentary,
+            onTap: () => onSelectionChanged(ActivityLevel.sedentary),
+          ),
+          
+          const SizedBox(height: PaddingSizes.large),
+          
+          // Lightly Active
+          _buildLevelCard(
+            context: context,
+            icon: Icons.directions_walk,
+            title: 'Lightly Active',
+            subtitle: 'Light exercise/sports 1-3 days/week',
+            isSelected: selectedLevel == ActivityLevel.lightlyActive,
+            onTap: () => onSelectionChanged(ActivityLevel.lightlyActive),
+          ),
+          
+          const SizedBox(height: PaddingSizes.large),
+          
+          // Moderately Active
+          _buildLevelCard(
+            context: context,
+            icon: Icons.directions_run,
+            title: 'Moderately Active',
+            subtitle: 'Moderate exercise/sports 3-5 days/week',
+            isSelected: selectedLevel == ActivityLevel.moderatelyActive,
+            onTap: () => onSelectionChanged(ActivityLevel.moderatelyActive),
+          ),
+          
+          const SizedBox(height: PaddingSizes.large),
+          
+          // Very Active
+          _buildLevelCard(
+            context: context,
+            icon: Icons.fitness_center,
+            title: 'Very Active',
+            subtitle: 'Hard exercise/sports 6-7 days/week',
+            isSelected: selectedLevel == ActivityLevel.veryActive,
+            onTap: () => onSelectionChanged(ActivityLevel.veryActive),
+          ),
           ],
         ),
       ),
+      onNext: onNext,
+      nextEnabled: selectedLevel != null,
     );
   }
   
-  Widget _buildActivityCard({
+  Widget _buildLevelCard({
     required BuildContext context,
     required IconData icon,
     required String title,
@@ -104,13 +87,10 @@ class ActivityLevelPage extends StatelessWidget {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final screenSize = MediaQuery.of(context).size;
-    final isSmallScreen = screenSize.width < 600;
-
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(isSmallScreen ? PaddingSizes.medium : PaddingSizes.large),
+        padding: const EdgeInsets.all(PaddingSizes.large),
         decoration: BoxDecoration(
           color: isSelected ? CoreColors.coreOrange.withOpacity(0.1) : CoreColors.foregroundColor,
           borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
@@ -130,7 +110,7 @@ class ActivityLevelPage extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(isSmallScreen ? PaddingSizes.small : PaddingSizes.medium),
+              padding: const EdgeInsets.all(PaddingSizes.medium),
               decoration: BoxDecoration(
                 color: isSelected 
                     ? CoreColors.coreOrange.withOpacity(0.2) 
@@ -140,10 +120,10 @@ class ActivityLevelPage extends StatelessWidget {
               child: Icon(
                 icon,
                 color: isSelected ? CoreColors.coreOrange : CoreColors.textColor.withOpacity(0.6),
-                size: isSmallScreen ? IconSizes.small : IconSizes.medium,
+                size: IconSizes.medium,
               ),
             ),
-            SizedBox(width: isSmallScreen ? GapSizes.medium : GapSizes.large),
+            const SizedBox(width: GapSizes.large),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +132,7 @@ class ActivityLevelPage extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: CoreColors.textColor,
-                      fontSize: isSmallScreen ? 14 : 16,
+                      fontSize: 16,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
@@ -161,7 +141,7 @@ class ActivityLevelPage extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       color: CoreColors.textColor.withOpacity(0.7),
-                      fontSize: isSmallScreen ? 10 : 12,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -171,7 +151,7 @@ class ActivityLevelPage extends StatelessWidget {
               Icon(
                 Icons.check_circle,
                 color: CoreColors.coreOrange,
-                size: isSmallScreen ? IconSizes.small : IconSizes.medium,
+                size: IconSizes.medium,
               ),
           ],
         ),

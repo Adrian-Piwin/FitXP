@@ -5,14 +5,12 @@ import 'package:healthcore/pages/onboarding/onboarding_base_page.dart';
 
 class FoodLoggingPage extends StatelessWidget {
   final VoidCallback onNext;
-  final VoidCallback onSkip;
   final Function(bool) onSelectionChanged;
   final bool? selectedValue;
 
   const FoodLoggingPage({
     super.key,
     required this.onNext,
-    required this.onSkip,
     required this.onSelectionChanged,
     this.selectedValue,
   });
@@ -20,69 +18,71 @@ class FoodLoggingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OnboardingBasePage(
-      title: 'Do you use a food logging app?',
+      title: 'Do you log your food?',
       subtitle: 'We can sync with your nutrition data to provide better insights',
       onNext: onNext,
-      onSkip: onSkip,
       nextEnabled: selectedValue != null,
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Yes option
-          _buildOptionCard(
-            context: context,
-            icon: Icons.check_circle_outline,
-            title: 'Yes',
-            isSelected: selectedValue == true,
-            onTap: () => onSelectionChanged(true),
-          ),
-          
-          const SizedBox(height: PaddingSizes.xlarge),
-          
-          // No option
-          _buildOptionCard(
-            context: context,
-            icon: Icons.cancel_outlined,
-            title: 'No',
-            isSelected: selectedValue == false,
-            onTap: () => onSelectionChanged(false),
-          ),
-          
-          // Hint text for "Yes" selection
-          if (selectedValue == true) ...[
+      content: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: PaddingSizes.xxlarge),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Yes option
+            _buildOptionCard(
+              context: context,
+              icon: Icons.check_circle_outline,
+              title: 'Yes',
+              isSelected: selectedValue == true,
+              onTap: () => onSelectionChanged(true),
+            ),
+            
             const SizedBox(height: PaddingSizes.xlarge),
-            Container(
-              padding: const EdgeInsets.all(PaddingSizes.large),
-              decoration: BoxDecoration(
-                color: CoreColors.coreOrange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-                border: Border.all(
-                  color: CoreColors.coreOrange.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.lightbulb_outline,
-                    color: CoreColors.coreOrange,
-                    size: IconSizes.medium,
+            
+            // No option
+            _buildOptionCard(
+              context: context,
+              icon: Icons.cancel_outlined,
+              title: 'No',
+              isSelected: selectedValue == false,
+              onTap: () => onSelectionChanged(false),
+            ),
+            
+            // Hint text for "Yes" selection
+            if (selectedValue == true) ...[
+              const SizedBox(height: PaddingSizes.xlarge),
+              Container(
+                padding: const EdgeInsets.all(PaddingSizes.large),
+                decoration: BoxDecoration(
+                  color: CoreColors.coreOrange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                  border: Border.all(
+                    color: CoreColors.coreOrange.withOpacity(0.3),
+                    width: 1,
                   ),
-                  const SizedBox(width: GapSizes.medium),
-                  Expanded(
-                    child: Text(
-                      'Make sure your food logging app syncs with Apple Health to ensure your data will be shown.',
-                      style: TextStyle(
-                        color: CoreColors.textColor,
-                        fontSize: FontSizes.small,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: CoreColors.coreOrange,
+                      size: IconSizes.medium,
+                    ),
+                    const SizedBox(width: GapSizes.medium),
+                    Expanded(
+                      child: Text(
+                        'Make sure your food logging app syncs with Apple Health to ensure your data will be shown.',
+                        style: TextStyle(
+                          color: CoreColors.textColor,
+                          fontSize: FontSizes.small,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

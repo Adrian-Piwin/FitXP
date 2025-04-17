@@ -2,64 +2,39 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:healthcore/services/db_service.dart';
 import 'package:healthcore/services/error_logger.service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-enum FitnessGoal {
-  gainWeight,
-  maintainWeight,
-  loseWeight,
-}
-
-enum ActivityLevel {
-  none,     // 0 hours
-  light,    // 1-2 hours
-  moderate, // 3-4 hours
-  active,   // 5-6 hours
-  veryActive // 7+ hours
-}
+import 'package:healthcore/enums/activity_level.enum.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserService extends DBService {
-  static const String _onboardingCompletedKey = 'onboarding_completed';
-  static const String _userCollectionPath = 'users';
-  
-  // Singleton pattern
-  static final UserService _instance = UserService._internal();
-  
-  factory UserService() {
-    return _instance;
-  }
-  
-  UserService._internal();
-  
-  final FirebaseFirestore db = FirebaseFirestore.instance;
-  
-  /// Saves the user's onboarding data to Firestore and marks onboarding as completed locally
+  final String _userCollectionPath = 'users';
+  final String _onboardingCompletedKey = 'onboarding_completed';
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? get userId => _auth.currentUser?.uid;
+
   Future<void> saveOnboardingData({
     bool? usesFoodLoggingApp,
-    FitnessGoal? fitnessGoal,
     ActivityLevel? activityLevel,
+    double? weight,
+    int? age,
+    bool? isMale,
+    double? height,
+    double? bodyFat,
   }) async {
-    if (userId == null) {
-      throw Exception('User must be authenticated to save onboarding data');
-    }
-    
+    if (userId == null) throw Exception('User not logged in');
+
     try {
-      // Save to Firestore, only including data that was explicitly provided
+      // Save to Firestore
       final Map<String, dynamic> onboardingData = {
         'completedAt': DateTime.now().toIso8601String(),
+        if (usesFoodLoggingApp != null) 'usesFoodLoggingApp': usesFoodLoggingApp,
+        if (activityLevel != null) 'activityLevel': activityLevel.toString(),
+        if (weight != null) 'weight': weight,
+        if (age != null) 'age': age,
+        if (isMale != null) 'isMale': isMale,
+        if (height != null) 'height': height,
+        if (bodyFat != null) 'bodyFat': bodyFat,
       };
-      
-      // Only add fields that the user actually provided
-      if (usesFoodLoggingApp != null) {
-        onboardingData['usesFoodLoggingApp'] = usesFoodLoggingApp;
-      }
-      
-      if (fitnessGoal != null) {
-        onboardingData['fitnessGoal'] = fitnessGoal.toString();
-      }
-      
-      if (activityLevel != null) {
-        onboardingData['activityLevel'] = activityLevel.toString();
-      }
       
       final userData = {
         'onboarding': onboardingData,
@@ -83,9 +58,10 @@ class UserService extends DBService {
       rethrow;
     }
   }
-  
+
   /// Checks if the user has completed onboarding (checks local storage first)
   Future<bool> hasCompletedOnboarding() async {
+    return false;
     // First check local storage for faster response
     final prefs = await SharedPreferences.getInstance();
     final localStatus = prefs.getBool(_onboardingCompletedKey);

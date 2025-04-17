@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:healthcore/pages/onboarding/food_logging_page.dart';
 import 'package:healthcore/pages/onboarding/fitness_goals_page.dart';
 import 'package:healthcore/pages/onboarding/activity_level_page.dart';
+import 'package:healthcore/pages/onboarding/body_stats_page.dart';
 import 'package:healthcore/pages/permissions/permissions_view.dart';
 import 'package:healthcore/services/user_service.dart';
+import 'package:healthcore/services/goals_service.dart';
+import 'package:healthcore/enums/health_item_type.enum.dart';
+import 'package:healthcore/enums/activity_level.enum.dart';
+import 'package:healthcore/enums/gender.enum.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class OnboardingController extends StatefulWidget {
@@ -18,13 +23,29 @@ class OnboardingController extends StatefulWidget {
 class _OnboardingControllerState extends State<OnboardingController> {
   final PageController _pageController = PageController();
   final UserService _userService = UserService();
+  late final GoalsService _goalsService;
   
   // Onboarding state
   bool? _usesFoodLoggingApp;
-  FitnessGoal? _fitnessGoal;
   ActivityLevel? _activityLevel;
+  double? _weight;
+  int? _age;
+  bool? _isMale;
+  double? _height;
+  double? _bodyFat;
+  Map<HealthItemType, double> _goals = {};
   
   int _currentPage = 0;
+  
+  @override
+  void initState() {
+    super.initState();
+    _initializeServices();
+  }
+
+  Future<void> _initializeServices() async {
+    _goalsService = await GoalsService.getInstance();
+  }
   
   @override
   void dispose() {
@@ -33,38 +54,33 @@ class _OnboardingControllerState extends State<OnboardingController> {
   }
   
   void _nextPage() {
-    if (_currentPage < 2) {
+    if (_currentPage < 3) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     } else {
-      _completeOnboarding();
-    }
-  }
-  
-  // Skip current page and move to next page or complete onboarding
-  void _skipCurrentPage() {
-    if (_currentPage < 2) {
-      // Skip to next page
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      // On last page, complete the onboarding with whatever data user has selected
       _completeOnboarding();
     }
   }
   
   Future<void> _completeOnboarding() async {
     try {
-      // Only save selections that were explicitly made by the user
+      // Save onboarding data
       await _userService.saveOnboardingData(
         usesFoodLoggingApp: _usesFoodLoggingApp,
-        fitnessGoal: _fitnessGoal,
         activityLevel: _activityLevel,
+        weight: _weight,
+        age: _age,
+        isMale: _isMale,
+        height: _height,
+        bodyFat: _bodyFat,
       );
+
+      // Save goals
+      for (var entry in _goals.entries) {
+        await _goalsService.saveGoal(entry.key.toString(), entry.value);
+      }
       
       if (mounted) {
         Superwall.shared.registerPlacement('CompleteOnboarding', feature: () {
@@ -97,15 +113,25 @@ class _OnboardingControllerState extends State<OnboardingController> {
     });
   }
   
-  void _updateFitnessGoal(FitnessGoal goal) {
-    setState(() {
-      _fitnessGoal = goal;
-    });
-  }
-  
   void _updateActivityLevel(ActivityLevel level) {
     setState(() {
       _activityLevel = level;
+    });
+  }
+
+  void _updateBodyStats(double weight, int age, Gender gender, double height, double? bodyFat) {
+    setState(() {
+      _weight = weight;
+      _age = age;
+      _isMale = gender == Gender.male;
+      _height = height;
+      _bodyFat = bodyFat;
+    });
+  }
+
+  void _updateGoals(Map<HealthItemType, double> goals) {
+    setState(() {
+      _goals = goals;
     });
   }
   
@@ -124,26 +150,39 @@ class _OnboardingControllerState extends State<OnboardingController> {
           // Food Logging Page
           FoodLoggingPage(
             onNext: _nextPage,
-            onSkip: _skipCurrentPage,
             onSelectionChanged: _updateFoodLoggingSelection,
             selectedValue: _usesFoodLoggingApp,
           ),
           
-          // Fitness Goals Page
-          FitnessGoalsPage(
+          // Body Stats Page
+          BodyStatsPage(
             onNext: _nextPage,
-            onSkip: _skipCurrentPage,
-            onSelectionChanged: _updateFitnessGoal,
-            selectedGoal: _fitnessGoal,
+            onSelectionChanged: _updateBodyStats,
+            selectedWeight: _weight,
+            selectedAge: _age,
+            selectedGender: _isMale == null ? null : (_isMale! ? Gender.male : Gender.female),
+            selectedHeight: _height,
+            selectedBodyFat: _bodyFat,
           ),
           
           // Activity Level Page
           ActivityLevelPage(
             onNext: _nextPage,
-            onSkip: _skipCurrentPage, // Now using _skipCurrentPage for the last page too
             onSelectionChanged: _updateActivityLevel,
             selectedLevel: _activityLevel,
-            isLastPage: true,
+          ),
+          
+          // Fitness Goals Page
+          FitnessGoalsPage(
+            onNext: _nextPage,
+            onSelectionChanged: _updateGoals,
+            selectedGoals: _goals,
+            weight: _weight ?? 0,
+            age: _age ?? 0,
+            isMale: _isMale ?? true,
+            activityLevel: _activityLevel ?? ActivityLevel.moderatelyActive,
+            height: _height ?? 0,
+            bodyFat: _bodyFat,
           ),
         ],
       ),
