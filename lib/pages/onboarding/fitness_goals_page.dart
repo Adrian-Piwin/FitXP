@@ -99,8 +99,11 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
   }
 
   void _initializeGoals() {
+    // Set net calories to default from health definitions if not provided
     _netCalories = _goals[HealthItemType.netCalories] ?? HealthItemDefinitions.netCalories.defaultGoal;
-    _proteinGoal = _goals[HealthItemType.proteinIntake] ?? widget.weight;
+    // Set protein goal to 1g per lb of body weight (convert kg to lb if needed)
+    final bodyWeightInLbs = _useMetricWeight ? widget.weight * 2.20462 : widget.weight;
+    _proteinGoal = _goals[HealthItemType.proteinIntake] ?? bodyWeightInLbs;
     _weightGoal = _goals[HealthItemType.weight] ?? widget.weight;
     _bodyFatGoal = _goals[HealthItemType.bodyFatPercentage] ?? widget.bodyFat ?? HealthItemDefinitions.bodyFat.defaultGoal;
   }
@@ -329,7 +332,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
                   builder: (context) => AlertDialog(
                     title: const Text('Net Calories'),
                     content: const Text(
-                      'This is your daily calorie goal. A negative value means you want to lose weight.',
+                      'This is your daily calorie goal. A negative value means you want to lose weight, positive means gain weight, and 0 means maintain weight.',
                     ),
                     actions: [
                       TextButton(
@@ -354,15 +357,27 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
             ),
           ),
           onChanged: (text) {
+            if (text.isEmpty) {
+              setState(() {
+                _goals[HealthItemType.netCalories] = 0.0;
+                _netCalories = 0.0;
+                _updateGoals();
+              });
+              return;
+            }
+            
             final value = int.tryParse(text);
             if (value != null) {
               setState(() {
                 _goals[HealthItemType.netCalories] = value.toDouble();
+                _netCalories = value.toDouble();
                 _updateGoals();
               });
             }
           },
         ),
+        const SizedBox(height: PaddingSizes.medium),
+        _buildWeightChangeVisualization(),
       ],
     );
   }
@@ -423,6 +438,15 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
               });
             }
           },
+        ),
+        const SizedBox(height: PaddingSizes.small),
+        const Text(
+          'The recommended amount of daily protein is 1g per 1lb of body weight',
+          style: TextStyle(
+            fontSize: 14,
+            color: CoreColors.textColor,
+            fontStyle: FontStyle.italic,
+          ),
         ),
       ],
     );
@@ -565,69 +589,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
     );
   }
 
-  Widget _buildGoalCard(
-    String title,
-    String value,
-    Function(double)? onChanged, {
-    bool isEditable = true,
-    bool infoIcon = false,
-    VoidCallback? onInfoPressed,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: CoreColors.textColor,
-              ),
-            ),
-            if (infoIcon)
-              IconButton(
-                icon: const Icon(
-                  Icons.info_outline,
-                  size: 20,
-                ),
-                onPressed: onInfoPressed,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-          ],
-        ),
-        const SizedBox(height: PaddingSizes.medium),
-        if (isEditable)
-          TextField(
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              hintText: value,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-              ),
-            ),
-            onChanged: (text) {
-              final value = double.tryParse(text);
-              if (value != null && onChanged != null) {
-                onChanged(value);
-              }
-            },
-          )
-        else
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 16,
-              color: CoreColors.textColor,
-            ),
-          ),
-      ],
-    );
-  }
-
   double _calculateRestingCalories() {
     // Mifflin-St Jeor Equation
     final weight = widget.weight;
@@ -709,6 +670,108 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildWeightChangeVisualization() {
+    final weeklyChange = (_netCalories * 7) / 3500; // 3500 calories = 1 lb
+    final isGaining = weeklyChange > 0;
+    final isMaintaining = weeklyChange == 0;
+    final changeText = weeklyChange.abs().toStringAsFixed(1);
+    
+    // Map net calories (-1000 to 1000) to position (0 to 1)
+    final position = _netCalories.clamp(-1000.0, 1000.0) / 2000.0 + 0.5;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: CoreColors.backgroundColor,
+            borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+            border: Border.all(
+              color: CoreColors.textColor.withOpacity(0.1),
+            ),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final containerWidth = constraints.maxWidth;
+              final indicatorWidth = 40.0;
+              final availableWidth = containerWidth - indicatorWidth;
+              final left = position * availableWidth;
+              
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // Background gradient
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          isMaintaining 
+                            ? CoreColors.coreOrange.withOpacity(0.2)
+                            : (isGaining ? Colors.red.withOpacity(0.2) : Colors.green.withOpacity(0.2)),
+                          CoreColors.backgroundColor,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                    ),
+                  ),
+                  // Indicator
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    left: left,
+                    child: Container(
+                      width: indicatorWidth,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: isMaintaining 
+                          ? CoreColors.coreOrange 
+                          : (isGaining ? Colors.red : Colors.green),
+                        borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
+                        boxShadow: [
+                          BoxShadow(
+                            color: CoreColors.textColor.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          isMaintaining 
+                            ? Icons.horizontal_rule 
+                            : (isGaining ? Icons.arrow_upward : Icons.arrow_downward),
+                          color: CoreColors.textColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: PaddingSizes.small),
+        Text(
+          isMaintaining 
+            ? 'You will maintain your current weight'
+            : 'You will ${isGaining ? 'gain' : 'lose'} $changeText lb per week',
+          style: TextStyle(
+            fontSize: 14,
+            color: isMaintaining 
+              ? CoreColors.coreOrange 
+              : (isGaining ? Colors.red : Colors.green),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 } 
