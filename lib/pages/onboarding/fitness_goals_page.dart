@@ -58,12 +58,18 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
     _goals = Map<HealthItemType, double>.from(widget.selectedGoals ?? {});
     _useMetricWeight = _goals[HealthItemType.weight] != null && _goals[HealthItemType.weight]! < 200;
     
+    // Calculate default protein goal (1g per lb of body weight)
+    final bodyWeightInLbs = _useMetricWeight ? widget.weight * 2.20462 : widget.weight;
+    final defaultProteinGoal = bodyWeightInLbs.round();
+    
     // Initialize controllers with current values
     _netCaloriesController = TextEditingController(
-      text: _goals[HealthItemType.netCalories]?.toStringAsFixed(0) ?? '',
+      text: _goals[HealthItemType.netCalories]?.toStringAsFixed(0) ?? 
+            HealthItemDefinitions.netCalories.defaultGoal.toStringAsFixed(0),
     );
     _proteinController = TextEditingController(
-      text: _goals[HealthItemType.proteinIntake]?.toStringAsFixed(0) ?? '',
+      text: _goals[HealthItemType.proteinIntake]?.toStringAsFixed(0) ?? 
+            defaultProteinGoal.toStringAsFixed(0),
     );
     _weightController = TextEditingController(
       text: _goals[HealthItemType.weight]?.toStringAsFixed(1) ?? '',
@@ -397,26 +403,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
                 color: CoreColors.textColor,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Protein Intake'),
-                    content: const Text(
-                      'This is your daily protein goal in grams.',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
           ],
         ),
         const SizedBox(height: PaddingSizes.medium),
@@ -441,7 +427,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
         ),
         const SizedBox(height: PaddingSizes.small),
         const Text(
-          'The recommended amount of daily protein is 1g per 1lb of body weight',
+          'The recommended amount of daily protein is 1g per 1 lb of body weight',
           style: TextStyle(
             fontSize: 14,
             color: CoreColors.textColor,
@@ -474,12 +460,19 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
               (value) {
                 setState(() {
                   _useMetricWeight = value;
-                  if (value) {
-                    _goals[HealthItemType.weight] = _goals[HealthItemType.weight]! / 2.20462;
-                  } else {
-                    _goals[HealthItemType.weight] = _goals[HealthItemType.weight]! * 2.20462;
+                  if (_goals[HealthItemType.weight] != null) {
+                    final currentWeight = _goals[HealthItemType.weight]!;
+                    if (value) {
+                      // Convert lb to kg
+                      _goals[HealthItemType.weight] = currentWeight / 2.20462;
+                    } else {
+                      // Convert kg to lb
+                      _goals[HealthItemType.weight] = currentWeight * 2.20462;
+                    }
+                    // Update the controller text with the converted value
+                    _weightController.text = _goals[HealthItemType.weight]!.toStringAsFixed(1);
+                    _updateGoals();
                   }
-                  _updateGoals();
                 });
               },
             ),
