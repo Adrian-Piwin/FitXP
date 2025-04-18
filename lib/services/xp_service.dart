@@ -116,7 +116,7 @@ class XpService extends ChangeNotifier {
     
     try {
       // Try to get cached data first
-      if (_xpBox.containsKey(monthKey)) {
+      if (offset != 0 && _xpBox.containsKey(monthKey)) {
         final List<dynamic> monthlyData = _xpBox.get(monthKey)!;
         xpEntities = monthlyData.map((data) {
           final Map<String, dynamic> entityData = Map<String, dynamic>.from(data);

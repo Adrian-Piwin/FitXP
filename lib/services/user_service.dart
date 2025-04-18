@@ -107,20 +107,6 @@ class UserService extends DBService {
     }
   }
   
-  /// Resets onboarding status (for testing purposes)
-  Future<void> resetOnboarding() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_onboardingCompletedKey);
-    
-    if (userId != null) {
-      await updateDocument(
-        collectionPath: _userCollectionPath,
-        documentId: userId!,
-        data: {'isOnboarded': false},
-      );
-    }
-  }
-  
   /// Deletes all user data from Firestore
   Future<void> deleteUserData() async {
     if (userId == null) {

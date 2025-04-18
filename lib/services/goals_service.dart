@@ -79,7 +79,7 @@ class GoalsService extends DBService {
     try {
       await _saveGoalToCache(userId!, goalKey, value);
       _cachedGoals[goalKey] = value;
-      await updateDocument(
+      await upsertDocument(
         collectionPath: collectionName,
         documentId: userId!,
         data: {normalizedKey: value},

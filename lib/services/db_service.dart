@@ -54,6 +54,20 @@ class DBService {
     }
   }
 
+  // Upsert a document
+  Future<void> upsertDocument({
+    required String collectionPath,
+    required String documentId,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      await _firestore.collection(collectionPath).doc(documentId).set(data, SetOptions(merge: true));
+    } catch (e) {
+      await ErrorLogger.logError('Error upserting document: $e');
+      rethrow;
+    }
+  }
+
   // Delete a document
   Future<void> deleteDocument({
     required String collectionPath,

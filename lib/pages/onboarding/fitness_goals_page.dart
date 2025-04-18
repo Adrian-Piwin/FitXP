@@ -325,7 +325,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Total Daily Energy Expenditure',
+              'Daily Energy Expenditure',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

@@ -14,7 +14,7 @@ class MedalDefinitions {
     return [
       // STEPS MONTHLY AVERAGE
       _createMonthlyMedal(
-        baseId: 'steps_15k_avg',
+        baseId: 'steps-avg_15k',
         monthKey: monthKey,
         title: 'Elite Stepper',
         description: 'Averaged 15,000 steps daily - surpassing WHO\'s recommended goal by 50%!',
@@ -27,7 +27,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.steps] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'steps_10k_avg',
+        baseId: 'steps-avg_10k',
         monthKey: monthKey,
         title: 'Step Master',
         description: 'Averaged 10,000 steps daily - meeting the perfect healthy lifestyle goal!',
@@ -40,7 +40,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.steps] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'steps_7500_avg',
+        baseId: 'steps-avg_7500',
         monthKey: monthKey,
         title: 'Active Achiever',
         description: 'Averaged 7,500 steps daily - you\'re in the top 30% of active people!',
@@ -53,7 +53,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.steps] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'steps_5000_avg',
+        baseId: 'steps-avg_5000',
         monthKey: monthKey,
         title: 'Consistent Stepper',
         description: 'Averaged 5,000 steps daily - building healthy habits one step at a time!',
@@ -68,7 +68,7 @@ class MedalDefinitions {
 
       // STRENGTH TRAINING TIME MONTHLY AVERAGE
       _createMonthlyMedal(
-        baseId: 'strength_60_avg',
+        baseId: 'strength-avg_60',
         monthKey: monthKey,
         title: 'Iron Master',
         description: 'Averaged 60 minutes of daily strength training - enough to build muscle like a Greek statue!',
@@ -81,7 +81,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.strengthTrainingTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'strength_45_avg',
+        baseId: 'strength-avg_45',
         monthKey: monthKey,
         title: 'Strength Champion',
         description: 'Averaged 45 minutes of daily strength training - the perfect balance for muscle growth and recovery!',
@@ -94,7 +94,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.strengthTrainingTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'strength_30_avg',
+        baseId: 'strength-avg_30',
         monthKey: monthKey,
         title: 'Resistance Ruler',
         description: 'Averaged 30 minutes of daily strength training - enough to trigger optimal protein synthesis!',
@@ -107,7 +107,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.strengthTrainingTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'strength_15_avg',
+        baseId: 'strength-avg_15',
         monthKey: monthKey,
         title: 'Strength Builder',
         description: 'Averaged 15 minutes of daily strength training - even short sessions can increase bone density by 1-3%!',
@@ -122,7 +122,7 @@ class MedalDefinitions {
 
       // CARDIO TIME MONTHLY AVERAGE
       _createMonthlyMedal(
-        baseId: 'cardio_60_avg',
+        baseId: 'cardio-avg_60',
         monthKey: monthKey,
         title: 'Cardio King',
         description: 'Averaged 60 minutes of daily cardio - enough to burn about 700-1000 calories daily!',
@@ -135,7 +135,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.cardioTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'cardio_45_avg',
+        baseId: 'cardio-avg_45',
         monthKey: monthKey,
         title: 'Endurance Expert',
         description: 'Averaged 45 minutes of daily cardio - reducing your resting heart rate by up to 10 beats per minute!',
@@ -148,7 +148,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.cardioTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'cardio_30_avg',
+        baseId: 'cardio-avg_30',
         monthKey: monthKey,
         title: 'Aerobic Achiever',
         description: 'Averaged 30 minutes of daily cardio - meeting the American Heart Association\'s recommendation!',
@@ -161,7 +161,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.cardioTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'cardio_15_avg',
+        baseId: 'cardio-avg_15',
         monthKey: monthKey,
         title: 'Cardio Starter',
         description: 'Averaged 15 minutes of daily cardio - even short bursts can increase your lifespan by 3 years!',
@@ -176,7 +176,7 @@ class MedalDefinitions {
 
       // SLEEP MONTHLY AVERAGE
       _createMonthlyMedal(
-        baseId: 'sleep_9h_avg',
+        baseId: 'sleep-avg_9h',
         monthKey: monthKey,
         title: 'Sleep Champion',
         description: 'Averaged 9 hours of sleep daily - optimal rest for peak performance!',
@@ -189,7 +189,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.sleep] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'sleep_8h_avg',
+        baseId: 'sleep-avg_8h',
         monthKey: monthKey,
         title: 'Rest Master',
         description: 'Averaged 8 hours of sleep daily - the perfect night\'s rest!',
@@ -202,7 +202,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.sleep] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'sleep_7h_avg',
+        baseId: 'sleep-avg_7h',
         monthKey: monthKey,
         title: 'Sleep Tracker',
         description: 'Averaged 7 hours of sleep daily - maintaining healthy sleep habits!',
@@ -215,7 +215,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.sleep] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'sleep_6h_avg',
+        baseId: 'sleep-avg_6h',
         monthKey: monthKey,
         title: 'Rest Achiever',
         description: 'Averaged 6 hours of sleep daily - working on better sleep habits!',
@@ -230,7 +230,7 @@ class MedalDefinitions {
 
       // PROTEIN MONTHLY AVERAGE
       _createMonthlyMedal(
-        baseId: 'protein_150_avg',
+        baseId: 'protein-avg_150',
         monthKey: monthKey,
         title: 'Protein Elite',
         description: 'Averaged 150g protein daily - optimal for muscle growth!',
@@ -243,7 +243,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.proteinIntake] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'protein_100_avg',
+        baseId: 'protein-avg_100',
         monthKey: monthKey,
         title: 'Protein Pro',
         description: 'Averaged 100g protein daily - perfect for active lifestyle!',
@@ -256,7 +256,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.proteinIntake] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'protein_75_avg',
+        baseId: 'protein-avg_75',
         monthKey: monthKey,
         title: 'Protein Tracker',
         description: 'Averaged 75g protein daily - meeting basic fitness needs!',
@@ -269,7 +269,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.proteinIntake] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'protein_50_avg',
+        baseId: 'protein-avg_50',
         monthKey: monthKey,
         title: 'Protein Starter',
         description: 'Averaged 50g protein daily - building healthy eating habits!',
@@ -284,7 +284,7 @@ class MedalDefinitions {
 
       // NET CALORIES MONTHLY AVERAGE
       _createMonthlyMedal(
-        baseId: 'netcalories_800_avg',
+        baseId: 'netcalories-avg_800',
         monthKey: monthKey,
         title: 'Elite Deficit Creator',
         description: 'Averaged a perfect 800 calorie daily deficit - the optimal amount for sustainable fat loss!',
@@ -297,7 +297,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.netCalories] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'netcalories_600_avg',
+        baseId: 'netcalories-avg_600',
         monthKey: monthKey,
         title: 'Master Deficit Achiever',
         description: 'Averaged a 600 calorie daily deficit - enough to lose about 1.2 pounds per week!',
@@ -310,7 +310,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.netCalories] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'netcalories_400_avg',
+        baseId: 'netcalories-avg_400',
         monthKey: monthKey,
         title: 'Consistent Calorie Cutter',
         description: 'Averaged a 400 calorie daily deficit - a sustainable approach that preserves muscle mass!',
@@ -323,7 +323,7 @@ class MedalDefinitions {
         value: monthlyAverages[HealthItemType.netCalories] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'netcalories_200_avg',
+        baseId: 'netcalories-avg_200',
         monthKey: monthKey,
         title: 'Deficit Starter',
         description: 'Averaged a 200 calorie daily deficit - small changes lead to long-term results!',
@@ -342,7 +342,7 @@ class MedalDefinitions {
     return [
       // STEPS MONTHLY TOTALS
       _createMonthlyMedal(
-        baseId: 'steps_400k_month',
+        baseId: 'steps-total_400k',
         monthKey: monthKey,
         title: 'Monthly Marathon Master',
         description: 'Crushed 400,000 steps in a month - you\'ve walked the length of Ireland!',
@@ -355,7 +355,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.steps] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'steps_300k_month',
+        baseId: 'steps-total_300k',
         monthKey: monthKey,
         title: 'Monthly Explorer',
         description: 'Reached 300,000 steps in a month - equivalent to hiking the Grand Canyon rim-to-rim!',
@@ -368,7 +368,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.steps] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'steps_200k_month',
+        baseId: 'steps-total_200k',
         monthKey: monthKey,
         title: 'Monthly Pathfinder',
         description: 'Completed 200,000 steps in a month - you\'ve walked the length of Manhattan 4 times!',
@@ -381,7 +381,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.steps] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'steps_100k_month',
+        baseId: 'steps-total_100k',
         monthKey: monthKey,
         title: 'Monthly Stepper',
         description: 'Achieved 100,000 steps in a month - that\'s like walking the Golden Gate Bridge 30 times!',
@@ -396,7 +396,7 @@ class MedalDefinitions {
 
       // STRENGTH TRAINING TIME MONTHLY TOTALS
       _createMonthlyMedal(
-        baseId: 'strength_1500_month',
+        baseId: 'strength-total_1500',
         monthKey: monthKey,
         title: 'Monthly Muscle Maestro',
         description: 'Logged 1,500 minutes (25 hours) of strength training - enough to do 9,000 push-ups!',
@@ -409,7 +409,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.strengthTrainingTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'strength_1000_month',
+        baseId: 'strength-total_1000',
         monthKey: monthKey,
         title: 'Monthly Iron Legend',
         description: 'Completed 1,000 minutes (16.7 hours) of strength training - equivalent to lifting the Eiffel Tower twice!',
@@ -422,7 +422,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.strengthTrainingTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'strength_750_month',
+        baseId: 'strength-total_750',
         monthKey: monthKey,
         title: 'Monthly Resistance Ruler',
         description: 'Achieved 750 minutes (12.5 hours) of strength training - like doing 4,500 squats!',
@@ -435,7 +435,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.strengthTrainingTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'strength_500_month',
+        baseId: 'strength-total_500',
         monthKey: monthKey,
         title: 'Monthly Strength Builder',
         description: 'Completed 500 minutes (8.3 hours) of strength training - equivalent to moving 15 tons of weight!',
@@ -450,7 +450,7 @@ class MedalDefinitions {
 
       // CARDIO TIME MONTHLY TOTALS
       _createMonthlyMedal(
-        baseId: 'cardio_1500_month',
+        baseId: 'cardio-total_1500',
         monthKey: monthKey,
         title: 'Monthly Cardio Conqueror',
         description: 'Logged 1,500 minutes (25 hours) of cardio - equivalent to running from New York to Boston!',
@@ -463,7 +463,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.cardioTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'cardio_1000_month',
+        baseId: 'cardio-total_1000',
         monthKey: monthKey,
         title: 'Monthly Endurance Elite',
         description: 'Completed 1,000 minutes (16.7 hours) of cardio - like swimming across the English Channel!',
@@ -476,7 +476,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.cardioTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'cardio_750_month',
+        baseId: 'cardio-total_750',
         monthKey: monthKey,
         title: 'Monthly Aerobic Ace',
         description: 'Achieved 750 minutes (12.5 hours) of cardio - burning approximately 10,000 calories!',
@@ -489,7 +489,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.cardioTime] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'cardio_500_month',
+        baseId: 'cardio-total_500',
         monthKey: monthKey,
         title: 'Monthly Cardio Committer',
         description: 'Completed 500 minutes (8.3 hours) of cardio - equivalent to climbing the Empire State Building 3 times!',
@@ -504,7 +504,7 @@ class MedalDefinitions {
 
       // SLEEP MONTHLY TOTALS
       _createMonthlyMedal(
-        baseId: 'sleep_270h_month',
+        baseId: 'sleep-total_270h',
         monthKey: monthKey,
         title: 'Monthly Sleep Master',
         description: 'Logged 270 hours of sleep - more than a bear\'s monthly hibernation!',
@@ -517,7 +517,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.sleep] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'sleep_240h_month',
+        baseId: 'sleep-total_240h',
         monthKey: monthKey,
         title: 'Monthly Dream Weaver',
         description: 'Achieved 240 hours of sleep - that\'s optimal sleep for a full month!',
@@ -530,7 +530,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.sleep] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'sleep_210h_month',
+        baseId: 'sleep-total_210h',
         monthKey: monthKey,
         title: 'Monthly Rest Champion',
         description: 'Logged 210 hours of sleep - better than 70% of adults!',
@@ -543,7 +543,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.sleep] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'sleep_180h_month',
+        baseId: 'sleep-total_180h',
         monthKey: monthKey,
         title: 'Monthly Sleep Tracker',
         description: 'Achieved 180 hours of sleep - building consistent sleep habits!',
@@ -558,7 +558,7 @@ class MedalDefinitions {
 
       // PROTEIN MONTHLY TOTALS
       _createMonthlyMedal(
-        baseId: 'protein_4500_month',
+        baseId: 'protein-total_4500',
         monthKey: monthKey,
         title: 'Monthly Protein Legend',
         description: 'Consumed 4,500g of protein - equivalent to 18 whole chickens!',
@@ -571,7 +571,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.proteinIntake] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'protein_3000_month',
+        baseId: 'protein-total_3000',
         monthKey: monthKey,
         title: 'Monthly Protein Master',
         description: 'Reached 3,000g of protein - that\'s 120 protein shakes!',
@@ -584,7 +584,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.proteinIntake] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'protein_2250_month',
+        baseId: 'protein-total_2250',
         monthKey: monthKey,
         title: 'Monthly Protein Pro',
         description: 'Tracked 2,250g of protein - like eating 90 eggs!',
@@ -597,7 +597,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.proteinIntake] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'protein_1500_month',
+        baseId: 'protein-total_1500',
         monthKey: monthKey,
         title: 'Monthly Protein Tracker',
         description: 'Achieved 1,500g of protein - equivalent to 60 cans of tuna!',
@@ -612,7 +612,7 @@ class MedalDefinitions {
 
       // NET CALORIES MONTHLY TOTALS
       _createMonthlyMedal(
-        baseId: 'netcalories_24k_month',
+        baseId: 'netcalories-total_24k',
         monthKey: monthKey,
         title: 'Monthly Fat Loss Champion',
         description: 'Created a 24,000 calorie deficit for the month - that\'s about 7 pounds of fat burned!',
@@ -625,7 +625,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.netCalories] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'netcalories_18k_month',
+        baseId: 'netcalories-total_18k',
         monthKey: monthKey,
         title: 'Monthly Calorie Master',
         description: 'Achieved an 18,000 calorie deficit for the month - equivalent to burning 5 pounds of body fat!',
@@ -638,7 +638,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.netCalories] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'netcalories_12k_month',
+        baseId: 'netcalories-total_12k',
         monthKey: monthKey,
         title: 'Monthly Deficit Achiever',
         description: 'Created a 12,000 calorie deficit this month - like running 24 five-kilometer races!',
@@ -651,7 +651,7 @@ class MedalDefinitions {
         value: monthlyTotals[HealthItemType.netCalories] ?? 0,
       ),
       _createMonthlyMedal(
-        baseId: 'netcalories_6k_month',
+        baseId: 'netcalories-total_6k',
         monthKey: monthKey,
         title: 'Monthly Calorie Controller',
         description: 'Reached a 6,000 calorie deficit for the month - a healthy start to sustainable weight management!',
