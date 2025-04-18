@@ -232,20 +232,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           backgroundColor: CoreColors.coreOrange,
                         ),
                         const SizedBox(height: PaddingSizes.large),
-
-                        // Back to Sign In
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: CoreColors.coreOrange,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            child: const Text('Back to Sign In'),
-                          ),
-                        ),
                       ],
                     ),
                   ),

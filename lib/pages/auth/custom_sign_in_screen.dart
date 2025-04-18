@@ -126,7 +126,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                 children: [
                   // App Logo/Title Section
                   Padding(
-                    padding: const EdgeInsets.only(bottom: PaddingSizes.xlarge * 2),
+                    padding: const EdgeInsets.only(bottom: PaddingSizes.xlarge * 2, top: PaddingSizes.xlarge),
                     child: Column(
                       children: [
                         Text(
@@ -153,7 +153,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                   // Main Form Card
                   Container(
                     width: formWidth,
-                    padding: EdgeInsets.all(screenSize.width > 600 ? PaddingSizes.xlarge * 1.5 : PaddingSizes.large),
+                    padding: EdgeInsets.all(screenSize.width > 600 ? PaddingSizes.xlarge * 1.5 : PaddingSizes.xlarge),
                     margin: const EdgeInsets.symmetric(horizontal: PaddingSizes.medium),
                     decoration: BoxDecoration(
                       color: CoreColors.foregroundColor,
@@ -169,25 +169,6 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Welcome Text
-                        Text(
-                          _isRegistering ? 'Create Account' : 'Welcome back',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: CoreColors.textColor,
-                          ),
-                        ),
-                        const SizedBox(height: GapSizes.small),
-                        Text(
-                          _isRegistering 
-                              ? 'Please fill in your details to register'
-                              : 'Please sign in to continue',
-                          style: TextStyle(
-                            color: CoreColors.textColor.withOpacity(0.7),
-                            fontSize: 16,
-                          ),
-                        ),
                         const SizedBox(height: PaddingSizes.xlarge),
 
                         // Error Message
@@ -383,7 +364,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                         // Toggle Register/Sign In
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: PaddingSizes.xlarge),
+                            padding: const EdgeInsets.only(bottom: 0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -433,17 +414,17 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                   // Terms Text - Positioned below the form card
                   Padding(
                     padding: EdgeInsets.only(
-                      top: PaddingSizes.xlarge,
+                      top: PaddingSizes.xxxlarge,
                       bottom: PaddingSizes.xlarge,
-                      left: PaddingSizes.medium,
-                      right: PaddingSizes.medium,
+                      left: PaddingSizes.xxxlarge,
+                      right: PaddingSizes.xxxlarge,
                     ),
                     child: Text(
                       'By continuing, you agree to our Terms of Service and Privacy Policy',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: CoreColors.textColor.withOpacity(0.5),
-                        fontSize: screenSize.width > 600 ? 12 : 10,
+                        fontSize: 12,
                       ),
                     ),
                   ),
