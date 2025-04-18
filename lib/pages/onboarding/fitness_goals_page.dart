@@ -16,7 +16,7 @@ class FitnessGoalsPage extends StatefulWidget {
   final ActivityLevel activityLevel;
   final double height; // Height in cm
   final double? bodyFat; // Optional body fat percentage
-
+  final bool useMetricWeight;
   const FitnessGoalsPage({
     super.key,
     required this.onNext,
@@ -28,6 +28,7 @@ class FitnessGoalsPage extends StatefulWidget {
     required this.height,
     this.bodyFat,
     this.selectedGoals,
+    required this.useMetricWeight,
   });
 
   @override
@@ -40,7 +41,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
   late double _activeCalories;
   late double _netCalories;
   late double _proteinGoal;
-  bool _useMetricWeight = false;
   int _currentStep = 0;
   
   // Controllers for each input
@@ -53,11 +53,9 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
   void initState() {
     super.initState();
     _goals = {};
-    _useMetricWeight = widget.weight < 200;
-    
+  
     // Calculate default protein goal (1g per lb of body weight)
-    final bodyWeightInLbs = _useMetricWeight ? widget.weight * 2.20462 : widget.weight;
-    final defaultProteinGoal = bodyWeightInLbs.round();
+    final defaultProteinGoal = widget.weight.round(); // weight is always in lbs
     
     // Initialize controllers with default values
     _netCaloriesController = TextEditingController(
@@ -66,9 +64,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
     _proteinController = TextEditingController(
       text: defaultProteinGoal.toStringAsFixed(0),
     );
-    _weightController = TextEditingController(
-      text: _useMetricWeight ? (widget.weight * 2.20462).toStringAsFixed(1) : widget.weight.toStringAsFixed(1),
-    );
+    _weightController = TextEditingController();
     _bodyFatController = TextEditingController();
 
     // Initialize values without setState
@@ -154,7 +150,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
     final weight = double.tryParse(_weightController.text);
     if (weight != null) {
       // Always store weight in pounds
-      _goals[HealthItemType.weight] = _useMetricWeight ? weight * 2.20462 : weight;
+      _goals[HealthItemType.weight] = widget.useMetricWeight ? weight / 2.20462 : weight;
     } else {
       _goals.remove(HealthItemType.weight);
     }
@@ -192,6 +188,8 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
                   _buildCaloriesSection(),
                   const SizedBox(height: PaddingSizes.xxxlarge),
                   _buildActiveCaloriesSection(),
+                  const SizedBox(height: PaddingSizes.xxxlarge),
+                  _buildTDEESection(),
                 ],
               ),
             1 => Column(
@@ -229,7 +227,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Resting Calories',
+              'Basic Metabolic Rate',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -309,6 +307,55 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
         ),
         Text(
           '${_activeCalories.round()} cal',
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: CoreColors.coreOrange,
+          ),
+        ),
+      ],
+    );
+  }
+
+    Widget _buildTDEESection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Total Daily Energy Expenditure',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: CoreColors.textColor,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Total Daily Energy Expenditure'),
+                    content: const Text(
+                      'Your basic metabolic rate plus the calories you burn through physical activity.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        Text(
+          '${(_restingCalories + _activeCalories).round()} cal',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -446,45 +493,20 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Weight Goal',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: CoreColors.textColor,
-              ),
-            ),
-            _buildUnitToggle(
-              'kg',
-              'lb',
-              _useMetricWeight,
-              (value) {
-                setState(() {
-                  if (_goals[HealthItemType.weight] != null) {
-                    // Convert the stored weight when switching units for display
-                    if (value) {
-                      // Converting from lb to kg for display
-                      _weightController.text = (_goals[HealthItemType.weight]! / 2.20462).toStringAsFixed(1);
-                    } else {
-                      // Display in lb
-                      _weightController.text = _goals[HealthItemType.weight]!.toStringAsFixed(1);
-                    }
-                  }
-                  _useMetricWeight = value;
-                });
-              },
-            ),
-          ],
+        const Text(
+          'Weight Goal',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: CoreColors.textColor,
+          ),
         ),
         const SizedBox(height: PaddingSizes.medium),
         TextField(
           controller: _weightController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            hintText: _useMetricWeight ? 'kg' : 'lb',
+            hintText: widget.useMetricWeight ? 'kg' : 'lb',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
             ),
@@ -493,7 +515,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
             if (text.isEmpty) {
               setState(() {
                 _goals.remove(HealthItemType.weight);
-                _updateGoals();
+                widget.onSelectionChanged(_goals);
               });
               return;
             }
@@ -501,8 +523,8 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
             if (value != null) {
               setState(() {
                 // Always store weight in pounds
-                _goals[HealthItemType.weight] = _useMetricWeight ? value * 2.20462 : value;
-                _updateGoals();
+                _goals[HealthItemType.weight] = widget.useMetricWeight ? value * 2.20462 : value;
+                widget.onSelectionChanged(_goals);
               });
             }
           },
@@ -579,7 +601,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
       subtitle: _currentStep == 0
           ? 'Based on your information, we calculated your daily resting and active calories. '
           : _currentStep == 1
-              ? 'Set your net calorie goal'
+              ? 'Set your daily calorie surplus or deficit goal'
               : _currentStep == 2
                   ? 'Set your protein intake goal'
                   : 'Set your body composition goals',
@@ -604,54 +626,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
       case ActivityLevel.extraActive:
         return 1.9;
     }
-  }
-
-  Widget _buildUnitToggle(
-    String metricLabel,
-    String imperialLabel,
-    bool isMetric,
-    Function(bool) onChanged,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: CoreColors.backgroundColor,
-        borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-        border: Border.all(
-          color: CoreColors.textColor.withOpacity(0.1),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildToggleButton(metricLabel, isMetric, () => onChanged(true)),
-          _buildToggleButton(imperialLabel, !isMetric, () => onChanged(false)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToggleButton(String label, bool isSelected, VoidCallback onPressed) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: PaddingSizes.large,
-          vertical: PaddingSizes.medium,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? CoreColors.coreOrange : Colors.transparent,
-          borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? CoreColors.textColor : CoreColors.textColor.withOpacity(0.7),
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildWeightChangeVisualization() {

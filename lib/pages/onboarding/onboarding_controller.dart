@@ -33,6 +33,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
   bool? _isMale;
   double? _height;
   double? _bodyFat;
+  bool _useMetricWeight = false;
   Map<HealthItemType, double> _goals = {};
   
   int _currentPage = 0;
@@ -119,13 +120,14 @@ class _OnboardingControllerState extends State<OnboardingController> {
     });
   }
 
-  void _updateBodyStats(double? weight, int? age, Gender? gender, double? height, double? bodyFat) {
+  void _updateBodyStats(double? weight, int? age, Gender? gender, double? height, double? bodyFat, bool useMetricWeight) {
     setState(() {
       _weight = weight;
       _age = age;
       _isMale = gender == Gender.male;
       _height = height;
       _bodyFat = bodyFat;
+      _useMetricWeight = useMetricWeight;
     });
   }
 
@@ -163,6 +165,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
             selectedGender: _isMale == null ? null : (_isMale! ? Gender.male : Gender.female),
             selectedHeight: _height,
             selectedBodyFat: _bodyFat,
+            selectedPreferredUnitSystem: _useMetricWeight,
           ),
           
           // Activity Level Page
@@ -183,6 +186,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
             activityLevel: _activityLevel ?? ActivityLevel.moderatelyActive,
             height: _height ?? 0,
             bodyFat: _bodyFat,
+            useMetricWeight: _useMetricWeight,
           ),
         ],
       ),
