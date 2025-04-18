@@ -6,7 +6,7 @@ import 'package:healthcore/pages/onboarding/onboarding_base_page.dart';
 
 class BodyStatsPage extends StatefulWidget {
   final VoidCallback onNext;
-  final Function(double weight, int age, Gender gender, double height, double? bodyFat) onSelectionChanged;
+  final Function(double? weight, int? age, Gender? gender, double? height, double? bodyFat) onSelectionChanged;
   final double? selectedWeight;
   final int? selectedAge;
   final Gender? selectedGender;
@@ -29,10 +29,10 @@ class BodyStatsPage extends StatefulWidget {
 }
 
 class _BodyStatsPageState extends State<BodyStatsPage> {
-  late double _weight;
-  late int _age;
-  late Gender _gender;
-  late double _height;
+  double? _weight;
+  int? _age;
+  Gender? _gender;
+  double? _height;
   double? _bodyFat;
   bool _useMetricWeight = false;
   bool _useMetricHeight = false;
@@ -48,13 +48,13 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
   @override
   void initState() {
     super.initState();
-    _weight = widget.selectedWeight ?? 0;
-    _age = widget.selectedAge ?? 0;
-    _gender = widget.selectedGender ?? Gender.male;
-    _height = widget.selectedHeight ?? 0;
+    _weight = widget.selectedWeight;
+    _age = widget.selectedAge;
+    _gender = widget.selectedGender;
+    _height = widget.selectedHeight;
     _bodyFat = widget.selectedBodyFat;
-    _useMetricWeight = false; // If weight is less than 200, assume it's in kg
-    _useMetricHeight = false; // If height is less than 200, assume it's in cm
+    _useMetricWeight = false; 
+    _useMetricHeight = false;
 
     // Initialize controllers with empty text
     _ageController = TextEditingController();
@@ -91,14 +91,95 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
   bool get _isValid {
     switch (_currentStep) {
       case 0:
-        return _age > 0 && _gender != null;
+        return _age != null && _gender != null;
       case 1:
-        return _weight > 0;
+        return _weight != null;
       case 2:
-        return _height > 0;
+        return _height != null;
       default:
         return false;
     }
+  }
+
+  void _updateWeightUnit(bool useMetric) {
+    setState(() {
+      if (_weight != null) {
+        // Convert the stored weight when switching units
+        if (useMetric) {
+          // Converting from lb to kg for display
+          _weightController.text = (_weight! / 2.20462).toStringAsFixed(1);
+        } else {
+          // Converting from kg to lb for display
+          _weightController.text = _weight!.toStringAsFixed(1);
+        }
+      }
+      _useMetricWeight = useMetric;
+      widget.onSelectionChanged(
+        _weight,
+        _age,
+        _gender,
+        _height,
+        _bodyFat,
+      );
+    });
+  }
+
+  void _updateWeight(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _weight = null;
+        widget.onSelectionChanged(
+          _weight,
+          _age,
+          _gender,
+          _height,
+          _bodyFat,
+        );
+      });
+      return;
+    }
+
+    final parsedValue = double.tryParse(value);
+    if (parsedValue != null) {
+      setState(() {
+        // Always store weight in pounds
+        _weight = _useMetricWeight ? parsedValue * 2.20462 : parsedValue;
+        widget.onSelectionChanged(
+          _weight,
+          _age,
+          _gender,
+          _height,
+          _bodyFat,
+        );
+      });
+    }
+  }
+
+  void _updateHeightUnit(bool useMetric) {
+    setState(() {
+      if (_height != null) {
+        // Convert the stored height when switching units for display
+        if (useMetric) {
+          // Display in cm
+          _heightController.text = _height!.toStringAsFixed(1);
+        } else {
+          // Convert cm to feet and inches for display
+          final totalInches = _height! / 2.54;
+          final feet = (totalInches / 12).floor();
+          final inches = (totalInches % 12).round();
+          _heightController.text = feet.toString();
+          _heightInchesController.text = inches.toString();
+        }
+      }
+      _useMetricHeight = useMetric;
+      widget.onSelectionChanged(
+        _weight,
+        _age,
+        _gender,
+        _height,
+        _bodyFat,
+      );
+    });
   }
 
   Widget _buildCurrentStep() {
@@ -269,17 +350,7 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
               'kg',
               'lb',
               _useMetricWeight,
-              (value) {
-                setState(() {
-                  _useMetricWeight = value;
-                  if (value) {
-                    _weight = _weight / 2.20462;
-                  } else {
-                    _weight = _weight * 2.20462;
-                  }
-                  _updateStats();
-                });
-              },
+              _updateWeightUnit,
             ),
           ],
         ),
@@ -293,15 +364,7 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
               borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
             ),
           ),
-          onChanged: (text) {
-            final value = double.tryParse(text);
-            if (value != null) {
-              setState(() {
-                _weight = value;
-                _updateStats();
-              });
-            }
-          },
+          onChanged: _updateWeight,
         ),
       ],
     );
@@ -369,22 +432,7 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
               'cm',
               'ft-in',
               _useMetricHeight,
-              (value) {
-                setState(() {
-                  _useMetricHeight = value;
-                  if (value) {
-                    // Convert from feet-inches to cm
-                    final feet = (_height / 12).floor();
-                    final inches = _height % 12;
-                    _height = feet * 30.48 + inches * 2.54;
-                  } else {
-                    // Convert from cm to feet-inches
-                    final totalInches = _height / 2.54;
-                    _height = totalInches;
-                  }
-                  _updateStats();
-                });
-              },
+              _updateHeightUnit,
             ),
           ],
         ),
@@ -400,11 +448,30 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
               ),
             ),
             onChanged: (text) {
+              if (text.isEmpty) {
+                setState(() {
+                  _height = null;
+                  widget.onSelectionChanged(
+                    _weight,
+                    _age,
+                    _gender,
+                    _height,
+                    _bodyFat,
+                  );
+                });
+                return;
+              }
               final value = double.tryParse(text);
               if (value != null) {
                 setState(() {
-                  _height = value;
-                  _updateStats();
+                  _height = value; // Store directly in cm
+                  widget.onSelectionChanged(
+                    _weight,
+                    _age,
+                    _gender,
+                    _height,
+                    _bodyFat,
+                  );
                 });
               }
             },
@@ -423,12 +490,32 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
                     ),
                   ),
                   onChanged: (text) {
-                    final feet = int.tryParse(text);
-                    if (feet != null) {
+                    if (text.isEmpty) {
                       setState(() {
-                        final inches = _height % 12;
-                        _height = feet * 12 + inches;
-                        _updateStats();
+                        _height = null;
+                        widget.onSelectionChanged(
+                          _weight,
+                          _age,
+                          _gender,
+                          _height,
+                          _bodyFat,
+                        );
+                      });
+                      return;
+                    }
+                    final feet = double.tryParse(text);
+                    final inches = double.tryParse(_heightInchesController.text);
+                    if (feet != null && inches != null) {
+                      setState(() {
+                        // Convert feet and inches to cm
+                        _height = (feet * 30.48) + (inches * 2.54);
+                        widget.onSelectionChanged(
+                          _weight,
+                          _age,
+                          _gender,
+                          _height,
+                          _bodyFat,
+                        );
                       });
                     }
                   },
@@ -446,12 +533,32 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
                     ),
                   ),
                   onChanged: (text) {
-                    final inches = double.tryParse(text);
-                    if (inches != null) {
+                    if (text.isEmpty) {
                       setState(() {
-                        final feet = (_height / 12).floor();
-                        _height = feet * 12 + inches;
-                        _updateStats();
+                        _height = null;
+                        widget.onSelectionChanged(
+                          _weight,
+                          _age,
+                          _gender,
+                          _height,
+                          _bodyFat,
+                        );
+                      });
+                      return;
+                    }
+                    final inches = double.tryParse(text);
+                    final feet = double.tryParse(_heightController.text);
+                    if (inches != null && feet != null) {
+                      setState(() {
+                        // Convert feet and inches to cm
+                        _height = (feet * 30.48) + (inches * 2.54);
+                        widget.onSelectionChanged(
+                          _weight,
+                          _age,
+                          _gender,
+                          _height,
+                          _bodyFat,
+                        );
                       });
                     }
                   },
@@ -516,7 +623,7 @@ class _BodyStatsPageState extends State<BodyStatsPage> {
     return OnboardingBasePage(
       title: 'Your Body Stats',
       subtitle: _currentStep == 0
-          ? 'Let\'s start with your age and gender'
+          ? 'We will use this to calculate your daily expended energy, so we can set your goals accordingly'
           : _currentStep == 1
               ? 'Set your weight and body fat percentage'
               : 'Set your height',

@@ -77,7 +77,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
         bodyFat: _bodyFat,
       );
 
-      // Save goals
+      // Save all goals
       for (var entry in _goals.entries) {
         await _goalsService.saveGoal(entry.key.toString(), entry.value);
       }
@@ -119,7 +119,7 @@ class _OnboardingControllerState extends State<OnboardingController> {
     });
   }
 
-  void _updateBodyStats(double weight, int age, Gender gender, double height, double? bodyFat) {
+  void _updateBodyStats(double? weight, int? age, Gender? gender, double? height, double? bodyFat) {
     setState(() {
       _weight = weight;
       _age = age;

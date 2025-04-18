@@ -4,7 +4,6 @@ import 'package:healthcore/constants/sizes.constants.dart';
 import 'package:healthcore/enums/activity_level.enum.dart';
 import 'package:healthcore/enums/health_item_type.enum.dart';
 import 'package:healthcore/pages/onboarding/onboarding_base_page.dart';
-import 'package:healthcore/services/goals_service.dart';
 import 'package:healthcore/constants/health_item_definitions.constants.dart';
 
 class FitnessGoalsPage extends StatefulWidget {
@@ -41,8 +40,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
   late double _activeCalories;
   late double _netCalories;
   late double _proteinGoal;
-  late double _weightGoal;
-  late double _bodyFatGoal;
   bool _useMetricWeight = false;
   int _currentStep = 0;
   
@@ -55,31 +52,38 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
   @override
   void initState() {
     super.initState();
-    _goals = Map<HealthItemType, double>.from(widget.selectedGoals ?? {});
-    _useMetricWeight = _goals[HealthItemType.weight] != null && _goals[HealthItemType.weight]! < 200;
+    _goals = {};
+    _useMetricWeight = widget.weight < 200;
     
     // Calculate default protein goal (1g per lb of body weight)
     final bodyWeightInLbs = _useMetricWeight ? widget.weight * 2.20462 : widget.weight;
     final defaultProteinGoal = bodyWeightInLbs.round();
     
-    // Initialize controllers with current values
+    // Initialize controllers with default values
     _netCaloriesController = TextEditingController(
-      text: _goals[HealthItemType.netCalories]?.toStringAsFixed(0) ?? 
-            HealthItemDefinitions.netCalories.defaultGoal.toStringAsFixed(0),
+      text: HealthItemDefinitions.netCalories.defaultGoal.toStringAsFixed(0),
     );
     _proteinController = TextEditingController(
-      text: _goals[HealthItemType.proteinIntake]?.toStringAsFixed(0) ?? 
-            defaultProteinGoal.toStringAsFixed(0),
+      text: defaultProteinGoal.toStringAsFixed(0),
     );
     _weightController = TextEditingController(
-      text: _goals[HealthItemType.weight]?.toStringAsFixed(1) ?? '',
+      text: _useMetricWeight ? (widget.weight * 2.20462).toStringAsFixed(1) : widget.weight.toStringAsFixed(1),
     );
-    _bodyFatController = TextEditingController(
-      text: _goals[HealthItemType.bodyFatPercentage]?.toStringAsFixed(1) ?? '',
-    );
+    _bodyFatController = TextEditingController();
 
+    // Initialize values without setState
     _calculateTDEE();
-    _initializeGoals();
+    _netCalories = HealthItemDefinitions.netCalories.defaultGoal;
+    _proteinGoal = defaultProteinGoal.toDouble();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Schedule the initialization after the build is complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeGoals();
+    });
   }
 
   @override
@@ -92,77 +96,77 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
   }
 
   void _calculateTDEE() {
-    // Mifflin-St Jeor Equation for BMR
-    final bmr = widget.isMale
-        ? 10 * widget.weight + 6.25 * widget.height - 5 * widget.age + 5
-        : 10 * widget.weight + 6.25 * widget.height - 5 * widget.age - 161;
+    // Calculate BMR using appropriate formula
+    double bmr;
+    if (widget.bodyFat != null) {
+      // Use Katch-McArdle formula (with body fat)
+      final weightInKg = widget.weight / 2.20462; // Convert lbs to kg
+      final leanMassInKg = weightInKg * (1 - (widget.bodyFat! / 100));
+      bmr = 370 + (21.6 * leanMassInKg);
+    } else {
+      // Use Mifflin-St Jeor formula (without body fat)
+      if (widget.isMale) {
+        bmr = 66 + (6.23 * widget.weight) + (12.7 * (widget.height / 2.54)) - (6.8 * widget.age);
+      } else {
+        bmr = 655 + (4.35 * widget.weight) + (4.7 * (widget.height / 2.54)) - (4.7 * widget.age);
+      }
+    }
 
-    // Activity level multipliers
+    // Calculate TDEE by applying activity multiplier
     final activityMultiplier = _getActivityMultiplier(widget.activityLevel);
+    final tdee = bmr * activityMultiplier;
 
-    _restingCalories = _goals[HealthItemType.restingCalories] ?? bmr;
-    _activeCalories = _goals[HealthItemType.activeCalories] ?? (bmr * activityMultiplier - bmr);
+    // Calculate active calories based on TDEE and net calories goal
+    _activeCalories = tdee - bmr;
+    _restingCalories = bmr;
   }
 
   void _initializeGoals() {
-    // Set net calories to default from health definitions if not provided
-    _netCalories = _goals[HealthItemType.netCalories] ?? HealthItemDefinitions.netCalories.defaultGoal;
-    // Set protein goal to 1g per lb of body weight (convert kg to lb if needed)
-    final bodyWeightInLbs = _useMetricWeight ? widget.weight * 2.20462 : widget.weight;
-    _proteinGoal = _goals[HealthItemType.proteinIntake] ?? bodyWeightInLbs;
-    _weightGoal = _goals[HealthItemType.weight] ?? widget.weight;
-    _bodyFatGoal = _goals[HealthItemType.bodyFatPercentage] ?? widget.bodyFat ?? HealthItemDefinitions.bodyFat.defaultGoal;
-  }
+    // Initialize goals with default values
+    _goals[HealthItemType.netCalories] = _netCalories;
+    _goals[HealthItemType.proteinIntake] = _proteinGoal;
+    
+    // Calculate and set resting calories (BMR)
+    _goals[HealthItemType.restingCalories] = _restingCalories;
+    _goals[HealthItemType.activeCalories] = _activeCalories;
+    _goals[HealthItemType.expendedEnergy] = _restingCalories + _activeCalories;
 
-  void _updateGoal(HealthItemType type, double value) {
-    setState(() {
-      _goals[type] = value;
-      switch (type) {
-        case HealthItemType.restingCalories:
-          _restingCalories = value;
-          break;
-        case HealthItemType.activeCalories:
-          _activeCalories = value;
-          break;
-        case HealthItemType.netCalories:
-          _netCalories = value;
-          break;
-        case HealthItemType.proteinIntake:
-          _proteinGoal = value;
-          break;
-        case HealthItemType.weight:
-          _weightGoal = value;
-          break;
-        case HealthItemType.bodyFatPercentage:
-          _bodyFatGoal = value;
-          break;
-        default:
-          break;
-      }
-    });
+    // Notify parent without setState
     widget.onSelectionChanged(_goals);
   }
 
-  void _showInfoDialog(String title, String content) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  void _updateGoals() {
+    // Update net calories goal
+    final netCalories = double.tryParse(_netCaloriesController.text);
+    if (netCalories != null) {
+      _goals[HealthItemType.netCalories] = netCalories;
+      _netCalories = netCalories;
+    }
 
-  String _getWeightChangeText() {
-    if (_netCalories == 0) return "You will maintain your current weight";
-    final weeklyChange = (_netCalories * 7) / 3500; // 3500 calories = 1 lb
-    return "You will ${weeklyChange > 0 ? 'gain' : 'lose'} ${weeklyChange.abs().toStringAsFixed(1)} lb of fat per week";
+    // Update protein goal
+    final protein = double.tryParse(_proteinController.text);
+    if (protein != null) {
+      _goals[HealthItemType.proteinIntake] = protein;
+      _proteinGoal = protein;
+    }
+
+    // Update weight goal
+    final weight = double.tryParse(_weightController.text);
+    if (weight != null) {
+      // Always store weight in pounds
+      _goals[HealthItemType.weight] = _useMetricWeight ? weight * 2.20462 : weight;
+    } else {
+      _goals.remove(HealthItemType.weight);
+    }
+
+    // Update body fat goal
+    final bodyFat = double.tryParse(_bodyFatController.text);
+    if (bodyFat != null) {
+      _goals[HealthItemType.bodyFatPercentage] = bodyFat;
+    }
+
+    // Notify parent without setState
+    widget.onSelectionChanged(_goals);
   }
 
   void _nextStep() {
@@ -255,7 +259,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
           ],
         ),
         Text(
-          '${_calculateRestingCalories().round()} cal',
+          '${_restingCalories.round()} cal',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -304,7 +308,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
           ],
         ),
         Text(
-          '${_calculateActiveCalories().round()} cal',
+          '${_activeCalories.round()} cal',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -459,20 +463,17 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
               _useMetricWeight,
               (value) {
                 setState(() {
-                  _useMetricWeight = value;
                   if (_goals[HealthItemType.weight] != null) {
-                    final currentWeight = _goals[HealthItemType.weight]!;
+                    // Convert the stored weight when switching units for display
                     if (value) {
-                      // Convert lb to kg
-                      _goals[HealthItemType.weight] = currentWeight / 2.20462;
+                      // Converting from lb to kg for display
+                      _weightController.text = (_goals[HealthItemType.weight]! / 2.20462).toStringAsFixed(1);
                     } else {
-                      // Convert kg to lb
-                      _goals[HealthItemType.weight] = currentWeight * 2.20462;
+                      // Display in lb
+                      _weightController.text = _goals[HealthItemType.weight]!.toStringAsFixed(1);
                     }
-                    // Update the controller text with the converted value
-                    _weightController.text = _goals[HealthItemType.weight]!.toStringAsFixed(1);
-                    _updateGoals();
                   }
+                  _useMetricWeight = value;
                 });
               },
             ),
@@ -489,10 +490,18 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
             ),
           ),
           onChanged: (text) {
+            if (text.isEmpty) {
+              setState(() {
+                _goals.remove(HealthItemType.weight);
+                _updateGoals();
+              });
+              return;
+            }
             final value = double.tryParse(text);
             if (value != null) {
               setState(() {
-                _goals[HealthItemType.weight] = value;
+                // Always store weight in pounds
+                _goals[HealthItemType.weight] = _useMetricWeight ? value * 2.20462 : value;
                 _updateGoals();
               });
             }
@@ -582,23 +591,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
     );
   }
 
-  double _calculateRestingCalories() {
-    // Mifflin-St Jeor Equation
-    final weight = widget.weight;
-    final height = widget.height;
-    final age = widget.age;
-    final isMale = widget.isMale;
-    
-    final bmr = (10 * weight) + (6.25 * height) - (5 * age) + (isMale ? 5 : -161);
-    return bmr;
-  }
-
-  double _calculateActiveCalories() {
-    final restingCalories = _calculateRestingCalories();
-    final activityMultiplier = _getActivityMultiplier(widget.activityLevel);
-    return (restingCalories * activityMultiplier) - restingCalories;
-  }
-
   double _getActivityMultiplier(ActivityLevel level) {
     switch (level) {
       case ActivityLevel.sedentary:
@@ -612,10 +604,6 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
       case ActivityLevel.extraActive:
         return 1.9;
     }
-  }
-
-  void _updateGoals() {
-    widget.onSelectionChanged(_goals);
   }
 
   Widget _buildUnitToggle(
@@ -690,7 +678,7 @@ class _FitnessGoalsPageState extends State<FitnessGoalsPage> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final containerWidth = constraints.maxWidth;
-              final indicatorWidth = 40.0;
+              const indicatorWidth = 40.0;
               final availableWidth = containerWidth - indicatorWidth;
               final left = position * availableWidth;
               
