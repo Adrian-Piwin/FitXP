@@ -25,7 +25,7 @@ class GoalEditButton extends WidgetFrame {
     this.currentValue,
   }) : super(
           size: 6,
-          height: WidgetSizes.xSmallHeight,
+          height: WidgetSizes.xxSmallHeight,
           borderRadius: BorderRadiusSizes.medium,
           color: CoreColors.accentAltColor,
           padding: PaddingSizes.small,

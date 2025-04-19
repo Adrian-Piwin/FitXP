@@ -58,3 +58,21 @@ SleepStage mapSleepStage(HealthDataType type) {
       return '${remainingMinutes}m';
     }
   }
+
+  /// Returns the number of minutes remaining in the current day
+  /// For example, at 11:30 PM it would return 30 minutes
+  int getMinutesLeftInDay() {
+    final now = DateTime.now();
+    final endOfDay = DateTime(now.year, now.month, now.day, 23, 59);
+    final difference = endOfDay.difference(now);
+    return difference.inMinutes;
+  }
+
+  /// Returns the number of minutes that have passed in the current day
+  /// For example, at 11:30 PM it would return 1410 minutes (23.5 hours)
+  int getMinutesPassedToday() {
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final difference = now.difference(startOfDay);
+    return difference.inMinutes;
+  }

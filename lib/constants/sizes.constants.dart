@@ -49,6 +49,7 @@ class PaddingSizes {
 class PercentIndicatorSizes{
   static const double lineHeightSmall = 6.0;
   static const double lineHeightMedium = 10.0;
+  static const double lineHeightMedium2 = 12.0;
   static const double lineHeightLarge = 16.0;
   static const double barRadius = 10.0;
   static const double circularRadiusMedium = 35.0;
@@ -62,7 +63,8 @@ class InputSizes {
 }
 
 class WidgetSizes {
-  static const double xSmallHeight = 40.0;
+  static const double xxSmallHeight = 40.0;
+  static const double xSmallHeight = 90.0;
   static const double smallHeight = 120.0;
   static const double mediumHeight = 145.0;
   static const double largeHeight = 205.0;

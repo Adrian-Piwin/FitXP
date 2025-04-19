@@ -101,7 +101,7 @@ class _HomeViewState extends State<HomeView> with AutomaticKeepAliveClientMixin 
                                   },
                                   child: Container(
                                     width: double.infinity,
-                                    height: WidgetSizes.xSmallHeight,
+                                    height: WidgetSizes.xxSmallHeight,
                                     decoration: BoxDecoration(
                                       color: CoreColors.accentAltColor,
                                       borderRadius: BorderRadius.circular(BorderRadiusSizes.medium),
