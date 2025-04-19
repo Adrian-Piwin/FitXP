@@ -112,7 +112,7 @@ class TrendHealthEntity extends HealthEntity {
 
   @override
   Widget get getGraphWidget {
-    // TODO: Fix the weird loading state where it shows briefly
+    // We use isLoading instead of showLoading, because we get a an error in the short state where we dont have data yet
     // It works fine for health entity using showLoading, but for this there is no data inbetween the loading
     if (isLoading) return LoadingWidget(size: 6, height: WidgetSizes.largeHeight); 
 

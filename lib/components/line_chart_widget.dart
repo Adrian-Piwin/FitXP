@@ -42,13 +42,29 @@ class LineChartWidget extends WidgetFrame {
     final effectiveMaxY = targetValue != null ? max(maxY, targetValue!) : maxY;
     final effectiveMinY = targetValue != null ? min(minY, targetValue!) : minY;
     
-    // Calculate bottom value: 3% lower than minY, rounded down to nearest 5
-    final bottomValue = (effectiveMinY * 0.97).floor();
-    final roundedBottom = ((bottomValue - 4) ~/ 5) * 5;
+    // Calculate rounded values with custom logic
+    double roundToNearest(double value, {bool isMax = false}) {
+      if (value <= 0) return 0;
+      
+      // For values between 0-50, round to nearest 2
+      if (value <= 50) {
+        if (isMax) {
+          return (value.ceil() + 1).toDouble();
+        } else {
+          return (value.floor() - 1).toDouble();
+        }
+      }
+      
+      // For values above 50, round to nearest 10
+      if (isMax) {
+        return ((value.ceil() + 9) ~/ 10) * 10.0;
+      } else {
+        return ((value.floor() - 9) ~/ 10) * 10.0;
+      }
+    }
     
-    // Calculate top value: 3% higher than maxY, rounded up to nearest 5
-    final paddedMaxY = (effectiveMaxY * 1.03).ceil();
-    final roundedTop = ((paddedMaxY + 4) ~/ 5) * 5;
+    final roundedBottom = roundToNearest(effectiveMinY, isMax: false);
+    final roundedTop = roundToNearest(effectiveMaxY, isMax: true);
     
     // Now create validSpots after calculating the ranges
     final validSpots = groupedData.asMap().entries

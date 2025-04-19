@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "iPhone_16_Pro_portrait.png",
+      "filename" : "iPhone_16_Pro_Max_portrait.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "iPhone_16_Plus__iPhone_15_Pro_Max__iPhone_15_Plus__iPhone_14_Pro_Max_portrait.png",
+      "filename" : "iPhone_16_Pro_Max_portrait 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "iPhone_16__iPhone_15_Pro__iPhone_15__iPhone_14_Pro_portrait.png",
+      "filename" : "iPhone_16_Pro_Max_portrait 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
